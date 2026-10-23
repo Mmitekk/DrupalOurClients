@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.1 (2026-10-23)
+
+- Module-shipped configuration (settings, image styles) now declares an enforced dependency on `our_clients`, so it is removed on uninstall and a clean re-install is possible.
+
 ## 1.0.0 (2026-10-23)
 
 - Initial release.

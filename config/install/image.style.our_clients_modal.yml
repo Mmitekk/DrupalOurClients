@@ -1,6 +1,9 @@
 langcode: en
 status: true
-dependencies: {}
+dependencies:
+  enforced:
+    module:
+      - our_clients
 name: our_clients_modal
 label: 'Our clients: modal image'
 effects:

@@ -1,3 +1,7 @@
+dependencies:
+  enforced:
+    module:
+      - our_clients
 heading: 'Our clients'
 visible_desktop: 4
 visible_tablet: 2
