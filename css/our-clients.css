@@ -1,0 +1,399 @@
+/**
+ * @file
+ * Styles for the Our clients slider block and modal window.
+ */
+
+.our-clients {
+  --oc-accent: #006ab1;
+  --oc-accent-contrast: #ffffff;
+  --oc-text: #1a171b;
+  --oc-text-muted: #5b6470;
+  --oc-bg: #ffffff;
+  --oc-surface: #f5f7fa;
+  --oc-border: #e3e8ef;
+  --oc-radius: 16px;
+  --oc-shadow: 0 10px 30px rgba(26, 23, 27, 0.08);
+  --oc-max-width: 1200px;
+  --oc-heading-size: 28px;
+  --oc-heading-size-mobile: 22px;
+  --oc-image-height: 130px;
+  --oc-image-height-mobile: 100px;
+  --oc-name-size: 14px;
+  position: relative;
+  max-width: var(--oc-max-width);
+}
+
+/* --------------------------------------------------------------------- */
+/* Slider                                                                */
+/* --------------------------------------------------------------------- */
+
+.our-clients__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.our-clients__heading {
+  margin: 0;
+  color: var(--oc-text);
+  font-size: var(--oc-heading-size);
+  line-height: 1.2;
+}
+
+.our-clients__frame {
+  position: relative;
+}
+
+.our-clients__viewport {
+  overflow: hidden;
+  margin: 0 -10px;
+  padding: 4px 0;
+  touch-action: pan-y;
+  cursor: grab;
+}
+
+.our-clients__viewport.is-dragging {
+  cursor: grabbing;
+}
+
+.our-clients__track {
+  display: flex;
+  align-items: stretch;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  transition: transform 0.45s ease;
+  will-change: transform;
+}
+
+.our-clients__viewport.is-dragging .our-clients__track {
+  transition: none;
+}
+
+.our-clients__slide {
+  flex: 0 0 auto;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 0 10px;
+}
+
+.our-clients__trigger {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  height: 100%;
+  padding: 22px 18px;
+  box-sizing: border-box;
+  font: inherit;
+  color: inherit;
+  background: var(--oc-bg);
+  border: 1px solid var(--oc-border);
+  border-radius: var(--oc-radius);
+  box-shadow: none;
+  cursor: pointer;
+  transition: box-shadow 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+}
+
+.our-clients__trigger:hover,
+.our-clients__trigger:focus-visible {
+  border-color: var(--oc-accent);
+  box-shadow: var(--oc-shadow);
+  transform: translateY(-2px);
+  outline: none;
+}
+
+.our-clients__figure {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: var(--oc-image-height);
+}
+
+.our-clients__figure img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+.our-clients__name {
+  color: var(--oc-text-muted);
+  font-size: var(--oc-name-size);
+  line-height: 1.3;
+  text-align: center;
+}
+
+.our-clients__arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  color: var(--oc-text);
+  background: var(--oc-bg);
+  border: 1px solid var(--oc-border);
+  border-radius: 50%;
+  box-shadow: 0 4px 14px rgba(26, 23, 27, 0.1);
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease, opacity 0.2s ease;
+}
+
+.our-clients__arrow--prev {
+  left: -14px;
+}
+
+.our-clients__arrow--next {
+  right: -14px;
+}
+
+.our-clients__arrow:hover {
+  color: var(--oc-accent-contrast);
+  background: var(--oc-accent);
+  border-color: var(--oc-accent);
+}
+
+.our-clients__arrow:disabled {
+  opacity: 0.35;
+  cursor: default;
+  pointer-events: none;
+}
+
+.our-clients__footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 18px;
+}
+
+.our-clients__dots {
+  display: flex;
+  gap: 8px;
+}
+
+.our-clients__dot {
+  width: 9px;
+  height: 9px;
+  padding: 0;
+  background: var(--oc-border);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.our-clients__dot.is-active {
+  background: var(--oc-accent);
+  transform: scale(1.15);
+}
+
+/* Nothing to scroll: hide arrows and dots. */
+.our-clients.is-static .our-clients__arrow,
+.our-clients.is-static .our-clients__footer {
+  display: none;
+}
+
+/* Hidden per-slide content cloned into the modal. */
+.our-clients__modal-source {
+  display: none;
+}
+
+/* --------------------------------------------------------------------- */
+/* Modal window                                                          */
+/* --------------------------------------------------------------------- */
+
+body.oc-modal-open {
+  overflow: hidden;
+}
+
+.oc-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1300;
+  display: none;
+}
+
+.oc-modal.is-open {
+  display: block;
+}
+
+.oc-modal__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(16, 24, 40, 0.6);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.oc-modal.is-open .oc-modal__overlay {
+  opacity: 1;
+}
+
+.oc-modal__window {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -46%);
+  width: min(var(--oc-modal-width, 760px), calc(100vw - 32px));
+  max-height: calc(100vh - 64px);
+  overflow-y: auto;
+  background: var(--oc-bg, #ffffff);
+  border-radius: 20px;
+  box-shadow: 0 24px 64px rgba(16, 24, 40, 0.25);
+  opacity: 0;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.oc-modal.is-open .oc-modal__window {
+  transform: translate(-50%, -50%);
+  opacity: 1;
+}
+
+.oc-modal__close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  color: #ffffff;
+  background: rgba(26, 23, 27, 0.55);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.oc-modal__close:hover {
+  background: var(--oc-accent, #006ab1);
+}
+
+.oc-modal__image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28px 28px 18px;
+  background: var(--oc-surface, #f5f7fa);
+  border-radius: 20px 20px 0 0;
+}
+
+.oc-modal__image img {
+  max-width: 100%;
+  max-height: 320px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+.oc-modal__body {
+  padding: 22px 28px 30px;
+  color: var(--oc-text, #1a171b);
+}
+
+.oc-modal__title {
+  margin: 0 0 12px;
+  font-size: 1.35em;
+  line-height: 1.25;
+}
+
+.oc-modal__description {
+  font-size: 0.95em;
+  line-height: 1.6;
+  color: var(--oc-text-muted, #5b6470);
+}
+
+.oc-modal__description p:first-child {
+  margin-top: 0;
+}
+
+.oc-modal__description p:last-child {
+  margin-bottom: 0;
+}
+
+.oc-modal__review {
+  margin: 18px 0 0;
+  padding: 16px 20px;
+  background: #eef5fb;
+  background: color-mix(in srgb, var(--oc-accent, #006ab1) 7%, #ffffff);
+  border-left: 4px solid var(--oc-accent, #006ab1);
+  border-radius: 0 12px 12px 0;
+  color: var(--oc-text, #1a171b);
+  font-size: 0.95em;
+  line-height: 1.6;
+}
+
+.oc-modal__review p:first-child {
+  margin-top: 0;
+}
+
+.oc-modal__review p:last-child {
+  margin-bottom: 0;
+}
+
+/* --------------------------------------------------------------------- */
+/* Admin overview thumbnail                                              */
+/* --------------------------------------------------------------------- */
+
+.our-clients-admin-thumb {
+  max-width: 60px;
+  max-height: 45px;
+  margin-right: 8px;
+  border-radius: 4px;
+  vertical-align: middle;
+}
+
+/* --------------------------------------------------------------------- */
+/* Responsive and accessibility                                          */
+/* --------------------------------------------------------------------- */
+
+@media (max-width: 575px) {
+  .our-clients__heading {
+    font-size: var(--oc-heading-size-mobile);
+  }
+
+  .our-clients__figure {
+    height: var(--oc-image-height-mobile);
+  }
+
+  .our-clients__arrow {
+    width: 38px;
+    height: 38px;
+  }
+
+  .our-clients__arrow--prev {
+    left: 6px;
+  }
+
+  .our-clients__arrow--next {
+    right: 6px;
+  }
+
+  .oc-modal__image {
+    padding: 20px 20px 14px;
+  }
+
+  .oc-modal__body {
+    padding: 18px 20px 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .our-clients__track,
+  .our-clients__trigger,
+  .our-clients__arrow,
+  .oc-modal__overlay,
+  .oc-modal__window {
+    transition: none;
+  }
+}

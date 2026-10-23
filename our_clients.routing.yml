@@ -1,0 +1,39 @@
+entity.our_clients_slide.collection:
+  path: '/admin/structure/our-clients'
+  defaults:
+    _form: '\Drupal\our_clients\Form\SlideOverviewForm'
+    _title: 'Our clients'
+  requirements:
+    _permission: 'administer our clients'
+
+our_clients.settings:
+  path: '/admin/structure/our-clients/settings'
+  defaults:
+    _form: '\Drupal\our_clients\Form\SettingsForm'
+    _title: 'Our clients settings'
+  requirements:
+    _permission: 'administer our clients'
+
+entity.our_clients_slide.add_form:
+  path: '/admin/structure/our-clients/add'
+  defaults:
+    _entity_form: 'our_clients_slide.add'
+    _title: 'Add slide'
+  requirements:
+    _permission: 'administer our clients'
+
+entity.our_clients_slide.edit_form:
+  path: '/admin/structure/our-clients/{our_clients_slide}'
+  defaults:
+    _entity_form: 'our_clients_slide.edit'
+    _title: 'Edit slide'
+  requirements:
+    _permission: 'administer our clients'
+
+entity.our_clients_slide.delete_form:
+  path: '/admin/structure/our-clients/{our_clients_slide}/delete'
+  defaults:
+    _entity_form: 'our_clients_slide.delete'
+    _title: 'Delete slide'
+  requirements:
+    _permission: 'administer our clients'

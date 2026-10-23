@@ -1,0 +1,5 @@
+our_clients.slide_add:
+  title: 'Add slide'
+  route_name: entity.our_clients_slide.add_form
+  appears_on:
+    - entity.our_clients_slide.collection

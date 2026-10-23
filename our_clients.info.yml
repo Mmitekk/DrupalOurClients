@@ -1,0 +1,6 @@
+name: Our clients
+type: module
+description: 'Provides a configurable "Our clients" slider block: client images with names, and a modal window with the full image, description and client review.'
+package: Custom
+core_version_requirement: ^9.3 || ^10 || ^11
+configure: entity.our_clients_slide.collection

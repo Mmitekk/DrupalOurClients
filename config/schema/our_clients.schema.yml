@@ -1,0 +1,95 @@
+our_clients.settings:
+  type: config_object
+  label: 'Our clients settings'
+  mapping:
+    heading:
+      type: label
+      label: 'Block heading'
+    visible_desktop:
+      type: integer
+      label: 'Visible slides on desktop'
+    visible_tablet:
+      type: integer
+      label: 'Visible slides on tablet'
+    visible_mobile:
+      type: integer
+      label: 'Visible slides on mobile'
+    autoplay:
+      type: boolean
+      label: 'Autoplay'
+    autoplay_speed:
+      type: integer
+      label: 'Autoplay interval (ms)'
+    slider_max_width:
+      type: integer
+      label: 'Slider maximum width (px)'
+    heading_font_size:
+      type: integer
+      label: 'Heading font size (px)'
+    heading_font_size_mobile:
+      type: integer
+      label: 'Heading font size on mobile (px)'
+    image_height:
+      type: integer
+      label: 'Slide image height (px)'
+    image_height_mobile:
+      type: integer
+      label: 'Slide image height on mobile (px)'
+    name_font_size:
+      type: integer
+      label: 'Client name font size (px)'
+    modal_width:
+      type: integer
+      label: 'Modal window width (px)'
+    accent_color:
+      type: string
+      label: 'Accent color'
+
+our_clients.slide.*:
+  type: config_entity
+  label: 'Our clients slide'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Client name'
+    image:
+      type: integer
+      label: 'Image file ID'
+    image_alt:
+      type: label
+      label: 'Image alt text'
+    description:
+      type: mapping
+      label: 'Description'
+      mapping:
+        value:
+          type: text
+          label: 'Value'
+        format:
+          type: string
+          label: 'Text format'
+    review:
+      type: mapping
+      label: 'Client review'
+      mapping:
+        value:
+          type: text
+          label: 'Value'
+        format:
+          type: string
+          label: 'Text format'
+    weight:
+      type: integer
+      label: 'Weight'
+    status:
+      type: boolean
+      label: 'Published'
+    uuid:
+      type: string
+      label: 'UUID'
+    langcode:
+      type: string
+      label: 'Language code'

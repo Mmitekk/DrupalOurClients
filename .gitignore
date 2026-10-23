@@ -1,0 +1,19 @@
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor / IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Composer / Drush local installs
+vendor/
+drush/
+
+# Test artefacts
+.phpunit.result.cache
+*.log

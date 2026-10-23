@@ -1,0 +1,10 @@
+our_clients:
+  version: 1.0.0
+  css:
+    theme:
+      css/our-clients.css: {}
+  js:
+    js/our-clients.js: {}
+  dependencies:
+    - core/drupal
+    - core/once

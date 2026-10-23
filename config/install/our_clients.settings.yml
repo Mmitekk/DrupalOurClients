@@ -1,0 +1,14 @@
+heading: 'Our clients'
+visible_desktop: 4
+visible_tablet: 2
+visible_mobile: 1
+autoplay: true
+autoplay_speed: 4000
+slider_max_width: 1200
+heading_font_size: 28
+heading_font_size_mobile: 22
+image_height: 130
+image_height_mobile: 100
+name_font_size: 14
+modal_width: 760
+accent_color: '#006ab1'

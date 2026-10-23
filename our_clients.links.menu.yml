@@ -1,0 +1,6 @@
+our_clients.admin:
+  title: 'Our clients'
+  description: 'Manage slides and settings of the "Our clients" slider block.'
+  parent: system.admin_structure
+  route_name: entity.our_clients_slide.collection
+  weight: 5

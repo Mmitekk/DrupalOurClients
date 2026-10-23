@@ -1,0 +1,288 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: our_clients 1.0.0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ru\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+msgid "Our clients"
+msgstr "Наши клиенты"
+
+msgid ""
+"Provides a configurable \"Our clients\" slider block: client images with "
+"names, and a modal window with the full image, description and client review."
+msgstr ""
+"Добавляет настраиваемый блок-слайдер «Наши клиенты»: картинки клиентов с "
+"названиями, модальное окно с полным изображением, описанием и отзывом клиента."
+
+msgid "Our clients slider"
+msgstr "Слайдер «Наши клиенты»"
+
+msgid "Our clients slide"
+msgstr "Слайд «Наши клиенты»"
+
+msgid "Our clients slides"
+msgstr "Слайды «Наши клиенты»"
+
+msgid "Administer Our clients"
+msgstr "Управление модулем «Наши клиенты»"
+
+msgid ""
+"Add, edit, reorder and delete slides of the \"Our clients\" slider and "
+"change its settings."
+msgstr ""
+"Добавление, изменение, упорядочивание и удаление слайдов блока «Наши "
+"клиенты», изменение его настроек."
+
+msgid "Manage slides and settings of the \"Our clients\" slider block."
+msgstr "Управление слайдами и настройками блока-слайдера «Наши клиенты»."
+
+msgid "Slides"
+msgstr "Слайды"
+
+msgid "Settings"
+msgstr "Настройки"
+
+msgid "Our clients settings"
+msgstr "Настройки «Наших клиентов»"
+
+msgid "Add slide"
+msgstr "Добавить слайд"
+
+msgid "Edit slide"
+msgstr "Редактировать слайд"
+
+msgid "Delete slide"
+msgstr "Удалить слайд"
+
+msgid "Edit"
+msgstr "Изменить"
+
+msgid "Delete"
+msgstr "Удалить"
+
+msgid "Slide"
+msgstr "Слайд"
+
+msgid "Status"
+msgstr "Статус"
+
+msgid "Weight"
+msgstr "Вес"
+
+msgid "Operations"
+msgstr "Операции"
+
+msgid "Published"
+msgstr "Опубликовано"
+
+msgid "Unpublished"
+msgstr "Скрыт"
+
+msgid "Client name"
+msgstr "Название клиента"
+
+msgid ""
+"Shown in the slider under the image and as the heading of the modal window."
+msgstr ""
+"Показывается в слайдере под картинкой и в заголовке модального окна."
+
+msgid "Image"
+msgstr "Изображение"
+
+msgid ""
+"PNG, GIF, JPG, JPEG or WebP. A scaled copy is shown in the slider, the "
+"larger version opens in the modal window. Recommended size: at least "
+"600x450 pixels."
+msgstr ""
+"PNG, GIF, JPG, JPEG или WebP. В слайдере показывается уменьшенная копия, в "
+"модальном окне открывается увеличенная версия. Рекомендуемый размер: не "
+"менее 600x450 пикселей."
+
+msgid "Image alt text"
+msgstr "Alt-текст изображения"
+
+msgid "A short text description of the image for accessibility and SEO."
+msgstr "Краткое текстовое описание картинки для доступности и SEO."
+
+msgid "Description"
+msgstr "Описание"
+
+msgid "Information about the client. Shown in the modal window."
+msgstr "Информация о клиенте. Показывается в модальном окне."
+
+msgid "Client review"
+msgstr "Отзыв клиента"
+
+msgid "The review text. Shown in the modal window as a quote."
+msgstr "Текст отзыва. Показывается в модальном окне в виде цитаты."
+
+msgid "The slide @label has been added."
+msgstr "Слайд @label добавлен."
+
+msgid "The slide @label has been saved."
+msgstr "Слайд @label сохранён."
+
+msgid "No slides yet. Add the first slide using the \"Add slide\" button."
+msgstr ""
+"Слайдов пока нет. Добавьте первый слайд кнопкой «Добавить слайд»."
+
+msgid "Save order"
+msgstr "Сохранить порядок"
+
+msgid "The slide order has been saved."
+msgstr "Порядок слайдов сохранён."
+
+msgid "Block heading"
+msgstr "Заголовок блока"
+
+msgid ""
+"The heading displayed above the slider. Leave empty to hide it. The "
+"technical block title can also be changed on the block placement form."
+msgstr ""
+"Заголовок, который отображается над слайдером. Оставьте пустым, чтобы "
+"скрыть. Техническое название блока также можно изменить в форме размещения "
+"блока."
+
+msgid "Slider"
+msgstr "Слайдер"
+
+msgid "Visible slides on desktop"
+msgstr "Видимых слайдов на десктопе"
+
+msgid "Visible slides on tablet"
+msgstr "Видимых слайдов на планшете"
+
+msgid "Visible slides on mobile"
+msgstr "Видимых слайдов на мобильном"
+
+msgid "Autoplay"
+msgstr "Автопрокрутка"
+
+msgid ""
+"Automatically advance the slider. Autoplay is paused while the visitor "
+"hovers over the slider and for users who prefer reduced motion."
+msgstr ""
+"Автоматически прокручивать слайдер. Автопрокрутка приостанавливается при "
+"наведении курсора и для пользователей с настройкой уменьшения анимации."
+
+msgid "Autoplay interval (ms)"
+msgstr "Интервал автопрокрутки (мс)"
+
+msgid "Appearance"
+msgstr "Оформление"
+
+msgid "Slider maximum width (px)"
+msgstr "Максимальная ширина слайдера (px)"
+
+msgid "Maximum width of the slider area. Set 0 for the full width of the region."
+msgstr ""
+"Максимальная ширина области слайдера. Укажите 0, чтобы занять всю ширину "
+"региона."
+
+msgid "Heading font size (px)"
+msgstr "Размер шрифта заголовка (px)"
+
+msgid "Heading font size on mobile (px)"
+msgstr "Размер шрифта заголовка на мобильном (px)"
+
+msgid "Slide image height (px)"
+msgstr "Высота картинки в слайде (px)"
+
+msgid ""
+"The height of the image area inside a slide card. The image keeps its "
+"proportions inside this area."
+msgstr ""
+"Высота области картинки внутри карточки слайда. Картинка сохраняет "
+"пропорции внутри этой области."
+
+msgid "Slide image height on mobile (px)"
+msgstr "Высота картинки в слайде на мобильном (px)"
+
+msgid "Client name font size (px)"
+msgstr "Размер шрифта названия клиента (px)"
+
+msgid "The size of the client name text under the image."
+msgstr "Размер текста названия клиента под картинкой."
+
+msgid "Modal window width (px)"
+msgstr "Ширина модального окна (px)"
+
+msgid "Accent color"
+msgstr "Акцентный цвет"
+
+msgid ""
+"Used for buttons, dots and the review quote. Pick the primary color of "
+"your site theme to make the block blend in."
+msgstr ""
+"Используется для кнопок, точек навигации и цитаты отзыва. Выберите основной "
+"цвет темы сайта, чтобы блок гармонично вписался в дизайн."
+
+msgid "The autoplay interval must be at least 1000 ms."
+msgstr "Интервал автопрокрутки должен быть не менее 1000 мс."
+
+msgid ""
+"The \"Our clients\" slider has no slides yet. Add them on the <a href=\":url"
+"\">Our clients</a> page."
+msgstr ""
+"В слайдере «Наши клиенты» пока нет слайдов. Добавьте их на странице <a "
+"href=\":url\">Наши клиенты</a>."
+
+msgid "Close"
+msgstr "Закрыть"
+
+msgid "Client details"
+msgstr "О клиенте"
+
+msgid "Go to slide @number"
+msgstr "Перейти к слайду @number"
+
+msgid "Previous slides"
+msgstr "Предыдущие слайды"
+
+msgid "Next slides"
+msgstr "Следующие слайды"
+
+msgid "About"
+msgstr "О модуле"
+
+msgid "Uses"
+msgstr "Использование"
+
+msgid "Managing slides"
+msgstr "Управление слайдами"
+
+msgid ""
+"The Our clients module provides a slider block with client images. Clicking "
+"a slide opens a modal window with the full image, the description and the "
+"client review."
+msgstr ""
+"Модуль «Наши клиенты» добавляет блок-слайдер с картинками клиентов. Клик по "
+"слайду открывает модальное окно с полным изображением, описанием и отзывом "
+"клиента."
+
+msgid ""
+"Add, edit, reorder and delete slides on the <a href=\":slides\">Our "
+"clients</a> page."
+msgstr ""
+"Добавляйте, изменяйте, упорядочивайте и удаляйте слайды на странице <a "
+"href=\":slides\">Наши клиенты</a>."
+
+msgid ""
+"The block heading, the number of visible slides, autoplay and the accent "
+"color are configured on the <a href=\":settings\">Settings</a> tab."
+msgstr ""
+"Заголовок блока, количество видимых слайдов, автопрокрутка и акцентный цвет "
+"настраиваются на вкладке <a href=\":settings\">Настройки</a>."
+
+msgid "Placing the block"
+msgstr "Размещение блока"
+
+msgid ""
+"Place the <em>Our clients slider</em> block into a region of your theme on "
+"the <a href=\":blocks\">Block layout</a> page."
+msgstr ""
+"Разместите блок <em>Слайдер «Наши клиенты»</em> в нужный регион темы на "
+"странице <a href=\":blocks\">Схема блоков</a>."

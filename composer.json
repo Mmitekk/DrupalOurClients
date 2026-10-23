@@ -1,0 +1,43 @@
+{
+  "name": "mmitekk/our-clients",
+  "type": "drupal-custom-module",
+  "description": "Provides a configurable 'Our clients' slider block: client images with names, and a modal window with the full image, description and client review.",
+  "keywords": [
+    "drupal",
+    "block",
+    "slider",
+    "carousel",
+    "clients",
+    "reviews",
+    "modal"
+  ],
+  "homepage": "https://github.com/Mmitekk/DrupalOurClients",
+  "license": "GPL-2.0-or-later",
+  "authors": [
+    {
+      "name": "Mmitekk",
+      "homepage": "https://github.com/Mmitekk",
+      "role": "Maintainer"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/Mmitekk/DrupalOurClients/issues",
+    "source": "https://github.com/Mmitekk/DrupalOurClients"
+  },
+  "require": {
+    "drupal/core": "^9.3 || ^10 || ^11"
+  },
+  "extra": {
+    "drupal": {
+      "packageName": "mmitekk/our-clients",
+      "version": "1.0.0",
+      "security-coverage": {
+        "status": "not-covered",
+        "message": "Security coverage is not checked for this module / Проверка безопасности для этого модуля не выполняется."
+      }
+    },
+    "installer-paths": {
+      "web/modules/custom/{$name}": ["type:drupal-custom-module"]
+    }
+  }
+}

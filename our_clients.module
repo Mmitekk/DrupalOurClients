@@ -1,0 +1,57 @@
+<?php
+
+/**
+ * @file
+ * Hook implementations for the Our clients module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function our_clients_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.our_clients':
+      $output = '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('The Our clients module provides a slider block with client images. Clicking a slide opens a modal window with the full image, the description and the client review.') . '</p>';
+      $output .= '<h3>' . t('Uses') . '</h3>';
+      $output .= '<dl>';
+      $output .= '<dt>' . t('Managing slides') . '</dt>';
+      $output .= '<dd>' . t('Add, edit, reorder and delete slides on the <a href=":slides">Our clients</a> page.', [':slides' => '/admin/structure/our-clients']) . '</dd>';
+      $output .= '<dt>' . t('Settings') . '</dt>';
+      $output .= '<dd>' . t('The block heading, the number of visible slides, autoplay and the accent color are configured on the <a href=":settings">Settings</a> tab.', [':settings' => '/admin/structure/our-clients/settings']) . '</dd>';
+      $output .= '<dt>' . t('Placing the block') . '</dt>';
+      $output .= '<dd>' . t('Place the <em>Our clients slider</em> block into a region of your theme on the <a href=":blocks">Block layout</a> page.', [':blocks' => '/admin/structure/block']) . '</dd>';
+      $output .= '</dl>';
+      return $output;
+
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function our_clients_theme($existing, $type, $theme, $path) {
+  return [
+    'our_clients_slider' => [
+      'variables' => [
+        'slides' => [],
+        'heading' => '',
+        'accent_color' => '',
+        'autoplay' => TRUE,
+        'autoplay_speed' => 4000,
+        'visible_desktop' => 4,
+        'visible_tablet' => 2,
+        'visible_mobile' => 1,
+        'slider_max_width' => 1200,
+        'heading_font_size' => 28,
+        'heading_font_size_mobile' => 22,
+        'image_height' => 130,
+        'image_height_mobile' => 100,
+        'name_font_size' => 14,
+        'modal_width' => 760,
+      ],
+    ],
+  ];
+}

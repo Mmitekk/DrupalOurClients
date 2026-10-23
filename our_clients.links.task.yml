@@ -1,0 +1,19 @@
+entity.our_clients_slide.collection:
+  title: 'Slides'
+  route_name: entity.our_clients_slide.collection
+  base_route: entity.our_clients_slide.collection
+
+our_clients.settings:
+  title: 'Settings'
+  route_name: our_clients.settings
+  base_route: entity.our_clients_slide.collection
+
+entity.our_clients_slide.edit_form:
+  title: 'Edit'
+  route_name: entity.our_clients_slide.edit_form
+  base_route: entity.our_clients_slide.edit_form
+
+entity.our_clients_slide.delete_form:
+  title: 'Delete'
+  route_name: entity.our_clients_slide.delete_form
+  base_route: entity.our_clients_slide.edit_form

@@ -1,0 +1,4 @@
+administer our clients:
+  title: 'Administer Our clients'
+  description: 'Add, edit, reorder and delete slides of the "Our clients" slider and change its settings.'
+  restrict access: false

@@ -1,0 +1,13 @@
+langcode: en
+status: true
+dependencies: {}
+name: our_clients_modal
+label: 'Our clients: modal image'
+effects:
+  our_clients_modal_scale:
+    id: image_scale
+    weight: 1
+    data:
+      width: 1200
+      height: 1200
+      upscale: false

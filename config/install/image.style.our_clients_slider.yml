@@ -1,0 +1,13 @@
+langcode: en
+status: true
+dependencies: {}
+name: our_clients_slider
+label: 'Our clients: slider image'
+effects:
+  our_clients_slider_scale:
+    id: image_scale
+    weight: 1
+    data:
+      width: 480
+      height: 360
+      upscale: false
