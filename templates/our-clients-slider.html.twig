@@ -86,9 +86,13 @@
             </button>
 
             <div class="our-clients__modal-source" data-oc-modal-source hidden>
-              <div class="oc-modal__image">
-                <img src="{{ slide.modal_image_url }}" alt="{{ slide.image_alt }}">
-              </div>
+              {% if slide.is_video and slide.modal_media %}
+                <div class="oc-modal__media oc-modal__media--video">{{ slide.modal_media }}</div>
+              {% else %}
+                <div class="oc-modal__image">
+                  <img src="{{ slide.modal_image_url }}" alt="{{ slide.image_alt }}">
+                </div>
+              {% endif %}
               <div class="oc-modal__body">
                 {% if slide.title %}
                   <h3 class="oc-modal__title">{{ slide.title }}</h3>

@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.0 (2026-10-24)
+
+- **Video slides**: the media field now also accepts media types based on `video` (uploaded video files) and `oembed` sources (YouTube, Vimeo, VK, Rutube and other providers configured on the site), in addition to images.
+- In the slider a video slide shows its automatic thumbnail preview; clicking it opens the modal window where the video is played with the site's default media formatter (HTML5 player for uploaded videos, provider iframe for remote videos).
+- The media field is now titled "Media" instead of "Image" (reflects the mixed content).
+
 ## 1.1.0 (2026-10-24)
 
 - The slide image is now a **Media Library field**: upload new images or pick existing media items from the site media library. The `media`, `media_library` and `media_library_form_element` modules are enabled automatically as dependencies.

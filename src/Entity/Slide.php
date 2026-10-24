@@ -152,9 +152,8 @@ class Slide extends ConfigEntityBase {
   /**
    * Returns the machine names of media bundles using the image source.
    *
-   * Used as the allowed bundles for the media library element. Falls back to
-   * the standard "image" bundle so that forms keep working on sites where no
-   * media types exist yet.
+   * Used by the post-update migration: legacy slide images are converted into
+   * media entities of the first found image bundle.
    *
    * @return string[]
    *   Media bundle IDs.
@@ -164,6 +163,42 @@ class Slide extends ConfigEntityBase {
     foreach (\Drupal::entityTypeManager()->getStorage('media_type')->loadMultiple() as $type) {
       $source = $type->getSource();
       if ($source && $source->getPluginId() === 'image') {
+        $bundles[] = $type->id();
+      }
+    }
+    return $bundles ?: ['image'];
+  }
+
+  /**
+   * The media source plugin IDs treated as video.
+   *
+   * Core uses "video_file" for uploaded videos and "oembed:video" for remote
+   * providers such as YouTube or Vimeo.
+   *
+   * @var string[]
+   */
+  const VIDEO_SOURCE_PLUGIN_IDS = ['video_file', 'oembed:video'];
+
+  /**
+   * Returns the media bundles allowed for a slide.
+   *
+   * Every media type based on an image, video or oEmbed video source is
+   * allowed, so a slide can hold either an image or a video (uploaded file or
+   * a remote one such as YouTube/VK). Falls back to the standard "image"
+   * bundle on sites where no such media types exist yet.
+   *
+   * @return string[]
+   *   Media bundle IDs.
+   */
+  public static function slideMediaBundles() {
+    $bundles = [];
+    foreach (\Drupal::entityTypeManager()->getStorage('media_type')->loadMultiple() as $type) {
+      $source = $type->getSource();
+      if (!$source) {
+        continue;
+      }
+      $plugin_id = $source->getPluginId();
+      if ($plugin_id === 'image' || in_array($plugin_id, self::VIDEO_SOURCE_PLUGIN_IDS, TRUE)) {
         $bundles[] = $type->id();
       }
     }

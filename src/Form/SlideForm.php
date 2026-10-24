@@ -48,12 +48,12 @@ class SlideForm extends EntityForm {
 
     $form['image_media'] = [
       '#type' => 'media_library',
-      '#title' => $this->t('Image'),
+      '#title' => $this->t('Media'),
       '#required' => TRUE,
-      '#allowed_bundles' => Slide::imageMediaBundles(),
+      '#allowed_bundles' => Slide::slideMediaBundles(),
       '#cardinality' => 1,
       '#default_value' => $slide->getImageMedia() ?: NULL,
-      '#description' => $this->t('Upload a new image or pick an existing one from the media library. It is shown in the slider and enlarged in the modal window. Recommended size: at least 600x450 pixels. The alt text is taken from the media item.'),
+      '#description' => $this->t('Upload a new image or video, or pick an existing media item from the media library. Images are shown in the slider and enlarged in the modal window; videos show an automatic preview in the slider and are played in the modal window. Recommended image size: at least 600x450 pixels. The alt text is taken from the media item.'),
     ];
 
     $description = $slide->getDescription();

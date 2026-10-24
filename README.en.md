@@ -1,6 +1,6 @@
 # Our clients
 
-A module for Drupal 9.3+ / 10 / 11 that adds a configurable **"Our clients"** block — a slider with client images and names. Clicking a slide opens a **modal window** with the enlarged image, the client description and the client review.
+A module for Drupal 9.3+ / 10 / 11 that adds a configurable **"Our clients"** block — a slider with client images and names. Clicking a slide opens a **modal window** with the enlarged image, the client description and the client review. A slide can hold not only an image but also a **video** — an uploaded file or a YouTube/VK/other-provider clip: the slider shows an automatic thumbnail preview, the modal window plays the video.
 
 The slider appearance and all of its content are managed in the module's admin section: block heading, number of visible slides, autoplay, accent color, plus adding / editing / sorting slides (image, alt text, name, description, review).
 
@@ -12,14 +12,14 @@ The slider appearance and all of its content are managed in the module's admin s
 
 - **`Our clients slider` block** — place it into any theme region via the standard Block layout page
 - **Dependency-free slider** — pure vanilla JS (~12 KB): arrows, dot navigation, mouse and touch swipe, autoplay with pause on hover
-- **Modal window** — clicking a slide opens the client card: large image, description, review as a quote. Close via the cross, clicking outside the window or the Escape key
+- **Modal window** — clicking a slide opens the client card: large image (or a video player), description, review as a quote. Close via the cross, clicking outside the window or the Escape key
 - **Full-featured admin** (Structure » Our clients):
   - Slides list with thumbnails and **drag & drop ordering**
   - Slide form: image (**media field** — upload a new file or pick an existing media item via the Media Library), client name, description (text format), review (text format), published flag
   - Settings tab: block heading, visible slides count (desktop / tablet / mobile), autoplay and its interval, **accent color** (pick your theme color so the block blends into the design), plus sizes: slider max width, heading font size (desktop and mobile), slide image height (desktop and mobile), client name font size, modal window width
 - **Mobile-first responsive behavior** — separate values for the number of visible slides, image height and heading size on mobile, touch swipe navigation, compact arrows
 - **Accessible** — carousel ARIA attributes, keyboard arrow navigation, focus trap in the modal, `prefers-reduced-motion` support
-- **Media library integration** — the slide image is stored as a media item: no file duplication, one media item can be reused across slides and other content; the alt text is managed by the media item
+- **Media library and video** — the slide image or video is stored as a media item: no file duplication, one media item can be reused; media types with image, video and oEmbed sources are supported (YouTube, VK and other providers configured on the site); the alt text is managed by the media item
 - **Automatic image styles** — `our_clients_slider` (480x360, no upscale) and `our_clients_modal` (up to 1200px) are created on install
 - **File usage tracking** — slide images are protected from garbage collection and released automatically when a slide is replaced or deleted
 - **Caching** — the block updates whenever any slide or setting changes; with an empty list the block is hidden entirely for anonymous visitors, while administrators see a hint with a link to the admin section
@@ -85,7 +85,7 @@ drush cr
 ## Quick start
 
 1. Open **Manage » Structure » Our clients** (`/admin/structure/our-clients`).
-2. Click **"Add slide"**: add an image via the media field (the "Add media" button uploads a new file or picks an existing media item), enter the client name, description and review, save. Repeat for the other clients.
+2. Click **"Add slide"**: add an image or video via the media field (the "Add media" button uploads a new file or picks an existing media item), enter the client name, description and review, save. Repeat for the other clients.
 3. Optionally open the **"Settings"** tab and set the block heading ("Our clients" by default), the number of visible slides and your theme's accent color.
 4. Place the block: **Manage » Structure » Block layout** (`/admin/structure/block`) » choose a region » **"Place block"** » find **"Our clients slider"**.
 5. In the placement form, hide the technical block title (the "Display block title" checkbox) if the heading is already set in the module settings — otherwise the title will appear twice.
@@ -96,7 +96,7 @@ drush cr
 | Section | Path | What is configured |
 |---|---|---|
 | Slides | `/admin/structure/our-clients` | Slides list, drag & drop ordering, "Add slide" button, Edit/Delete operations |
-| Slide form | `/admin/structure/our-clients/add` | Media image (Media Library), client name, description, review, published flag |
+| Slide form | `/admin/structure/our-clients/add` | Media (image or video, Media Library), client name, description, review, published flag |
 | Settings | `/admin/structure/our-clients/settings` | Block heading, visible slides (3 breakpoints), autoplay, interval, sizes (slider width, fonts, image height, modal width), accent color |
 
 The section is also linked from the admin menu: **Manage » Structure » Our clients**.

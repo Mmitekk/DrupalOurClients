@@ -296,6 +296,27 @@ body.oc-modal-open {
   object-fit: contain;
 }
 
+/* Video slides: the media entity rendered by the default view mode. */
+.oc-modal__media--video {
+  padding: 0;
+  background: #101820;
+  border-radius: 20px 20px 0 0;
+  overflow: hidden;
+}
+
+.oc-modal__media--video iframe,
+.oc-modal__media--video video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0;
+}
+
+.oc-modal__media--video .field__label,
+.oc-modal__media--video .field--name-thumbnail {
+  display: none;
+}
+
 .oc-modal__body {
   padding: 22px 28px 30px;
   color: var(--oc-text, #1a171b);

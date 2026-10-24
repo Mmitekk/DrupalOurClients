@@ -9,6 +9,7 @@ use Drupal\file\Entity\File;
 use Drupal\filter\Entity\FilterFormat;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\media\Entity\Media;
+use Drupal\our_clients\Entity\Slide;
 
 /**
  * Provides the Our clients slider block.
@@ -40,6 +41,7 @@ class OurClientsBlock extends BlockBase {
     $slider_style = ImageStyle::load('our_clients_slider');
     $modal_style = ImageStyle::load('our_clients_modal');
     $file_url_generator = \Drupal::service('file_url_generator');
+    $view_builder = \Drupal::entityTypeManager()->getViewBuilder('media');
 
     $items = [];
     $media_ids = [];
@@ -49,6 +51,34 @@ class OurClientsBlock extends BlockBase {
       if (!$media) {
         continue;
       }
+
+      $source_plugin_id = $media->getSource()->getPluginId();
+      $is_video = in_array($source_plugin_id, Slide::VIDEO_SOURCE_PLUGIN_IDS, TRUE);
+
+      if ($is_video) {
+        // Videos are represented in the slider by their thumbnail and played
+        // in the modal window with the site's default media formatter.
+        $thumbnail = $media->get('thumbnail')->entity;
+        if (!$thumbnail) {
+          continue;
+        }
+        $items[] = [
+          'title' => $slide->label(),
+          'is_video' => TRUE,
+          'slider_image_url' => $slider_style
+            ? $slider_style->buildUrl($thumbnail->getFileUri())
+            : $file_url_generator->generateString($thumbnail->getFileUri()),
+          'image_alt' => self::thumbnailAlt($media, (string) $slide->label()),
+          'modal_image_url' => '',
+          'modal_media' => $view_builder->view($media, 'default'),
+          'description' => self::processText($slide->getDescription()),
+          'review' => self::processText($slide->getReview()),
+        ];
+        $media_ids[] = $media->id();
+        $file_ids[] = $thumbnail->id();
+        continue;
+      }
+
       $file = self::mediaFile($media);
       if (!$file) {
         continue;
@@ -56,13 +86,15 @@ class OurClientsBlock extends BlockBase {
       $uri = $file->getFileUri();
       $items[] = [
         'title' => $slide->label(),
-        'image_alt' => self::mediaAlt($media, (string) $slide->label()),
+        'is_video' => FALSE,
         'slider_image_url' => $slider_style
           ? $slider_style->buildUrl($uri)
           : $file_url_generator->generateString($uri),
+        'image_alt' => self::mediaAlt($media, (string) $slide->label()),
         'modal_image_url' => $modal_style
           ? $modal_style->buildUrl($uri)
           : $file_url_generator->generateString($uri),
+        'modal_media' => NULL,
         'description' => self::processText($slide->getDescription()),
         'review' => self::processText($slide->getReview()),
       ];
@@ -149,6 +181,27 @@ class OurClientsBlock extends BlockBase {
   protected static function mediaFile(Media $media) {
     $fid = (int) $media->getSource()->getSourceFieldValue($media);
     return $fid ? File::load($fid) : NULL;
+  }
+
+  /**
+   * Returns the alt text of a media item's thumbnail.
+   *
+   * @param \Drupal\media\Entity\Media $media
+   *   The media item.
+   * @param string $fallback
+   *   Text used when the thumbnail has no alt text.
+   *
+   * @return string
+   *   The alt text.
+   */
+  protected static function thumbnailAlt(Media $media, string $fallback) {
+    if (!$media->get('thumbnail')->isEmpty()) {
+      $alt = (string) ($media->get('thumbnail')->first()->alt ?? '');
+      if ($alt !== '') {
+        return $alt;
+      }
+    }
+    return $fallback;
   }
 
   /**
