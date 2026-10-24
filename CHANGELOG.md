@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.1 (2026-10-24)
+
+- **Self-healing dependencies**: when the module code is updated over an already-enabled module, Composer installs the new dependency packages but never enables them, and Drupal silently hides unknown form element types - the media field disappeared without any error. The slide form now enables the missing media modules itself (Media, Media library, Media library form element) the first time it is opened.
+- **Guaranteed image field**: if the media modules cannot be enabled automatically, the form falls back to a plain image upload and the uploaded file is stored as a media item automatically, so an image field is always present.
+- The machine name field on the slide form now has a visible title.
+- `slideMediaBundles()` falls back to every existing media type when the site has no image/video/oEmbed media types.
+
 ## 1.2.0 (2026-10-24)
 
 - **Video slides**: the media field now also accepts media types based on `video` (uploaded video files) and `oembed` sources (YouTube, Vimeo, VK, Rutube and other providers configured on the site), in addition to images.

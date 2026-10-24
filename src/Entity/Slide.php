@@ -202,7 +202,14 @@ class Slide extends ConfigEntityBase {
         $bundles[] = $type->id();
       }
     }
-    return $bundles ?: ['image'];
+    if (empty($bundles)) {
+      // No matching media types: offer every existing type so the form keeps
+      // working on unusual setups; on sites without media types at all fall
+      // back to the standard "image" type name.
+      $all = array_keys(\Drupal::service('entity_type.bundle.info')->getBundleInfo('media'));
+      $bundles = $all ?: ['image'];
+    }
+    return $bundles;
   }
 
   /**
