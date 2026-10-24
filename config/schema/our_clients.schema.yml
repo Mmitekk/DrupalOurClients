@@ -55,12 +55,9 @@ our_clients.slide.*:
     label:
       type: label
       label: 'Client name'
-    image:
+    image_media:
       type: integer
-      label: 'Image file ID'
-    image_alt:
-      type: label
-      label: 'Image alt text'
+      label: 'Image media ID'
     description:
       type: mapping
       label: 'Description'

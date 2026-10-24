@@ -6,7 +6,6 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
-use Drupal\file\Entity\File;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -81,15 +80,11 @@ class SlideOverviewForm extends FormBase {
       $form['slides'][$id]['#attributes']['class'][] = 'draggable';
 
       $info = [];
-      if ($slide->getImage() && ($file = File::load($slide->getImage()))) {
+      if ($slide->getImageMedia() && ($media = $this->entityTypeManager->getStorage('media')->load($slide->getImageMedia()))) {
         $info['thumb'] = [
-          '#type' => 'html_tag',
-          '#tag' => 'img',
-          '#attributes' => [
-            'src' => \Drupal::service('file_url_generator')->generateString($file->getFileUri()),
-            'alt' => $slide->label(),
-            'class' => ['our-clients-admin-thumb'],
-          ],
+          '#type' => 'container',
+          '#attributes' => ['class' => ['our-clients-admin-thumb-wrapper']],
+          'thumbnail' => $media->get('thumbnail')->view('thumbnail'),
         ];
       }
       $info['label'] = [

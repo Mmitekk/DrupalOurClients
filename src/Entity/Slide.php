@@ -4,8 +4,6 @@ namespace Drupal\our_clients\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\Core\Entity\EntityStorageInterface;
-use Drupal\file\Entity\File;
-use Drupal\file\FileInterface;
 
 /**
  * Defines the Our clients slide entity.
@@ -34,8 +32,7 @@ use Drupal\file\FileInterface;
  *   config_export = {
  *     "id",
  *     "label",
- *     "image",
- *     "image_alt",
+ *     "image_media",
  *     "description",
  *     "review",
  *     "weight",
@@ -68,18 +65,11 @@ class Slide extends ConfigEntityBase {
   protected $label;
 
   /**
-   * The image file ID.
+   * The referenced image media entity ID.
    *
    * @var int
    */
-  protected $image = 0;
-
-  /**
-   * The image alt text.
-   *
-   * @var string
-   */
-  protected $image_alt = '';
+  protected $image_media = 0;
 
   /**
    * The description (value + format).
@@ -110,23 +100,13 @@ class Slide extends ConfigEntityBase {
   protected $status = TRUE;
 
   /**
-   * Returns the image file ID.
+   * Returns the referenced media entity ID.
    *
    * @return int
-   *   The file ID, 0 if none.
+   *   The media ID, 0 if none.
    */
-  public function getImage() {
-    return (int) $this->image;
-  }
-
-  /**
-   * Returns the image alt text.
-   *
-   * @return string
-   *   The alt text.
-   */
-  public function getImageAlt() {
-    return (string) $this->image_alt;
+  public function getImageMedia() {
+    return (int) $this->image_media;
   }
 
   /**
@@ -170,32 +150,34 @@ class Slide extends ConfigEntityBase {
   }
 
   /**
+   * Returns the machine names of media bundles using the image source.
+   *
+   * Used as the allowed bundles for the media library element. Falls back to
+   * the standard "image" bundle so that forms keep working on sites where no
+   * media types exist yet.
+   *
+   * @return string[]
+   *   Media bundle IDs.
+   */
+  public static function imageMediaBundles() {
+    $bundles = [];
+    foreach (\Drupal::entityTypeManager()->getStorage('media_type')->loadMultiple() as $type) {
+      $source = $type->getSource();
+      if ($source && $source->getPluginId() === 'image') {
+        $bundles[] = $type->id();
+      }
+    }
+    return $bundles ?: ['image'];
+  }
+
+  /**
    * {@inheritdoc}
    */
   public static function preDelete(EntityStorageInterface $storage, array $entities) {
     parent::preDelete($storage, $entities);
 
-    $file_usage = \Drupal::service('file.usage');
-    foreach ($entities as $slide) {
-      if ($slide instanceof Slide && ($fid = $slide->getImage()) && ($file = File::load($fid))) {
-        $file_usage->delete($file, 'our_clients', 'our_clients_slide', $slide->id());
-        self::releaseFile($file);
-      }
-    }
-  }
-
-  /**
-   * Marks the file temporary when no other module uses it.
-   *
-   * @param \Drupal\file\FileInterface $file
-   *   The file.
-   */
-  public static function releaseFile(FileInterface $file) {
-    $usage = \Drupal::service('file.usage')->listUsage($file);
-    if (empty($usage)) {
-      $file->setTemporary();
-      $file->save();
-    }
+    // The media items themselves are kept: they live in the media library and
+    // may be reused by other slides or content.
   }
 
 }

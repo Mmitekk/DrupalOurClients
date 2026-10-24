@@ -5,7 +5,6 @@ namespace Drupal\our_clients\Form;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\file\Entity\File;
 use Drupal\filter\Entity\FilterFormat;
 use Drupal\our_clients\Entity\Slide;
 
@@ -15,11 +14,6 @@ use Drupal\our_clients\Entity\Slide;
 class SlideForm extends EntityForm {
 
   /**
-   * Key of the form state value holding the original image file ID.
-   */
-  const ORIGINAL_IMAGE_KEY = 'our_clients_original_image';
-
-  /**
    * {@inheritdoc}
    */
   public function form(array $form, FormStateInterface $form_state) {
@@ -27,8 +21,6 @@ class SlideForm extends EntityForm {
 
     /** @var \Drupal\our_clients\Entity\Slide $slide */
     $slide = $this->entity;
-
-    $form_state->set(static::ORIGINAL_IMAGE_KEY, $slide->isNew() ? 0 : $slide->getImage());
 
     $form['label'] = [
       '#type' => 'textfield',
@@ -54,24 +46,14 @@ class SlideForm extends EntityForm {
       '#default_value' => $slide->isNew() ? TRUE : $slide->isEnabled(),
     ];
 
-    $form['image'] = [
-      '#type' => 'managed_file',
+    $form['image_media'] = [
+      '#type' => 'media_library',
       '#title' => $this->t('Image'),
       '#required' => TRUE,
-      '#default_value' => $slide->getImage() ? [$slide->getImage()] : NULL,
-      '#upload_location' => 'public://our_clients',
-      '#upload_validators' => [
-        'file_validate_extensions' => ['png gif jpg jpeg webp'],
-      ],
-      '#description' => $this->t('PNG, GIF, JPG, JPEG or WebP. A scaled copy is shown in the slider, the larger version opens in the modal window. Recommended size: at least 600x450 pixels.'),
-    ];
-
-    $form['image_alt'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Image alt text'),
-      '#maxlength' => 512,
-      '#default_value' => $slide->getImageAlt(),
-      '#description' => $this->t('A short text description of the image for accessibility and SEO.'),
+      '#allowed_bundles' => Slide::imageMediaBundles(),
+      '#cardinality' => 1,
+      '#default_value' => $slide->getImageMedia() ?: NULL,
+      '#description' => $this->t('Upload a new image or pick an existing one from the media library. It is shown in the slider and enlarged in the modal window. Recommended size: at least 600x450 pixels. The alt text is taken from the media item.'),
     ];
 
     $description = $slide->getDescription();
@@ -150,40 +132,36 @@ class SlideForm extends EntityForm {
     $entity->set('label', (string) $values['label']);
     $entity->set('id', (string) $values['id']);
     $entity->set('status', !empty($values['status']));
-    $entity->set('image', isset($values['image'][0]) ? (int) $values['image'][0] : 0);
-    $entity->set('image_alt', isset($values['image_alt']) ? (string) $values['image_alt'] : '');
+    $entity->set('image_media', self::extractMediaId($values['image_media'] ?? NULL));
     $entity->set('description', is_array($values['description']) ? $values['description'] : ['value' => '', 'format' => NULL]);
     $entity->set('review', is_array($values['review']) ? $values['review'] : ['value' => '', 'format' => NULL]);
     $entity->set('weight', (int) $values['weight']);
   }
 
   /**
-   * {@inheritdoc}
+   * Extracts a single media ID from the media library element value.
+   *
+   * The element value may arrive as an ID, a comma-separated string or an
+   * array depending on the submission path (full submit, AJAX rebuild or the
+   * default value pass-through).
+   *
+   * @param mixed $raw
+   *   The raw element value.
+   *
+   * @return int
+   *   The first numeric media ID, 0 if none.
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
-    parent::submitForm($form, $form_state);
-
-    /** @var \Drupal\our_clients\Entity\Slide $slide */
-    $slide = $this->entity;
-
-    $file_usage = \Drupal::service('file.usage');
-    $new_fid = $slide->getImage();
-    $old_fid = (int) $form_state->get(static::ORIGINAL_IMAGE_KEY);
-
-    // Register the usage of the new image.
-    if ($new_fid && $new_fid !== $old_fid && ($file = File::load($new_fid))) {
-      if (!$file->isPermanent()) {
-        $file->setPermanent();
-        $file->save();
+  protected static function extractMediaId($raw) {
+    if (is_array($raw)) {
+      $raw = implode(',', $raw);
+    }
+    foreach (explode(',', (string) $raw) as $part) {
+      $part = trim($part);
+      if ($part !== '' && ctype_digit($part)) {
+        return (int) $part;
       }
-      $file_usage->add($file, 'our_clients', 'our_clients_slide', $slide->id());
     }
-
-    // Release the usage of the replaced image.
-    if ($old_fid && $old_fid !== $new_fid && ($old_file = File::load($old_fid))) {
-      $file_usage->delete($old_file, 'our_clients', 'our_clients_slide', $slide->id());
-      Slide::releaseFile($old_file);
-    }
+    return 0;
   }
 
   /**

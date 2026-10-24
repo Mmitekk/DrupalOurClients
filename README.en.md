@@ -15,10 +15,11 @@ The slider appearance and all of its content are managed in the module's admin s
 - **Modal window** — clicking a slide opens the client card: large image, description, review as a quote. Close via the cross, clicking outside the window or the Escape key
 - **Full-featured admin** (Structure » Our clients):
   - Slides list with thumbnails and **drag & drop ordering**
-  - Slide form: image (upload with extension validation), alt text, client name, description (text format), review (text format), published flag
+  - Slide form: image (**media field** — upload a new file or pick an existing media item via the Media Library), client name, description (text format), review (text format), published flag
   - Settings tab: block heading, visible slides count (desktop / tablet / mobile), autoplay and its interval, **accent color** (pick your theme color so the block blends into the design), plus sizes: slider max width, heading font size (desktop and mobile), slide image height (desktop and mobile), client name font size, modal window width
 - **Mobile-first responsive behavior** — separate values for the number of visible slides, image height and heading size on mobile, touch swipe navigation, compact arrows
 - **Accessible** — carousel ARIA attributes, keyboard arrow navigation, focus trap in the modal, `prefers-reduced-motion` support
+- **Media library integration** — the slide image is stored as a media item: no file duplication, one media item can be reused across slides and other content; the alt text is managed by the media item
 - **Automatic image styles** — `our_clients_slider` (480x360, no upscale) and `our_clients_modal` (up to 1200px) are created on install
 - **File usage tracking** — slide images are protected from garbage collection and released automatically when a slide is replaced or deleted
 - **Caching** — the block updates whenever any slide or setting changes; with an empty list the block is hidden entirely for anonymous visitors, while administrators see a hint with a link to the admin section
@@ -29,6 +30,8 @@ The slider appearance and all of its content are managed in the module's admin s
 
 - Drupal 9.3+ / 10 / 11
 - PHP version required by your Drupal version
+
+The core **Media** and **Media Library** modules plus the small contrib module **Media Library Form Element** are enabled automatically on module install; the contrib module is pulled in as a Composer dependency.
 
 ## Installation
 
@@ -82,7 +85,7 @@ drush cr
 ## Quick start
 
 1. Open **Manage » Structure » Our clients** (`/admin/structure/our-clients`).
-2. Click **"Add slide"**: upload an image, enter the client name, description and review, save. Repeat for the other clients.
+2. Click **"Add slide"**: add an image via the media field (the "Add media" button uploads a new file or picks an existing media item), enter the client name, description and review, save. Repeat for the other clients.
 3. Optionally open the **"Settings"** tab and set the block heading ("Our clients" by default), the number of visible slides and your theme's accent color.
 4. Place the block: **Manage » Structure » Block layout** (`/admin/structure/block`) » choose a region » **"Place block"** » find **"Our clients slider"**.
 5. In the placement form, hide the technical block title (the "Display block title" checkbox) if the heading is already set in the module settings — otherwise the title will appear twice.
@@ -93,7 +96,7 @@ drush cr
 | Section | Path | What is configured |
 |---|---|---|
 | Slides | `/admin/structure/our-clients` | Slides list, drag & drop ordering, "Add slide" button, Edit/Delete operations |
-| Slide form | `/admin/structure/our-clients/add` | Image, alt text, client name, description, review, published flag |
+| Slide form | `/admin/structure/our-clients/add` | Media image (Media Library), client name, description, review, published flag |
 | Settings | `/admin/structure/our-clients/settings` | Block heading, visible slides (3 breakpoints), autoplay, interval, sizes (slider width, fonts, image height, modal width), accent color |
 
 The section is also linked from the admin menu: **Manage » Structure » Our clients**.
@@ -132,13 +135,16 @@ The modal window (`oc-modal__*`) is appended directly to `<body>`, so its CSS va
 Check: (1) the block has at least one **published** slide — an empty block is hidden completely; (2) the block is placed into a region that is actually rendered on that page; (3) the cache has been rebuilt (`drush cr`).
 
 **Images are missing / broken previews.**
-Rebuild the cache — image styles are generated on first request. Make sure an image is uploaded in the slide form (the field is required).
+Rebuild the cache — image styles are generated on first request. Make sure the slide references a media item with an image (the "Image" field is required) and that the media item has its alt text filled.
 
 **How to disable autoplay?**
 The "Settings" tab » uncheck "Autoplay" » save.
 
 **How to rename the "Our clients" heading?**
 The "Settings" tab » the "Block heading" field (clear it to render the slider without a heading). The technical block title is changed in its placement form on the "Block layout" page.
+
+**How to set the image alt text?**
+The alt text belongs to the media item: fill the "Alt" field when uploading the image or edit the media item later (/admin/content/media » edit). If the alt is empty, the client name is used instead.
 
 **The admin UI is in English.**
 Make sure the **Interface Translation** (`locale`) module is enabled and the interface language is Russian: the translation from the `translations/` folder is imported automatically on module install. If needed: **Manage » Configuration » Regional and language » User interface translation » Update** (`/admin/config/regional/translate/import`).

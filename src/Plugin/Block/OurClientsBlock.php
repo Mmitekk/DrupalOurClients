@@ -8,6 +8,7 @@ use Drupal\Core\Cache\Cache;
 use Drupal\file\Entity\File;
 use Drupal\filter\Entity\FilterFormat;
 use Drupal\image\Entity\ImageStyle;
+use Drupal\media\Entity\Media;
 
 /**
  * Provides the Our clients slider block.
@@ -41,15 +42,21 @@ class OurClientsBlock extends BlockBase {
     $file_url_generator = \Drupal::service('file_url_generator');
 
     $items = [];
+    $media_ids = [];
+    $file_ids = [];
     foreach ($slides as $slide) {
-      $file = $slide->getImage() ? File::load($slide->getImage()) : NULL;
+      $media = $slide->getImageMedia() ? Media::load($slide->getImageMedia()) : NULL;
+      if (!$media) {
+        continue;
+      }
+      $file = self::mediaFile($media);
       if (!$file) {
         continue;
       }
       $uri = $file->getFileUri();
       $items[] = [
         'title' => $slide->label(),
-        'image_alt' => $slide->getImageAlt(),
+        'image_alt' => self::mediaAlt($media, (string) $slide->label()),
         'slider_image_url' => $slider_style
           ? $slider_style->buildUrl($uri)
           : $file_url_generator->generateString($uri),
@@ -59,13 +66,15 @@ class OurClientsBlock extends BlockBase {
         'description' => self::processText($slide->getDescription()),
         'review' => self::processText($slide->getReview()),
       ];
+      $media_ids[] = $media->id();
+      $file_ids[] = $file->id();
     }
 
     if (empty($items)) {
       if (\Drupal::currentUser()->hasPermission('administer our clients')) {
         return [
           '#markup' => '<p>' . $this->t('The "Our clients" slider has no slides yet. Add them on the <a href=":url">Our clients</a> page.', [':url' => '/admin/structure/our-clients']) . '</p>',
-          '#cache' => $this->buildCacheMetadata(array_keys($slides)),
+          '#cache' => $this->buildCacheMetadata(array_keys($slides), [], []),
         ];
       }
       return [];
@@ -88,7 +97,7 @@ class OurClientsBlock extends BlockBase {
       '#image_height_mobile' => (int) $settings->get('image_height_mobile'),
       '#name_font_size' => (int) $settings->get('name_font_size'),
       '#modal_width' => (int) $settings->get('modal_width'),
-      '#cache' => $this->buildCacheMetadata(array_keys($slides)),
+      '#cache' => $this->buildCacheMetadata(array_keys($slides), $media_ids, $file_ids),
     ];
   }
 
@@ -97,22 +106,71 @@ class OurClientsBlock extends BlockBase {
    *
    * @param array $slide_ids
    *   The loaded slide IDs.
+   * @param array $media_ids
+   *   The media IDs referenced by the rendered slides.
+   * @param array $file_ids
+   *   The file IDs behind those media items.
    *
    * @return array
    *   Cache metadata array with tags and contexts.
    */
-  protected function buildCacheMetadata(array $slide_ids) {
+  protected function buildCacheMetadata(array $slide_ids, array $media_ids, array $file_ids) {
     $tags = [
       'config:our_clients.settings',
       'config:our_clients_slide_list',
+      'config:image.style.our_clients_slider',
+      'config:image.style.our_clients_modal',
+      'media_list',
     ];
     foreach ($slide_ids as $id) {
       $tags[] = 'config:our_clients.slide.' . $id;
+    }
+    foreach ($media_ids as $id) {
+      $tags[] = 'media:' . $id;
+    }
+    foreach ($file_ids as $id) {
+      $tags[] = 'file:' . $id;
     }
     return [
       'tags' => Cache::mergeTags($tags, []),
       'contexts' => ['user.permissions'],
     ];
+  }
+
+  /**
+   * Returns the source file of a media item.
+   *
+   * @param \Drupal\media\Entity\Media $media
+   *   The media item.
+   *
+   * @return \Drupal\file\Entity\File|null
+   *   The file or NULL if the media has none.
+   */
+  protected static function mediaFile(Media $media) {
+    $fid = (int) $media->getSource()->getSourceFieldValue($media);
+    return $fid ? File::load($fid) : NULL;
+  }
+
+  /**
+   * Returns the alt text of a media item's image.
+   *
+   * @param \Drupal\media\Entity\Media $media
+   *   The media item.
+   * @param string $fallback
+   *   Text used when the media item has no alt text.
+   *
+   * @return string
+   *   The alt text.
+   */
+  protected static function mediaAlt(Media $media, string $fallback) {
+    $source_field = $media->getSource()->getConfiguration()['source_field'] ?? '';
+    if ($source_field && $media->hasField($source_field) && !$media->get($source_field)->isEmpty()) {
+      $alt = (string) ($media->get($source_field)->first()->alt ?? '');
+      if ($alt !== '') {
+        return $alt;
+      }
+    }
+    return $fallback;
   }
 
   /**

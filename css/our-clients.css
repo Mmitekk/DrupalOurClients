@@ -345,7 +345,7 @@ body.oc-modal-open {
 /* Admin overview thumbnail                                              */
 /* --------------------------------------------------------------------- */
 
-.our-clients-admin-thumb {
+.our-clients-admin-thumb-wrapper img {
   max-width: 60px;
   max-height: 45px;
   margin-right: 8px;

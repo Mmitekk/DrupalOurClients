@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.0 (2026-10-24)
+
+- The slide image is now a **Media Library field**: upload new images or pick existing media items from the site media library. The `media`, `media_library` and `media_library_form_element` modules are enabled automatically as dependencies.
+- Per-slide alt text removed: the alt text now belongs to the media item itself and is edited there. On update, existing slide images are automatically converted into media entities (`our_clients_post_update_image_to_media()`), the old alt text is preserved.
+- The media items of a slide are kept in the library when the slide is deleted.
+- Block cache metadata now also depends on the referenced media items, files and image styles.
+
 ## 1.0.1 (2026-10-23)
 
 - Module-shipped configuration (settings, image styles) now declares an enforced dependency on `our_clients`, so it is removed on uninstall and a clean re-install is possible.

@@ -4,3 +4,7 @@ description: 'Provides a configurable "Our clients" slider block: client images 
 package: Custom
 core_version_requirement: ^9.3 || ^10 || ^11
 configure: entity.our_clients_slide.collection
+dependencies:
+  - drupal:media
+  - drupal:media_library
+  - media_library_form_element
