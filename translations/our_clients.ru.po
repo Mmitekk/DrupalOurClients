@@ -92,6 +92,56 @@ msgstr ""
 msgid "Media"
 msgstr "Медиа"
 
+msgid "Media image"
+msgstr "Медиа-изображение"
+
+msgid ""
+"Select an existing media item or upload a new image. Images are shown in "
+"the slider and enlarged in the modal window; videos show an automatic "
+"preview in the slider and are played in the modal window."
+msgstr ""
+"Выберите существующий медиа-объект или загрузите новое изображение. "
+"Изображения показываются в слайдере и в увеличенном виде в модальном окне; "
+"для видео в слайдере показывается автоматическое превью, а в модальном окне "
+"видео проигрывается."
+
+msgid "From the media library"
+msgstr "Из медиатеки"
+
+msgid "Preview"
+msgstr "Превью"
+
+msgid "Media item"
+msgstr "Медиа-объект"
+
+msgid "The media library is empty. Upload a new image below."
+msgstr "В медиатеке пока ничего нет. Загрузите новое изображение ниже."
+
+msgid "Upload new image"
+msgstr "Загрузить новое изображение"
+
+msgid ""
+"The uploaded image is stored as a media item automatically. Recommended "
+"size: at least 600x450 pixels. The alt text equals the client name and can "
+"be edited on the media item afterwards."
+msgstr ""
+"Загруженное изображение автоматически сохраняется как медиа-объект. "
+"Рекомендуемый размер: не менее 600x450 пикселей. Alt-текст равен названию "
+"клиента, позже его можно изменить у медиа-объекта."
+
+msgid "Add an image: select one from the media library or upload a new one."
+msgstr ""
+"Добавьте изображение: выберите из медиатеки или загрузите новое."
+
+msgid ""
+"The slide @label was saved without an image because the Media module is "
+"disabled on this site. Enable the Media module and edit the slide to attach "
+"an image."
+msgstr ""
+"Слайд @label сохранён без изображения, так как на сайте выключен модуль "
+"Media. Включите модуль Media и отредактируйте слайд, чтобы прикрепить "
+"изображение."
+
 msgid ""
 "Upload a new image or video, or pick an existing media item from the media "
 "library. Images are shown in the slider and enlarged in the modal window; "

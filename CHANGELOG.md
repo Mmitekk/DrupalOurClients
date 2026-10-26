@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.3.0 (2026-10-24)
+
+- **Self-contained media selection field** («Медиа-изображение»): pick an existing media item from a thumbnail grid or upload a new image in the same form. The upload is stored as a media item automatically.
+- The contrib dependency `media_library_form_element` (and the core Media Library module requirement) is **gone** - the field is rendered by the module itself and cannot silently disappear because of disabled dependencies. Requires only the core `media` module.
+- The bundled Russian translation is imported automatically on the module admin pages when the admin UI language is Russian (works even if the module was installed before the locale module).
+- `our_clients_post_update_detach_media_library_form_element()` cleanly detaches the no-longer-used contrib module during `drush updb`.
+
 ## 1.2.1 (2026-10-24)
 
 - **Self-healing dependencies**: when the module code is updated over an already-enabled module, Composer installs the new dependency packages but never enables them, and Drupal silently hides unknown form element types - the media field disappeared without any error. The slide form now enables the missing media modules itself (Media, Media library, Media library form element) the first time it is opened.

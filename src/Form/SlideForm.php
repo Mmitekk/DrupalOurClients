@@ -2,6 +2,7 @@
 
 namespace Drupal\our_clients\Form;
 
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -14,11 +15,6 @@ use Drupal\our_clients\Entity\Slide;
 class SlideForm extends EntityForm {
 
   /**
-   * Modules the media library form element depends on.
-   */
-  const MEDIA_DEPENDENCIES = ['media', 'media_library', 'media_library_form_element'];
-
-  /**
    * {@inheritdoc}
    */
   public function form(array $form, FormStateInterface $form_state) {
@@ -26,17 +22,7 @@ class SlideForm extends EntityForm {
 
     /** @var \Drupal\our_clients\Entity\Slide $slide */
     $slide = $this->entity;
-
-    // The media dependencies may be missing when the module code was updated
-    // over an already-enabled module: Composer installs the new dependency
-    // packages but never enables them, and Drupal silently skips unknown
-    // element types, which would make the media field disappear. Schedule a
-    // self-heal (performed after the response, see scheduleDependencyHeal())
-    // and fall back to a plain image upload for the current request.
-    if (!\Drupal::moduleHandler()->moduleExists('media_library_form_element')) {
-      $this->scheduleDependencyHeal();
-    }
-    $media_element_available = \Drupal::moduleHandler()->moduleExists('media_library_form_element');
+    our_clients_maybe_import_russian_translation();
 
     $form['label'] = [
       '#type' => 'textfield',
@@ -63,32 +49,65 @@ class SlideForm extends EntityForm {
       '#default_value' => $slide->isNew() ? TRUE : $slide->isEnabled(),
     ];
 
-    if ($media_element_available) {
-      $form['image_media'] = [
-        '#type' => 'media_library',
-        '#title' => $this->t('Media'),
-        '#required' => TRUE,
-        '#allowed_bundles' => Slide::slideMediaBundles(),
-        '#cardinality' => 1,
-        '#default_value' => $slide->getImageMedia() ?: NULL,
-        '#description' => $this->t('Upload a new image or video, or pick an existing media item from the media library. Images are shown in the slider and enlarged in the modal window; videos show an automatic preview in the slider and are played in the modal window. Recommended image size: at least 600x450 pixels. The alt text is taken from the media item.'),
-      ];
-    }
-    else {
-      // Emergency fallback: the classic file upload. The uploaded file is
-      // converted into a media entity on save, so nothing is lost.
-      $form['image_media_fallback'] = [
-        '#type' => 'managed_file',
-        '#title' => $this->t('Image'),
-        '#required' => !$slide->getImageMedia(),
-        '#default_value' => $this->currentFallbackFileId($slide) ? [$this->currentFallbackFileId($slide)] : NULL,
-        '#upload_location' => 'public://our_clients',
-        '#upload_validators' => [
-          'file_validate_extensions' => ['png gif jpg jpeg webp'],
+    // Self-contained media field: pick an existing media item from the grid
+    // or upload a new image. Requires nothing but the core media module.
+    $form['media_image'] = [
+      '#type' => 'fieldset',
+      '#title' => $this->t('Media image'),
+      '#tree' => TRUE,
+      '#description' => $this->t('Select an existing media item or upload a new image. Images are shown in the slider and enlarged in the modal window; videos show an automatic preview in the slider and are played in the modal window.'),
+    ];
+
+    $current_fid = $this->currentSourceFileId($slide);
+
+    if (\Drupal::moduleHandler()->moduleExists('media') && ($bundles = Slide::slideMediaBundles())) {
+      $query = \Drupal::entityQuery('media')
+        ->accessCheck(FALSE)
+        ->condition('bundle', $bundles, 'IN')
+        ->sort('created', 'DESC')
+        ->range(0, 50);
+      $mids = $query->execute();
+      $options = [];
+      if ($mids) {
+        foreach (\Drupal::entityTypeManager()->getStorage('media')->loadMultiple($mids) as $media) {
+          $thumbnail = $media->get('thumbnail')->entity;
+          $thumb = $thumbnail ? [
+            '#theme' => 'image_style',
+            '#style_name' => 'thumbnail',
+            '#uri' => $thumbnail->getFileUri(),
+            '#attributes' => ['class' => ['our-clients-admin-thumb']],
+          ] : [];
+          $options[$media->id()] = [
+            'thumb' => ['data' => $thumb],
+            'name' => ['data' => ['#markup' => Html::escape((string) $media->label())]],
+          ];
+        }
+      }
+      $form['media_image']['existing'] = [
+        '#type' => 'tableselect',
+        '#title' => $this->t('From the media library'),
+        '#header' => [
+          'thumb' => $this->t('Preview'),
+          'name' => $this->t('Media item'),
         ],
-        '#description' => $this->t('The media library modules are not available on this site, so a plain image upload is shown. The uploaded image is stored as a media item automatically.'),
+        '#options' => $options,
+        '#empty' => $this->t('The media library is empty. Upload a new image below.'),
+        '#multiple' => FALSE,
+        '#js_select' => FALSE,
+        '#default_value' => $slide->getImageMedia() ?: NULL,
       ];
     }
+
+    $form['media_image']['upload'] = [
+      '#type' => 'managed_file',
+      '#title' => $this->t('Upload new image'),
+      '#default_value' => $current_fid ? [$current_fid] : NULL,
+      '#upload_location' => 'public://our_clients',
+      '#upload_validators' => [
+        'file_validate_extensions' => ['png gif jpg jpeg webp'],
+      ],
+      '#description' => $this->t('The uploaded image is stored as a media item automatically. Recommended size: at least 600x450 pixels. The alt text equals the client name and can be edited on the media item afterwards.'),
+    ];
 
     $description = $slide->getDescription();
     $form['description'] = [
@@ -117,97 +136,18 @@ class SlideForm extends EntityForm {
   }
 
   /**
-   * Schedules the media dependency installation for after the response.
-   *
-   * Installing modules in the middle of a request invalidates cached entity
-   * definitions and breaks the rest of the page, so the installation is
-   * deferred to a PHP shutdown function: the current page renders normally
-   * (with the fallback image field), the next one gets the media library.
+   * {@inheritdoc}
    */
-  protected function scheduleDependencyHeal() {
-    if (\Drupal::state()->get('our_clients.heal_scheduled')) {
-      return;
-    }
-    \Drupal::state()->set('our_clients.heal_scheduled', TRUE);
-    register_shutdown_function(function () {
-      $missing = [];
-      try {
-        $missing = array_filter(self::MEDIA_DEPENDENCIES, function ($module) {
-          return !\Drupal::moduleHandler()->moduleExists($module);
-        });
-        if (!empty($missing)) {
-          \Drupal::service('module_installer')->install($missing, TRUE);
-          \Drupal::logger('our_clients')->info('Automatically enabled the media dependencies: @modules', [
-            '@modules' => implode(', ', $missing),
-          ]);
-        }
-      }
-      catch (\Throwable $e) {
-        \Drupal::logger('our_clients')->error('Unable to enable the media dependencies automatically: @message', [
-          '@message' => $e->getMessage(),
-        ]);
-      }
-      \Drupal::state()->delete('our_clients.heal_scheduled');
-    });
-  }
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    parent::validateForm($form, $form_state);
 
-  /**
-   * Returns the file ID behind the slide's current media item.
-   *
-   * Used to prefill the emergency managed_file fallback.
-   *
-   * @param \Drupal\our_clients\Entity\Slide $slide
-   *   The slide.
-   *
-   * @return int
-   *   The file ID, 0 if none.
-   */
-  protected function currentFallbackFileId($slide) {
-    if (!$slide->getImageMedia() || !($media = \Drupal::entityTypeManager()->getStorage('media')->load($slide->getImageMedia()))) {
-      return 0;
-    }
-    return (int) $media->getSource()->getSourceFieldValue($media);
-  }
+    $fieldset = $form_state->getValue('media_image') ?: [];
+    $upload = isset($fieldset['upload'][0]) ? (int) $fieldset['upload'][0] : 0;
+    $selected = isset($fieldset['existing']) ? (int) $fieldset['existing'] : 0;
 
-  /**
-   * Creates a media item from an uploaded file.
-   *
-   * @param int $fid
-   *   The uploaded file ID.
-   * @param string $label
-   *   The media item name.
-   *
-   * @return int
-   *   The created media ID, 0 on failure.
-   */
-  protected static function mediaFromUpload($fid, $label) {
-    $bundle_id = reset(\Drupal\our_clients\Entity\Slide::imageMediaBundles());
-    $media_type = \Drupal::entityTypeManager()->getStorage('media_type')->load($bundle_id);
-    if (!$fid || !$media_type) {
-      return 0;
+    if (!$upload && !$selected && $this->entity->isNew()) {
+      $form_state->setErrorByName('media_image', $this->t('Add an image: select one from the media library or upload a new one.'));
     }
-    $file = \Drupal::entityTypeManager()->getStorage('file')->load($fid);
-    if (!$file) {
-      return 0;
-    }
-    if (!$file->isPermanent()) {
-      $file->setPermanent();
-      $file->save();
-    }
-    $source_field = $media_type->getSource()->getConfiguration()['source_field'] ?? '';
-    $media = \Drupal::entityTypeManager()->getStorage('media')->create([
-      'bundle' => $bundle_id,
-      'name' => $label,
-      'uid' => \Drupal::currentUser()->id(),
-      'status' => 1,
-      $source_field => [
-        'target_id' => $fid,
-        'alt' => $label,
-        'title' => $label,
-      ],
-    ]);
-    $media->save();
-    return (int) $media->id();
   }
 
   /**
@@ -255,51 +195,90 @@ class SlideForm extends EntityForm {
    */
   protected function copyFormValuesToEntity(EntityInterface $entity, array $form, FormStateInterface $form_state) {
     $values = $form_state->getValues();
+    $fieldset = isset($values['media_image']) && is_array($values['media_image']) ? $values['media_image'] : [];
 
     /** @var \Drupal\our_clients\Entity\Slide $entity */
     $entity->set('label', (string) $values['label']);
     $entity->set('id', (string) $values['id']);
     $entity->set('status', !empty($values['status']));
-    if (array_key_exists('image_media', $values)) {
-      $entity->set('image_media', self::extractMediaId($values['image_media']));
-    }
-    elseif (array_key_exists('image_media_fallback', $values)) {
-      // Emergency upload path: convert the file into a media item. When no
-      // new file was uploaded the slide keeps its current media item.
-      $fid = isset($values['image_media_fallback'][0]) ? (int) $values['image_media_fallback'][0] : 0;
-      if ($fid) {
-        $entity->set('image_media', self::mediaFromUpload($fid, (string) $values['label']));
-      }
-    }
     $entity->set('description', is_array($values['description']) ? $values['description'] : ['value' => '', 'format' => NULL]);
     $entity->set('review', is_array($values['review']) ? $values['review'] : ['value' => '', 'format' => NULL]);
     $entity->set('weight', (int) $values['weight']);
+
+    // Priority: a freshly uploaded image wins over a library selection; when
+    // both are empty an existing slide keeps its current media item.
+    $fid = isset($fieldset['upload'][0]) ? (int) $fieldset['upload'][0] : 0;
+    $selected = isset($fieldset['existing']) ? (int) $fieldset['existing'] : 0;
+    if ($fid) {
+      $entity->set('image_media', self::mediaFromUpload($fid, (string) $values['label']));
+    }
+    elseif ($selected) {
+      $entity->set('image_media', $selected);
+    }
   }
 
   /**
-   * Extracts a single media ID from the media library element value.
+   * Returns the source file ID behind the slide's current media item.
    *
-   * The element value may arrive as an ID, a comma-separated string or an
-   * array depending on the submission path (full submit, AJAX rebuild or the
-   * default value pass-through).
+   * Used to prefill the upload field when editing a slide whose media item is
+   * based on an image file.
    *
-   * @param mixed $raw
-   *   The raw element value.
+   * @param \Drupal\our_clients\Entity\Slide $slide
+   *   The slide.
    *
    * @return int
-   *   The first numeric media ID, 0 if none.
+   *   The file ID, 0 if none.
    */
-  protected static function extractMediaId($raw) {
-    if (is_array($raw)) {
-      $raw = implode(',', $raw);
+  protected function currentSourceFileId($slide) {
+    if (!$slide->getImageMedia() || !\Drupal::moduleHandler()->moduleExists('media')) {
+      return 0;
     }
-    foreach (explode(',', (string) $raw) as $part) {
-      $part = trim($part);
-      if ($part !== '' && ctype_digit($part)) {
-        return (int) $part;
-      }
+    $media = \Drupal::entityTypeManager()->getStorage('media')->load($slide->getImageMedia());
+    if (!$media || $media->getSource()->getPluginId() !== 'image') {
+      return 0;
     }
-    return 0;
+    return (int) $media->getSource()->getSourceFieldValue($media);
+  }
+
+  /**
+   * Creates a media item from an uploaded file.
+   *
+   * @param int $fid
+   *   The uploaded file ID.
+   * @param string $label
+   *   The media item name.
+   *
+   * @return int
+   *   The created media ID, 0 on failure.
+   */
+  protected static function mediaFromUpload($fid, $label) {
+    $bundle_id = reset(\Drupal\our_clients\Entity\Slide::imageMediaBundles());
+    $media_type = \Drupal::entityTypeManager()->getStorage('media_type')->load($bundle_id);
+    if (!$fid || !$media_type) {
+      return 0;
+    }
+    $file = \Drupal::entityTypeManager()->getStorage('file')->load($fid);
+    if (!$file) {
+      return 0;
+    }
+    if (!$file->isPermanent()) {
+      $file->setPermanent();
+      $file->save();
+    }
+    $source_field = $media_type->getSource()->getConfiguration()['source_field'] ?? '';
+    $media = \Drupal::entityTypeManager()->getStorage('media')->create([
+      'bundle' => $bundle_id,
+      'name' => $label,
+      'uid' => \Drupal::currentUser()->id(),
+      'status' => 1,
+      $source_field => [
+        'target_id' => $fid,
+        'alt' => $label,
+        'title' => $label,
+      ],
+    ]);
+    $media->save();
+    return (int) $media->id();
   }
 
   /**
@@ -308,6 +287,10 @@ class SlideForm extends EntityForm {
   public function save(array $form, FormStateInterface $form_state) {
     $slide = $this->entity;
     $status = $slide->save();
+
+    if (!$slide->getImageMedia()) {
+      $this->messenger()->addWarning($this->t('The slide @label was saved without an image because the Media module is disabled on this site. Enable the Media module and edit the slide to attach an image.', ['@label' => $slide->label()]));
+    }
 
     $params = ['@label' => $slide->label()];
     $this->messenger()->addStatus($status === SAVED_NEW

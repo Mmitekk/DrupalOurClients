@@ -33,6 +33,8 @@ class SettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
+    our_clients_maybe_import_russian_translation();
+
     $config = $this->config(static::SETTINGS);
 
     $form['heading'] = [

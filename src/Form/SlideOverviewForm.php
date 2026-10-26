@@ -50,6 +50,8 @@ class SlideOverviewForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
+    our_clients_maybe_import_russian_translation();
+
     $storage = $this->entityTypeManager->getStorage('our_clients_slide');
     $ids = $storage->getQuery()
       ->sort('weight')

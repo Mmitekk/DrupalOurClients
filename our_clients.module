@@ -5,7 +5,9 @@
  * Hook implementations for the Our clients module.
  */
 
+use Drupal\Component\Gettext\PoStreamReader;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\locale\PoDatabaseWriter;
 
 /**
  * Implements hook_help().
@@ -27,6 +29,57 @@ function our_clients_help($route_name, RouteMatchInterface $route_match) {
       return $output;
 
   }
+}
+
+/**
+ * Imports the bundled Russian translation once, when it makes sense.
+ *
+ * A module installed before the locale module (or on an English-only site)
+ * never gets its translations/our_clients.ru.po imported. This runs on the
+ * module admin pages: when the admin UI language is Russian and the locale
+ * module is available, the bundled .po file is imported one time, so the
+ * interface speaks Russian without any manual steps.
+ */
+function our_clients_maybe_import_russian_translation() {
+  if (\Drupal::state()->get('our_clients.ru_po_imported')) {
+    return;
+  }
+  if (!\Drupal::moduleHandler()->moduleExists('locale')) {
+    \Drupal::state()->set('our_clients.ru_po_imported', TRUE);
+    return;
+  }
+  // Keep retrying on English pages - the admin may switch the language later.
+  if (\Drupal::languageManager()->getCurrentLanguage()->getId() !== 'ru') {
+    return;
+  }
+  try {
+    $path = \Drupal::service('extension.path.resolver')->getPath('module', 'our_clients') . '/translations/our_clients.ru.po';
+    if (!file_exists($path)) {
+      \Drupal::state()->set('our_clients.ru_po_imported', TRUE);
+      return;
+    }
+    $reader = new PoStreamReader();
+    $reader->setLangcode('ru');
+    $reader->setURI($path);
+    $reader->open();
+    $writer = new PoDatabaseWriter();
+    $writer->setLangcode('ru');
+    $writer->setOptions(['overwrite_options' => ['not_customized' => TRUE]]);
+    $writer->setHeader($reader->getHeader());
+    $writer->writeItems($reader, -1);
+    $report = $writer->getReport();
+    \Drupal::logger('our_clients')->info('Imported the bundled Russian translation: @add additions, @upd updates.', [
+      '@add' => $report['additions'] ?? 0,
+      '@upd' => $report['updates'] ?? 0,
+    ]);
+    \Drupal::service('cache_tags.invalidator')->invalidateTags(['locale']);
+  }
+  catch (\Throwable $e) {
+    \Drupal::logger('our_clients')->warning('Failed to import the bundled Russian translation: @message', [
+      '@message' => $e->getMessage(),
+    ]);
+  }
+  \Drupal::state()->set('our_clients.ru_po_imported', TRUE);
 }
 
 /**
