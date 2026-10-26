@@ -152,6 +152,9 @@ When the admin UI language is Russian, the module imports its bundled Russian tr
 **The admin UI is in English.**
 Make sure the **Interface Translation** (`locale`) module is enabled and the interface language is Russian: the translation from the `translations/` folder is imported automatically on module install. If needed: **Manage » Configuration » Regional and language » User interface translation » Update** (`/admin/config/regional/translate/import`).
 
+**On Drupal 9, `composer require drupal/media_library_form_element` fails.**
+That contrib package is **no longer needed** — since 1.3.0 this module does not depend on it (the media selection field is implemented inside the module itself; the only dependency is core `media`). `media_library_form_element` 2.x requires Drupal 10.3+, so Composer refuses to install it on 9.5. Do not install anything extra: just update this module to the latest release (`composer update mmitekk/our-clients` or replace the files manually) and run `drush updb -y && drush cr` — if the old contrib module was enabled, the update detaches it automatically. The module is compatible with Drupal 9.3+ and PHP 7.4.
+
 ## License
 
 [GPL-2.0-or-later](LICENSE.txt)

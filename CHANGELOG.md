@@ -8,6 +8,8 @@
 - **The "Media image" field of the slide form is collapsed by default** - the media list no longer takes over the form; it opens automatically when the field fails validation.
 - New appearance defaults: accent color `#ff5073`, image height 390px (200px mobile), client name 24px. `our_clients_post_update_refresh_default_appearance()` applies them to sites that never changed the old defaults.
 - The bundled Russian translation is re-imported automatically on module update (versioned import state).
+- **Confirmed compatible with Drupal 9.3+ / 9.5 / 10 / 11 and PHP 7.4.** The module has no contrib dependencies, so no `composer require drupal/media_library_form_element` is needed (that package requires Drupal 10.3+ and fails on Drupal 9) - just update the module itself and run `drush updb -y && drush cr`.
+- Stale translations from the media_library_form_element era removed from the bundled Russian translation.
 
 ## 1.4.0 (2026-10-24)
 

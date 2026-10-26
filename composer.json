@@ -30,7 +30,7 @@
   "extra": {
     "drupal": {
       "packageName": "mmitekk/our-clients",
-      "version": "1.4.0",
+      "version": "1.5.0",
       "security-coverage": {
         "status": "not-covered",
         "message": "Security coverage is not checked for this module / Проверка безопасности для этого модуля не выполняется."
