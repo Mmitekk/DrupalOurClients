@@ -8,8 +8,6 @@
  */
 
 .our-clients {
-  --oc-accent: #ff5073;
-  --oc-accent-contrast: #ffffff;
   --oc-text: #000000;
   --oc-text-muted: #5b6470;
   --oc-bg: #ffffff;
@@ -94,7 +92,7 @@
 }
 
 .our-clients__trigger:focus-visible {
-  outline: 2px solid var(--oc-accent);
+  outline: 2px solid var(--oc-more-color, #ff5073);
   outline-offset: 4px;
 }
 
@@ -119,7 +117,8 @@
 }
 
 .our-clients__name {
-  margin-top: 15px;
+  margin-top: var(--oc-name-margin-top, 15px);
+  margin-bottom: var(--oc-name-margin-bottom, 0);
   font-size: var(--oc-name-size);
   line-height: 1.25;
 }
@@ -131,9 +130,9 @@
   height: var(--oc-more-height, 40px);
   line-height: calc(var(--oc-more-height, 40px) - 4px);
   box-sizing: border-box;
-  color: var(--oc-more-color, var(--oc-accent));
+  color: var(--oc-more-color, #ff5073);
   background: var(--oc-more-bg, var(--oc-bg));
-  border: 2px solid color-mix(in srgb, var(--oc-more-color, var(--oc-accent)) 50%, #ffffff);
+  border: 2px solid color-mix(in srgb, var(--oc-more-color, #ff5073) 50%, #ffffff);
   border-radius: var(--oc-more-radius, 40px);
   font-size: var(--oc-more-font-size, 18px);
   font-weight: 500;
@@ -142,7 +141,8 @@
 }
 
 .our-clients__trigger:hover .our-clients__more {
-  background: var(--oc-more-bg-hover, color-mix(in srgb, var(--oc-accent) 8%, #ffffff));
+  background: var(--oc-more-bg-hover, color-mix(in srgb, var(--oc-more-color, #ff5073) 8%, #ffffff));
+  color: var(--oc-more-hover-color, var(--oc-more-color, #ff5073));
 }
 
 .our-clients__arrow {
@@ -177,7 +177,7 @@
 }
 
 .our-clients__arrow:hover {
-  color: var(--oc-accent);
+  color: var(--oc-more-color, #ff5073);
 }
 
 .our-clients__arrow:disabled {
@@ -264,7 +264,7 @@ body.oc-modal-open {
 }
 
 .oc-modal__close:hover {
-  background: var(--oc-accent, #ff5073);
+  background: var(--oc-review-color, #ff5073);
 }
 
 .oc-modal__image {
@@ -340,8 +340,8 @@ body.oc-modal-open {
   margin: 0;
   padding: 16px 20px;
   background: #eef5fb;
-  background: color-mix(in srgb, var(--oc-accent, #ff5073) 7%, #ffffff);
-  border-left: 4px solid var(--oc-accent, #ff5073);
+  background: color-mix(in srgb, var(--oc-review-color, #ff5073) 7%, #ffffff);
+  border-left: 4px solid var(--oc-review-color, #ff5073);
   border-radius: 0 12px 12px 0;
   color: var(--oc-text, #000000);
   font-size: 0.95em;
@@ -355,7 +355,7 @@ body.oc-modal-open {
 }
 
 .oc-modal__review-stars {
-  color: var(--oc-accent, #ff5073);
+  color: var(--oc-review-color, #ff5073);
   font-size: 1.05em;
   letter-spacing: 2px;
 }
@@ -456,7 +456,7 @@ img.our-clients-admin-thumb {
   }
 
   .our-clients__name {
-    margin-top: 10px;
+    margin-top: var(--oc-name-margin-top, 10px);
     font-size: min(var(--oc-name-size), 17px);
   }
 

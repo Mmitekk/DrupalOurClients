@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.7.0 (2026-10-26)
+
+- **The vague "Accent color" setting is gone.** It is replaced by understandable per-element colors: the **button text color** (also used for the button border, the slide focus outline and the arrows on hover), a separate **button text color on hover** and the **review color** (stars, left border and background tint of the reviews in the modal window, plus the close button on hover). `our_clients_post_update_remove_accent_color()` clears the old config key on update.
+- **Client name margins**: new "margin top" and "margin bottom" settings control the space around the client name (0 keeps the defaults).
+- The modal window now picks up the block's custom colors via inline CSS variables synced from the slider.
+
 ## 1.6.0 (2026-10-26)
 
 - **New "Heading" and "More details" button style settings**: heading font size (desktop/mobile), heading top/bottom margins, button text color, background, hover background, border radius, font size (desktop/mobile), height (desktop/mobile) and horizontal padding. Empty values keep the defaults (the theme's h2 style for the heading, the stormoff-style accent pill for the button).

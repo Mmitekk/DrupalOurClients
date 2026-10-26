@@ -119,7 +119,6 @@ function our_clients_post_update_refresh_default_appearance(array &$sandbox = NU
     'image_height' => ['old' => 130, 'new' => 390],
     'image_height_mobile' => ['old' => 100, 'new' => 200],
     'name_font_size' => ['old' => 14, 'new' => 24],
-    'accent_color' => ['old' => '#006ab1', 'new' => '#ff5073'],
   ];
   foreach ($defaults as $key => $values) {
     if ($config->get($key) === $values['old']) {
@@ -130,4 +129,17 @@ function our_clients_post_update_refresh_default_appearance(array &$sandbox = NU
   // h2 style entirely.
   $config->clear('heading_font_size')->clear('heading_font_size_mobile');
   $config->save();
+}
+
+/**
+ * Removes the vague accent color setting.
+ *
+ * The single "Accent color" was split into understandable per-element colors:
+ * the button text color (also used for the button border, the focus outline
+ * and the arrows on hover) and the review color in the modal window.
+ */
+function our_clients_post_update_remove_accent_color(array &$sandbox = NULL) {
+  \Drupal::configFactory()->getEditable('our_clients.settings')
+    ->clear('accent_color')
+    ->save();
 }

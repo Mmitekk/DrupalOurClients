@@ -146,9 +146,20 @@
     clone.classList.remove('our-clients__modal-source');
     content.appendChild(clone);
 
-    var modalWidth = parseInt(source.closest('.our-clients').getAttribute('data-oc-modal-width'), 10);
-    if (!isNaN(modalWidth) && modalWidth > 0) {
-      m.style.setProperty('--oc-modal-width', modalWidth + 'px');
+    var sliderRoot = source.closest('.our-clients');
+    if (sliderRoot) {
+      // The modal lives on <body>, so copy the slider's custom properties
+      // (review color etc.) onto it.
+      for (var i = 0; i < sliderRoot.style.length; i++) {
+        var prop = sliderRoot.style[i];
+        if (prop.indexOf('--oc-') === 0) {
+          m.style.setProperty(prop, sliderRoot.style.getPropertyValue(prop));
+        }
+      }
+      var modalWidth = parseInt(sliderRoot.getAttribute('data-oc-modal-width'), 10);
+      if (!isNaN(modalWidth) && modalWidth > 0) {
+        m.style.setProperty('--oc-modal-width', modalWidth + 'px');
+      }
     }
 
     var title = content.querySelector('.oc-modal__title');

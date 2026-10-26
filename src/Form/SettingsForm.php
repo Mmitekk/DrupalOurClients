@@ -102,7 +102,16 @@ class SettingsForm extends ConfigFormBase {
       '#default_value' => $config->get('button_text_color'),
       '#maxlength' => 7,
       '#placeholder' => '#ff5073',
-      '#description' => $this->t('Leave empty to use the accent color.'),
+      '#description' => $this->t('Leave empty for the default (#ff5073). Also used for the button border, the slide focus outline and the arrows on hover.'),
+    ];
+
+    $form['button']['button_hover_text_color'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Button text color on hover'),
+      '#default_value' => $config->get('button_hover_text_color'),
+      '#maxlength' => 7,
+      '#placeholder' => '#ffffff',
+      '#description' => $this->t('Leave empty to keep the normal button text color.'),
     ];
 
     $form['button']['button_background'] = [
@@ -120,7 +129,7 @@ class SettingsForm extends ConfigFormBase {
       '#default_value' => $config->get('button_hover_background'),
       '#maxlength' => 7,
       '#placeholder' => '#ff5073',
-      '#description' => $this->t('Leave empty for a light tint of the accent color.'),
+      '#description' => $this->t('Leave empty for a light tint of the button text color.'),
     ];
 
     $form['button']['button_border_radius'] = [
@@ -274,6 +283,26 @@ class SettingsForm extends ConfigFormBase {
       '#description' => $this->t('The size of the client name text under the image.'),
     ];
 
+    $form['appearance']['name_margin_top'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Client name margin top (px)'),
+      '#default_value' => $config->get('name_margin_top'),
+      '#min' => 0,
+      '#max' => 100,
+      '#field_suffix' => 'px',
+      '#description' => $this->t('Space between the image and the client name. Leave 0 for the default.'),
+    ];
+
+    $form['appearance']['name_margin_bottom'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Client name margin bottom (px)'),
+      '#default_value' => $config->get('name_margin_bottom'),
+      '#min' => 0,
+      '#max' => 100,
+      '#field_suffix' => 'px',
+      '#description' => $this->t('Space between the client name and the button. Leave 0 for none.'),
+    ];
+
     $form['appearance']['modal_width'] = [
       '#type' => 'number',
       '#title' => $this->t('Modal window width (px)'),
@@ -283,11 +312,13 @@ class SettingsForm extends ConfigFormBase {
       '#field_suffix' => 'px',
     ];
 
-    $form['appearance']['accent_color'] = [
-      '#type' => 'color',
-      '#title' => $this->t('Accent color'),
-      '#default_value' => $config->get('accent_color'),
-      '#description' => $this->t('Used for the "More details" button, the arrows on hover and the review quote. Pick the primary color of your site theme to make the block blend in.'),
+    $form['appearance']['review_color'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Review color'),
+      '#default_value' => $config->get('review_color'),
+      '#maxlength' => 7,
+      '#placeholder' => '#ff5073',
+      '#description' => $this->t('The color of the client reviews in the modal window: the stars, the left border and the background tint, plus the close button on hover. Leave empty for the default (#ff5073).'),
     ];
 
     return parent::buildForm($form, $form_state);
@@ -300,7 +331,7 @@ class SettingsForm extends ConfigFormBase {
     if ((int) $form_state->getValue('autoplay_speed') < 1000) {
       $form_state->setErrorByName('autoplay_speed', $this->t('The autoplay interval must be at least 1000 ms.'));
     }
-    foreach (['button_text_color', 'button_background', 'button_hover_background'] as $key) {
+    foreach (['button_text_color', 'button_hover_text_color', 'button_background', 'button_hover_background', 'review_color'] as $key) {
       $value = trim((string) $form_state->getValue($key));
       if ($value !== '' && !preg_match('/^#?[0-9a-fA-F]{3}([0-9a-fA-F]{3})?$/', $value)) {
         $form_state->setErrorByName($key, $this->t('Enter a hexadecimal color like #ff5073, or leave empty.'));
@@ -338,6 +369,7 @@ class SettingsForm extends ConfigFormBase {
       ->set('heading_margin_top', (int) $form_state->getValue('heading_margin_top'))
       ->set('heading_margin_bottom', (int) $form_state->getValue('heading_margin_bottom'))
       ->set('button_text_color', $this->normalizeHexColor($form_state->getValue('button_text_color')))
+      ->set('button_hover_text_color', $this->normalizeHexColor($form_state->getValue('button_hover_text_color')))
       ->set('button_background', $this->normalizeHexColor($form_state->getValue('button_background')))
       ->set('button_hover_background', $this->normalizeHexColor($form_state->getValue('button_hover_background')))
       ->set('button_border_radius', (int) $form_state->getValue('button_border_radius'))
@@ -355,8 +387,10 @@ class SettingsForm extends ConfigFormBase {
       ->set('image_height', (int) $form_state->getValue('image_height'))
       ->set('image_height_mobile', (int) $form_state->getValue('image_height_mobile'))
       ->set('name_font_size', (int) $form_state->getValue('name_font_size'))
+      ->set('name_margin_top', (int) $form_state->getValue('name_margin_top'))
+      ->set('name_margin_bottom', (int) $form_state->getValue('name_margin_bottom'))
       ->set('modal_width', (int) $form_state->getValue('modal_width'))
-      ->set('accent_color', (string) $form_state->getValue('accent_color'))
+      ->set('review_color', $this->normalizeHexColor($form_state->getValue('review_color')))
       ->save();
 
     parent::submitForm($form, $form_state);

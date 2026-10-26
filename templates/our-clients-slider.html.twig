@@ -12,20 +12,22 @@
  *   - modal_image_url: URL of the larger modal image.
  *   - description: Render array with the description.
  *   - reviews: Render array with the client reviews.
- * - accent_color: Hex accent color, empty to use the CSS default.
  * - autoplay: Whether autoplay is enabled.
  * - autoplay_speed: Autoplay interval in milliseconds.
  * - visible_desktop, visible_tablet, visible_mobile: Slides per view.
  * - slider_max_width: Maximum slider width in px (0 = unlimited).
  * - image_height, image_height_mobile: Slide image area height in px.
  * - name_font_size: Client name font size in px.
+ * - name_margin_top, name_margin_bottom: Space around the client name in px
+ *   (0 = module default).
  * - modal_width: Modal window width in px.
+ * - review_color: Color of the reviews in the modal window (empty = default).
  * - heading_font_size, heading_font_size_mobile: Heading font size in px
  *   (0 = inherit the theme's h2 style).
  * - heading_margin_top, heading_margin_bottom: Heading margins in px
  *   (0 = theme default).
- * - button_text_color, button_background, button_hover_background: Button
- *   colors (empty = module default).
+ * - button_text_color, button_hover_text_color, button_background,
+ *   button_hover_background: Button colors (empty = module default).
  * - button_border_radius, button_font_size, button_font_size_mobile,
  *   button_height, button_height_mobile, button_padding_x: Button sizes in
  *   px (0 = module default).
@@ -38,9 +40,6 @@
 #}
 {{ attach_library('our_clients/our_clients') }}
 {% set oc_styles = [] %}
-{% if accent_color %}
-  {% set oc_styles = oc_styles|merge(['--oc-accent: ' ~ accent_color]) %}
-{% endif %}
 {% if slider_max_width > 0 %}
   {% set oc_styles = oc_styles|merge(['--oc-max-width: ' ~ slider_max_width ~ 'px']) %}
 {% endif %}
@@ -52,6 +51,15 @@
 {% endif %}
 {% if name_font_size > 0 %}
   {% set oc_styles = oc_styles|merge(['--oc-name-size: ' ~ name_font_size ~ 'px']) %}
+{% endif %}
+{% if name_margin_top > 0 %}
+  {% set oc_styles = oc_styles|merge(['--oc-name-margin-top: ' ~ name_margin_top ~ 'px']) %}
+{% endif %}
+{% if name_margin_bottom > 0 %}
+  {% set oc_styles = oc_styles|merge(['--oc-name-margin-bottom: ' ~ name_margin_bottom ~ 'px']) %}
+{% endif %}
+{% if review_color %}
+  {% set oc_styles = oc_styles|merge(['--oc-review-color: ' ~ review_color]) %}
 {% endif %}
 {% if heading_font_size > 0 %}
   {% set oc_styles = oc_styles|merge(['--oc-heading-font-size: ' ~ heading_font_size ~ 'px']) %}
@@ -67,6 +75,9 @@
 {% endif %}
 {% if button_text_color %}
   {% set oc_styles = oc_styles|merge(['--oc-more-color: ' ~ button_text_color]) %}
+{% endif %}
+{% if button_hover_text_color %}
+  {% set oc_styles = oc_styles|merge(['--oc-more-hover-color: ' ~ button_hover_text_color]) %}
 {% endif %}
 {% if button_background %}
   {% set oc_styles = oc_styles|merge(['--oc-more-bg: ' ~ button_background]) %}

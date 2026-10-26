@@ -20,6 +20,9 @@ our_clients.settings:
     button_text_color:
       type: string
       label: 'Button text color'
+    button_hover_text_color:
+      type: string
+      label: 'Button text color on hover'
     button_background:
       type: string
       label: 'Button background'
@@ -71,12 +74,18 @@ our_clients.settings:
     name_font_size:
       type: integer
       label: 'Client name font size (px)'
+    name_margin_top:
+      type: integer
+      label: 'Client name margin top (px)'
+    name_margin_bottom:
+      type: integer
+      label: 'Client name margin bottom (px)'
     modal_width:
       type: integer
       label: 'Modal window width (px)'
-    accent_color:
+    review_color:
       type: string
-      label: 'Accent color'
+      label: 'Review color'
 
 our_clients.slide.*:
   type: config_entity

@@ -22,7 +22,7 @@ function our_clients_help($route_name, RouteMatchInterface $route_match) {
       $output .= '<dt>' . t('Managing slides') . '</dt>';
       $output .= '<dd>' . t('Add, edit, reorder and delete slides on the <a href=":slides">Our clients</a> page.', [':slides' => '/admin/structure/our-clients']) . '</dd>';
       $output .= '<dt>' . t('Settings') . '</dt>';
-      $output .= '<dd>' . t('The block heading, the number of visible slides, autoplay, the accent color and the "More details" button style are configured on the <a href=":settings">Settings</a> tab.', [':settings' => '/admin/structure/our-clients/settings']) . '</dd>';
+      $output .= '<dd>' . t('The block heading, the number of visible slides, autoplay and the "More details" button style are configured on the <a href=":settings">Settings</a> tab.', [':settings' => '/admin/structure/our-clients/settings']) . '</dd>';
       $output .= '<dt>' . t('Placing the block') . '</dt>';
       $output .= '<dd>' . t('Place the <em>Our clients slider</em> block into a region of your theme on the <a href=":blocks">Block layout</a> page.', [':blocks' => '/admin/structure/block']) . '</dd>';
       $output .= '</dl>';
@@ -42,7 +42,7 @@ function our_clients_help($route_name, RouteMatchInterface $route_match) {
  */
 function our_clients_maybe_import_russian_translation() {
   // Bump when the bundled .po file changes so existing sites re-import it.
-  $po_version = '1.6.0';
+  $po_version = '1.7.0';
   if (\Drupal::state()->get('our_clients.ru_po_imported') === $po_version) {
     return;
   }
@@ -93,7 +93,6 @@ function our_clients_theme($existing, $type, $theme, $path) {
       'variables' => [
         'slides' => [],
         'heading' => '',
-        'accent_color' => '',
         'autoplay' => TRUE,
         'autoplay_speed' => 4000,
         'visible_desktop' => 4,
@@ -103,12 +102,16 @@ function our_clients_theme($existing, $type, $theme, $path) {
         'image_height' => 390,
         'image_height_mobile' => 200,
         'name_font_size' => 24,
+        'name_margin_top' => 0,
+        'name_margin_bottom' => 0,
         'modal_width' => 760,
+        'review_color' => '',
         'heading_font_size' => 0,
         'heading_font_size_mobile' => 0,
         'heading_margin_top' => 0,
         'heading_margin_bottom' => 0,
         'button_text_color' => '',
+        'button_hover_text_color' => '',
         'button_background' => '',
         'button_hover_background' => '',
         'button_border_radius' => 0,
