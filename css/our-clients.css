@@ -32,12 +32,13 @@
   display: flex;
   align-items: baseline;
   justify-content: flex-start;
-  margin-bottom: 32px;
 }
 
-/* The heading inherits the theme's h2 style entirely. */
+/* By default the heading inherits the theme's h2 style entirely; the
+   --oc-heading-* variables override the size and the margins. */
 .our-clients__heading {
-  margin: 0;
+  margin: var(--oc-heading-margin-top, 0) 0 var(--oc-heading-margin-bottom, 32px);
+  font-size: var(--oc-heading-font-size, inherit);
 }
 
 .our-clients__frame {
@@ -126,22 +127,22 @@
 .our-clients__more {
   align-self: flex-start;
   margin-top: 12px;
-  padding: 0 24px;
-  height: 40px;
-  line-height: 36px;
+  padding: 0 var(--oc-more-padding-x, 24px);
+  height: var(--oc-more-height, 40px);
+  line-height: calc(var(--oc-more-height, 40px) - 4px);
   box-sizing: border-box;
-  color: var(--oc-accent);
-  background: var(--oc-bg);
-  border: 2px solid color-mix(in srgb, var(--oc-accent) 50%, #ffffff);
-  border-radius: 40px;
-  font-size: 18px;
+  color: var(--oc-more-color, var(--oc-accent));
+  background: var(--oc-more-bg, var(--oc-bg));
+  border: 2px solid color-mix(in srgb, var(--oc-more-color, var(--oc-accent)) 50%, #ffffff);
+  border-radius: var(--oc-more-radius, 40px);
+  font-size: var(--oc-more-font-size, 18px);
   font-weight: 500;
   text-align: center;
   transition: background 0.2s ease-in-out;
 }
 
 .our-clients__trigger:hover .our-clients__more {
-  background: color-mix(in srgb, var(--oc-accent) 8%, #ffffff);
+  background: var(--oc-more-bg-hover, color-mix(in srgb, var(--oc-accent) 8%, #ffffff));
 }
 
 .our-clients__arrow {
@@ -419,8 +420,9 @@ img.our-clients-admin-thumb {
 }
 
 @media (max-width: 575px) {
-  .our-clients__header {
-    margin-bottom: 24px;
+  .our-clients__heading {
+    font-size: var(--oc-heading-font-size-mobile, var(--oc-heading-font-size, inherit));
+    margin-bottom: var(--oc-heading-margin-bottom, 24px);
   }
 
   .our-clients__viewport {
@@ -460,10 +462,10 @@ img.our-clients-admin-thumb {
 
   .our-clients__more {
     margin-top: 10px;
-    padding: 0 20px;
-    height: 36px;
-    line-height: 32px;
-    font-size: 16px;
+    padding: 0 var(--oc-more-padding-x, 20px);
+    height: var(--oc-more-height-mobile, var(--oc-more-height, 36px));
+    line-height: calc(var(--oc-more-height-mobile, var(--oc-more-height, 36px)) - 4px);
+    font-size: var(--oc-more-font-size-mobile, var(--oc-more-font-size, 16px));
   }
 
   .oc-modal__image {

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.6.0 (2026-10-26)
+
+- **New "Heading" and "More details" button style settings**: heading font size (desktop/mobile), heading top/bottom margins, button text color, background, hover background, border radius, font size (desktop/mobile), height (desktop/mobile) and horizontal padding. Empty values keep the defaults (the theme's h2 style for the heading, the stormoff-style accent pill for the button).
+
 ## 1.5.0 (2026-10-26)
 
 - **New slider design in the style of the "Our clients" block on stormoff.ru**: frameless slides with a full-bleed image, the client name and an accent pill button "More details", bold side arrows. The dots navigation is gone - the arrows cover paging.

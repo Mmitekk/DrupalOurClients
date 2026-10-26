@@ -16,7 +16,7 @@ The slider appearance and all of its content are managed in the module's admin s
 - **Full-featured admin** (Structure » Our clients):
   - Slides list with thumbnails and **drag & drop ordering**
   - Slide form: the **"Media image" field** (collapsed by default so the media list does not take over the form) — pick an existing media item from a thumbnail grid or upload a new file (stored as a media item automatically), client name, description (text format), **reviews** (multi-value field: author name, date, city, 1-5 rating, text — add as many as needed with the "Add review" button), published flag
-  - Settings tab: block heading, visible slides count (desktop / tablet / mobile), autoplay and its interval, **accent color** (pick your theme color so the block blends into the design), plus sizes: slider max width, slide image height (desktop and mobile), client name font size, modal window width
+  - Settings tab: block heading, visible slides count (desktop / tablet / mobile), autoplay and its interval, **accent color** (pick your theme color so the block blends into the design), sizes: slider max width, slide image height (desktop and mobile), client name font size, modal window width, plus **heading size and margins** and **full "More details" button styling** (text color, background, hover background, border radius, font size, height and horizontal padding — desktop and mobile)
 - **Mobile-first responsive behavior** — separate values for the number of visible slides and image height on mobile, touch swipe navigation, compact arrows
 - **Accessible** — carousel ARIA attributes, keyboard arrow navigation, focus trap in the modal, `prefers-reduced-motion` support
 - **Media library and video** — the slide image or video is stored as a media item: no file duplication, one media item can be reused; media types with image, video and oEmbed sources are supported (YouTube, VK and other providers configured on the site); the alt text is managed by the media item
@@ -97,7 +97,7 @@ drush cr
 |---|---|---|
 | Slides | `/admin/structure/our-clients` | Slides list, drag & drop ordering, "Add slide" button, Edit/Delete operations |
 | Slide form | `/admin/structure/our-clients/add` | Media image (library selection or upload), client name, description, reviews (multi-value: author, date, city, rating, text), published flag |
-| Settings | `/admin/structure/our-clients/settings` | Block heading, visible slides (3 breakpoints), autoplay, interval, sizes (slider width, image height, client name size, modal width), accent color |
+| Settings | `/admin/structure/our-clients/settings` | Block heading, visible slides (3 breakpoints), autoplay, interval, sizes (slider width, image height, client name size, modal width), accent color, heading size and margins, "More details" button style (colors, radius, sizes) |
 
 The section is also linked from the admin menu: **Manage » Structure » Our clients**.
 
@@ -114,14 +114,24 @@ The block is styled with CSS variables — override them in your theme without t
   --oc-image-height: 390px;          /* slide image height (also in settings) */
   --oc-image-height-mobile: 200px;   /* image height on mobile (also in settings) */
   --oc-name-size: 24px;              /* client name size (also in settings) */
+  --oc-heading-font-size: inherit;   /* heading font size (also in settings) */
+  --oc-heading-margin-top: 0;        /* heading top margin (also in settings) */
+  --oc-heading-margin-bottom: 32px;  /* heading bottom margin (also in settings) */
+  --oc-more-color: #ff5073;          /* "More details" text color (also in settings) */
+  --oc-more-bg: #ffffff;             /* button background (also in settings) */
+  --oc-more-bg-hover: rgba(255, 80, 115, 0.08); /* hover background (also in settings) */
+  --oc-more-radius: 40px;            /* button corner rounding (also in settings) */
+  --oc-more-font-size: 18px;         /* button font size (also in settings) */
+  --oc-more-height: 40px;            /* button height (also in settings) */
+  --oc-more-padding-x: 24px;         /* button horizontal padding (also in settings) */
   --oc-text: #000000;                /* modal window text */
   --oc-text-muted: #5b6470;          /* descriptions and captions */
-  --oc-bg: #ffffff;                  /* "More details" button and modal background */
+  --oc-bg: #ffffff;                  /* modal background */
   --oc-surface: #f5f7fa;             /* modal image background */
 }
 ```
 
-The block heading is rendered as an `h2` and **inherits the theme's h2 style entirely** (color, font, size) — no separate size settings are needed.
+The block heading is rendered as an `h2` and **by default inherits the theme's h2 style entirely** (color, font, size). The heading size and margins, as well as the "More details" button style, can be overridden in the admin UI (Settings tab » "Heading" and '"More details" button' sections); empty values keep the defaults.
 
 The block wrapper carries the theme layout classes `page-content page-margin-top-middle page-margin-bottom-middle page-padding-top-big page-padding-bottom-middle` — change them in the template if needed. The "More details" button label is translated like any other interface string.
 
@@ -154,6 +164,9 @@ Make sure the **Interface Translation** (`locale`) module is enabled and the int
 
 **On Drupal 9, `composer require drupal/media_library_form_element` fails.**
 That contrib package is **no longer needed** — since 1.3.0 this module does not depend on it (the media selection field is implemented inside the module itself; the only dependency is core `media`). `media_library_form_element` 2.x requires Drupal 10.3+, so Composer refuses to install it on 9.5. Do not install anything extra: just update this module to the latest release (`composer update mmitekk/our-clients` or replace the files manually) and run `drush updb -y && drush cr` — if the old contrib module was enabled, the update detaches it automatically. The module is compatible with Drupal 9.3+ and PHP 7.4.
+
+**After updating the module, the site crashed with «The "paragraph" entity type did not specify a translation handler».**
+This is a known Drupal 9.5/10 core bug (drupal.org issue #3207813, fixed only in Drupal 11): module operations can leave the cache in a corrupted state, which breaks the Paragraphs + Content Translation combination. This module is not the cause — any module operation or cache clear can trigger it. Fix: run `drush cr` (twice if needed). If drush itself crashes with the same error, clear the cache directly in the database: `drush sqlq "TRUNCATE cache_bootstrap; TRUNCATE cache_discovery; TRUNCATE cache_entity; TRUNCATE cache_default; TRUNCATE cache_data;"`, then `drush cr`.
 
 ## License
 

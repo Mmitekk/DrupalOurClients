@@ -20,8 +20,18 @@
  * - image_height, image_height_mobile: Slide image area height in px.
  * - name_font_size: Client name font size in px.
  * - modal_width: Modal window width in px.
+ * - heading_font_size, heading_font_size_mobile: Heading font size in px
+ *   (0 = inherit the theme's h2 style).
+ * - heading_margin_top, heading_margin_bottom: Heading margins in px
+ *   (0 = theme default).
+ * - button_text_color, button_background, button_hover_background: Button
+ *   colors (empty = module default).
+ * - button_border_radius, button_font_size, button_font_size_mobile,
+ *   button_height, button_height_mobile, button_padding_x: Button sizes in
+ *   px (0 = module default).
  *
- * The heading is rendered as an h2 and styled by the active theme.
+ * The heading is rendered as an h2. By default it is styled by the active
+ * theme; the heading_* variables override individual properties.
  *
  * @ingroup themeable
  */
@@ -42,6 +52,45 @@
 {% endif %}
 {% if name_font_size > 0 %}
   {% set oc_styles = oc_styles|merge(['--oc-name-size: ' ~ name_font_size ~ 'px']) %}
+{% endif %}
+{% if heading_font_size > 0 %}
+  {% set oc_styles = oc_styles|merge(['--oc-heading-font-size: ' ~ heading_font_size ~ 'px']) %}
+{% endif %}
+{% if heading_font_size_mobile > 0 %}
+  {% set oc_styles = oc_styles|merge(['--oc-heading-font-size-mobile: ' ~ heading_font_size_mobile ~ 'px']) %}
+{% endif %}
+{% if heading_margin_top > 0 %}
+  {% set oc_styles = oc_styles|merge(['--oc-heading-margin-top: ' ~ heading_margin_top ~ 'px']) %}
+{% endif %}
+{% if heading_margin_bottom > 0 %}
+  {% set oc_styles = oc_styles|merge(['--oc-heading-margin-bottom: ' ~ heading_margin_bottom ~ 'px']) %}
+{% endif %}
+{% if button_text_color %}
+  {% set oc_styles = oc_styles|merge(['--oc-more-color: ' ~ button_text_color]) %}
+{% endif %}
+{% if button_background %}
+  {% set oc_styles = oc_styles|merge(['--oc-more-bg: ' ~ button_background]) %}
+{% endif %}
+{% if button_hover_background %}
+  {% set oc_styles = oc_styles|merge(['--oc-more-bg-hover: ' ~ button_hover_background]) %}
+{% endif %}
+{% if button_border_radius > 0 %}
+  {% set oc_styles = oc_styles|merge(['--oc-more-radius: ' ~ button_border_radius ~ 'px']) %}
+{% endif %}
+{% if button_font_size > 0 %}
+  {% set oc_styles = oc_styles|merge(['--oc-more-font-size: ' ~ button_font_size ~ 'px']) %}
+{% endif %}
+{% if button_font_size_mobile > 0 %}
+  {% set oc_styles = oc_styles|merge(['--oc-more-font-size-mobile: ' ~ button_font_size_mobile ~ 'px']) %}
+{% endif %}
+{% if button_height > 0 %}
+  {% set oc_styles = oc_styles|merge(['--oc-more-height: ' ~ button_height ~ 'px']) %}
+{% endif %}
+{% if button_height_mobile > 0 %}
+  {% set oc_styles = oc_styles|merge(['--oc-more-height-mobile: ' ~ button_height_mobile ~ 'px']) %}
+{% endif %}
+{% if button_padding_x > 0 %}
+  {% set oc_styles = oc_styles|merge(['--oc-more-padding-x: ' ~ button_padding_x ~ 'px']) %}
 {% endif %}
 <div class="our-clients page-content page-margin-top-middle page-margin-bottom-middle page-padding-top-big page-padding-bottom-middle"
   role="region"

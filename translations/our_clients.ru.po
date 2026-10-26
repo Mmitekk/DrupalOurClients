@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: our_clients 1.5.0\n"
+"Project-Id-Version: our_clients 1.6.0\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -234,6 +234,84 @@ msgstr ""
 "скрыть. Техническое название блока также можно изменить в форме размещения "
 "блока."
 
+msgid "Heading"
+msgstr "Заголовок"
+
+msgid "Heading font size (px)"
+msgstr "Размер шрифта заголовка (px)"
+
+msgid "Heading font size on mobile (px)"
+msgstr "Размер шрифта заголовка на мобильном (px)"
+
+msgid ""
+"Font size of the block heading. Leave 0 to inherit the h2 style of the site "
+"theme."
+msgstr ""
+"Размер шрифта заголовка блока. Оставьте 0, чтобы наследовать стиль h2 темы "
+"сайта."
+
+msgid "Heading margin top (px)"
+msgstr "Отступ заголовка сверху (px)"
+
+msgid "Heading margin bottom (px)"
+msgstr "Отступ заголовка снизу (px)"
+
+msgid "Vertical space above the heading. Leave 0 for the theme default."
+msgstr "Отступ над заголовком. Оставьте 0 для значения по умолчанию из темы."
+
+msgid ""
+"Vertical space between the heading and the slider. Leave 0 for the theme "
+"default."
+msgstr ""
+"Отступ между заголовком и слайдером. Оставьте 0 для значения по умолчанию из "
+"темы."
+
+msgid "\"More details\" button"
+msgstr "Кнопка «Подробнее»"
+
+msgid "Button text color"
+msgstr "Цвет текста кнопки"
+
+msgid "Button background"
+msgstr "Фон кнопки"
+
+msgid "Button hover background"
+msgstr "Фон кнопки при наведении"
+
+msgid "Leave empty to use the accent color."
+msgstr "Оставьте пустым, чтобы использовать акцентный цвет."
+
+msgid "Leave empty for white."
+msgstr "Оставьте пустым для белого фона."
+
+msgid "Leave empty for a light tint of the accent color."
+msgstr "Оставьте пустым для лёгкой тонировки акцентным цветом."
+
+msgid "Button border radius (px)"
+msgstr "Скругление кнопки (px)"
+
+msgid "Corner rounding of the button. 0 keeps the default pill shape."
+msgstr "Скругление углов кнопки. 0 оставляет форму таблетки по умолчанию."
+
+msgid "Button font size (px)"
+msgstr "Размер шрифта кнопки (px)"
+
+msgid "Button font size on mobile (px)"
+msgstr "Размер шрифта кнопки на мобильном (px)"
+
+msgid "Button height (px)"
+msgstr "Высота кнопки (px)"
+
+msgid "Button height on mobile (px)"
+msgstr "Высота кнопки на мобильном (px)"
+
+msgid "Button horizontal padding (px)"
+msgstr "Горизонтальный отступ кнопки (px)"
+
+msgid "Enter a hexadecimal color like #ff5073, or leave empty."
+msgstr ""
+"Введите шестнадцатеричный цвет, например #ff5073, или оставьте поле пустым."
+
 msgid "Slider"
 msgstr "Слайдер"
 
@@ -356,11 +434,13 @@ msgstr ""
 "href=\":slides\">Наши клиенты</a>."
 
 msgid ""
-"The block heading, the number of visible slides, autoplay and the accent "
-"color are configured on the <a href=\":settings\">Settings</a> tab."
+"The block heading, the number of visible slides, autoplay, the accent color "
+"and the \"More details\" button style are configured on the <a "
+"href=\":settings\">Settings</a> tab."
 msgstr ""
-"Заголовок блока, количество видимых слайдов, автопрокрутка и акцентный цвет "
-"настраиваются на вкладке <a href=\":settings\">Настройки</a>."
+"Заголовок блока, количество видимых слайдов, автопрокрутка, акцентный цвет "
+"и стиль кнопки «Подробнее» настраиваются на вкладке <a "
+"href=\":settings\">Настройки</a>."
 
 msgid "Placing the block"
 msgstr "Размещение блока"

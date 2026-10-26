@@ -45,6 +45,139 @@ class SettingsForm extends ConfigFormBase {
       '#description' => $this->t('The heading displayed above the slider. Leave empty to hide it. The technical block title can also be changed on the block placement form.'),
     ];
 
+    $form['heading_style'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Heading'),
+      '#open' => TRUE,
+    ];
+
+    $form['heading_style']['heading_font_size'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Heading font size (px)'),
+      '#default_value' => $config->get('heading_font_size'),
+      '#min' => 0,
+      '#max' => 100,
+      '#field_suffix' => 'px',
+      '#description' => $this->t('Font size of the block heading. Leave 0 to inherit the h2 style of the site theme.'),
+    ];
+
+    $form['heading_style']['heading_font_size_mobile'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Heading font size on mobile (px)'),
+      '#default_value' => $config->get('heading_font_size_mobile'),
+      '#min' => 0,
+      '#max' => 100,
+      '#field_suffix' => 'px',
+    ];
+
+    $form['heading_style']['heading_margin_top'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Heading margin top (px)'),
+      '#default_value' => $config->get('heading_margin_top'),
+      '#min' => 0,
+      '#max' => 200,
+      '#field_suffix' => 'px',
+      '#description' => $this->t('Vertical space above the heading. Leave 0 for the theme default.'),
+    ];
+
+    $form['heading_style']['heading_margin_bottom'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Heading margin bottom (px)'),
+      '#default_value' => $config->get('heading_margin_bottom'),
+      '#min' => 0,
+      '#max' => 200,
+      '#field_suffix' => 'px',
+      '#description' => $this->t('Vertical space between the heading and the slider. Leave 0 for the theme default.'),
+    ];
+
+    $form['button'] = [
+      '#type' => 'details',
+      '#title' => $this->t('"More details" button'),
+      '#open' => TRUE,
+    ];
+
+    $form['button']['button_text_color'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Button text color'),
+      '#default_value' => $config->get('button_text_color'),
+      '#maxlength' => 7,
+      '#placeholder' => '#ff5073',
+      '#description' => $this->t('Leave empty to use the accent color.'),
+    ];
+
+    $form['button']['button_background'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Button background'),
+      '#default_value' => $config->get('button_background'),
+      '#maxlength' => 7,
+      '#placeholder' => '#ffffff',
+      '#description' => $this->t('Leave empty for white.'),
+    ];
+
+    $form['button']['button_hover_background'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Button hover background'),
+      '#default_value' => $config->get('button_hover_background'),
+      '#maxlength' => 7,
+      '#placeholder' => '#ff5073',
+      '#description' => $this->t('Leave empty for a light tint of the accent color.'),
+    ];
+
+    $form['button']['button_border_radius'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Button border radius (px)'),
+      '#default_value' => $config->get('button_border_radius'),
+      '#min' => 0,
+      '#max' => 100,
+      '#field_suffix' => 'px',
+      '#description' => $this->t('Corner rounding of the button. 0 keeps the default pill shape.'),
+    ];
+
+    $form['button']['button_font_size'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Button font size (px)'),
+      '#default_value' => $config->get('button_font_size'),
+      '#min' => 0,
+      '#max' => 40,
+      '#field_suffix' => 'px',
+    ];
+
+    $form['button']['button_font_size_mobile'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Button font size on mobile (px)'),
+      '#default_value' => $config->get('button_font_size_mobile'),
+      '#min' => 0,
+      '#max' => 40,
+      '#field_suffix' => 'px',
+    ];
+
+    $form['button']['button_height'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Button height (px)'),
+      '#default_value' => $config->get('button_height'),
+      '#min' => 0,
+      '#max' => 100,
+      '#field_suffix' => 'px',
+    ];
+
+    $form['button']['button_height_mobile'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Button height on mobile (px)'),
+      '#default_value' => $config->get('button_height_mobile'),
+      '#min' => 0,
+      '#max' => 100,
+      '#field_suffix' => 'px',
+    ];
+
+    $form['button']['button_padding_x'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Button horizontal padding (px)'),
+      '#default_value' => $config->get('button_padding_x'),
+      '#min' => 0,
+      '#max' => 100,
+      '#field_suffix' => 'px',
+    ];
+
     $form['slider'] = [
       '#type' => 'details',
       '#title' => $this->t('Slider'),
@@ -167,7 +300,31 @@ class SettingsForm extends ConfigFormBase {
     if ((int) $form_state->getValue('autoplay_speed') < 1000) {
       $form_state->setErrorByName('autoplay_speed', $this->t('The autoplay interval must be at least 1000 ms.'));
     }
+    foreach (['button_text_color', 'button_background', 'button_hover_background'] as $key) {
+      $value = trim((string) $form_state->getValue($key));
+      if ($value !== '' && !preg_match('/^#?[0-9a-fA-F]{3}([0-9a-fA-F]{3})?$/', $value)) {
+        $form_state->setErrorByName($key, $this->t('Enter a hexadecimal color like #ff5073, or leave empty.'));
+      }
+    }
     parent::validateForm($form, $form_state);
+  }
+
+  /**
+   * Normalizes an optional hex color: lowercase, leading #, empty stays empty.
+   *
+   * @param mixed $value
+   *   The submitted value.
+   *
+   * @return string
+   *   The normalized hex color or an empty string.
+   */
+  protected function normalizeHexColor($value) {
+    $value = trim((string) $value);
+    if ($value === '') {
+      return '';
+    }
+    $value = ltrim($value, '#');
+    return '#' . strtolower($value);
   }
 
   /**
@@ -176,6 +333,19 @@ class SettingsForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->config(static::SETTINGS)
       ->set('heading', (string) $form_state->getValue('heading'))
+      ->set('heading_font_size', (int) $form_state->getValue('heading_font_size'))
+      ->set('heading_font_size_mobile', (int) $form_state->getValue('heading_font_size_mobile'))
+      ->set('heading_margin_top', (int) $form_state->getValue('heading_margin_top'))
+      ->set('heading_margin_bottom', (int) $form_state->getValue('heading_margin_bottom'))
+      ->set('button_text_color', $this->normalizeHexColor($form_state->getValue('button_text_color')))
+      ->set('button_background', $this->normalizeHexColor($form_state->getValue('button_background')))
+      ->set('button_hover_background', $this->normalizeHexColor($form_state->getValue('button_hover_background')))
+      ->set('button_border_radius', (int) $form_state->getValue('button_border_radius'))
+      ->set('button_font_size', (int) $form_state->getValue('button_font_size'))
+      ->set('button_font_size_mobile', (int) $form_state->getValue('button_font_size_mobile'))
+      ->set('button_height', (int) $form_state->getValue('button_height'))
+      ->set('button_height_mobile', (int) $form_state->getValue('button_height_mobile'))
+      ->set('button_padding_x', (int) $form_state->getValue('button_padding_x'))
       ->set('visible_desktop', (int) $form_state->getValue('visible_desktop'))
       ->set('visible_tablet', (int) $form_state->getValue('visible_tablet'))
       ->set('visible_mobile', (int) $form_state->getValue('visible_mobile'))

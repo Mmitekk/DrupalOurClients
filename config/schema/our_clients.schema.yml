@@ -5,6 +5,45 @@ our_clients.settings:
     heading:
       type: label
       label: 'Block heading'
+    heading_font_size:
+      type: integer
+      label: 'Heading font size (px)'
+    heading_font_size_mobile:
+      type: integer
+      label: 'Heading font size on mobile (px)'
+    heading_margin_top:
+      type: integer
+      label: 'Heading margin top (px)'
+    heading_margin_bottom:
+      type: integer
+      label: 'Heading margin bottom (px)'
+    button_text_color:
+      type: string
+      label: 'Button text color'
+    button_background:
+      type: string
+      label: 'Button background'
+    button_hover_background:
+      type: string
+      label: 'Button hover background'
+    button_border_radius:
+      type: integer
+      label: 'Button border radius (px)'
+    button_font_size:
+      type: integer
+      label: 'Button font size (px)'
+    button_font_size_mobile:
+      type: integer
+      label: 'Button font size on mobile (px)'
+    button_height:
+      type: integer
+      label: 'Button height (px)'
+    button_height_mobile:
+      type: integer
+      label: 'Button height on mobile (px)'
+    button_padding_x:
+      type: integer
+      label: 'Button horizontal padding (px)'
     visible_desktop:
       type: integer
       label: 'Visible slides on desktop'
