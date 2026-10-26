@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.7.1 (2026-10-26)
+
+- **New "Button border color" setting** (Settings tab » '"More details" button'): controls the button border, the slide focus outline, the arrows on hover and the default hover background tint. Leave empty to follow the button text color. This makes the remaining accent-colored outlines directly adjustable instead of being derived from the text color.
+
 ## 1.7.0 (2026-10-26)
 
 - **The vague "Accent color" setting is gone.** It is replaced by understandable per-element colors: the **button text color** (also used for the button border, the slide focus outline and the arrows on hover), a separate **button text color on hover** and the **review color** (stars, left border and background tint of the reviews in the modal window, plus the close button on hover). `our_clients_post_update_remove_accent_color()` clears the old config key on update.

@@ -102,7 +102,7 @@ class SettingsForm extends ConfigFormBase {
       '#default_value' => $config->get('button_text_color'),
       '#maxlength' => 7,
       '#placeholder' => '#ff5073',
-      '#description' => $this->t('Leave empty for the default (#ff5073). Also used for the button border, the slide focus outline and the arrows on hover.'),
+      '#description' => $this->t('Leave empty for the default (#ff5073). By default the button border, the focus outline and the arrows on hover use this color as well.'),
     ];
 
     $form['button']['button_hover_text_color'] = [
@@ -112,6 +112,15 @@ class SettingsForm extends ConfigFormBase {
       '#maxlength' => 7,
       '#placeholder' => '#ffffff',
       '#description' => $this->t('Leave empty to keep the normal button text color.'),
+    ];
+
+    $form['button']['button_border_color'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Button border color'),
+      '#default_value' => $config->get('button_border_color'),
+      '#maxlength' => 7,
+      '#placeholder' => '#ff5073',
+      '#description' => $this->t('The button border, the slide focus outline, the arrows on hover and the default hover background tint. Leave empty to follow the button text color.'),
     ];
 
     $form['button']['button_background'] = [
@@ -331,7 +340,7 @@ class SettingsForm extends ConfigFormBase {
     if ((int) $form_state->getValue('autoplay_speed') < 1000) {
       $form_state->setErrorByName('autoplay_speed', $this->t('The autoplay interval must be at least 1000 ms.'));
     }
-    foreach (['button_text_color', 'button_hover_text_color', 'button_background', 'button_hover_background', 'review_color'] as $key) {
+    foreach (['button_text_color', 'button_hover_text_color', 'button_border_color', 'button_background', 'button_hover_background', 'review_color'] as $key) {
       $value = trim((string) $form_state->getValue($key));
       if ($value !== '' && !preg_match('/^#?[0-9a-fA-F]{3}([0-9a-fA-F]{3})?$/', $value)) {
         $form_state->setErrorByName($key, $this->t('Enter a hexadecimal color like #ff5073, or leave empty.'));
@@ -370,6 +379,7 @@ class SettingsForm extends ConfigFormBase {
       ->set('heading_margin_bottom', (int) $form_state->getValue('heading_margin_bottom'))
       ->set('button_text_color', $this->normalizeHexColor($form_state->getValue('button_text_color')))
       ->set('button_hover_text_color', $this->normalizeHexColor($form_state->getValue('button_hover_text_color')))
+      ->set('button_border_color', $this->normalizeHexColor($form_state->getValue('button_border_color')))
       ->set('button_background', $this->normalizeHexColor($form_state->getValue('button_background')))
       ->set('button_hover_background', $this->normalizeHexColor($form_state->getValue('button_hover_background')))
       ->set('button_border_radius', (int) $form_state->getValue('button_border_radius'))

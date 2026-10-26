@@ -16,7 +16,7 @@ The slider appearance and all of its content are managed in the module's admin s
 - **Full-featured admin** (Structure » Our clients):
   - Slides list with thumbnails and **drag & drop ordering**
   - Slide form: the **"Media image" field** (collapsed by default so the media list does not take over the form) — pick an existing media item from a thumbnail grid or upload a new file (stored as a media item automatically), client name, description (text format), **reviews** (multi-value field: author name, date, city, 1-5 rating, text — add as many as needed with the "Add review" button), published flag
-  - Settings tab: block heading, visible slides count (desktop / tablet / mobile), autoplay and its interval, sizes: slider max width, slide image height (desktop and mobile), client name font size and **margins around it**, modal window width, plus **heading size and margins**, **full "More details" button styling** (text color, hover text color, background, hover background, border radius, font size, height and horizontal padding — desktop and mobile) and the **review color** (stars, border and background of the reviews in the modal window)
+  - Settings tab: block heading, visible slides count (desktop / tablet / mobile), autoplay and its interval, sizes: slider max width, slide image height (desktop and mobile), client name font size and **margins around it**, modal window width, plus **heading size and margins**, **full "More details" button styling** (text color, hover text color, border color, background, hover background, border radius, font size, height and horizontal padding — desktop and mobile) and the **review color** (stars, border and background of the reviews in the modal window)
 - **Mobile-first responsive behavior** — separate values for the number of visible slides and image height on mobile, touch swipe navigation, compact arrows
 - **Accessible** — carousel ARIA attributes, keyboard arrow navigation, focus trap in the modal, `prefers-reduced-motion` support
 - **Media library and video** — the slide image or video is stored as a media item: no file duplication, one media item can be reused; media types with image, video and oEmbed sources are supported (YouTube, VK and other providers configured on the site); the alt text is managed by the media item
@@ -97,7 +97,7 @@ drush cr
 |---|---|---|
 | Slides | `/admin/structure/our-clients` | Slides list, drag & drop ordering, "Add slide" button, Edit/Delete operations |
 | Slide form | `/admin/structure/our-clients/add` | Media image (library selection or upload), client name, description, reviews (multi-value: author, date, city, rating, text), published flag |
-| Settings | `/admin/structure/our-clients/settings` | Block heading, visible slides (3 breakpoints), autoplay, interval, sizes (slider width, image height, client name size and margins, modal width), heading size and margins, "More details" button style (text and hover colors, background, radius, sizes), review color |
+| Settings | `/admin/structure/our-clients/settings` | Block heading, visible slides (3 breakpoints), autoplay, interval, sizes (slider width, image height, client name size and margins, modal width), heading size and margins, "More details" button style (text, hover and border colors, background, radius, sizes), review color |
 
 The section is also linked from the admin menu: **Manage » Structure » Our clients**.
 
@@ -120,6 +120,7 @@ The block is styled with CSS variables — override them in your theme without t
   --oc-heading-margin-bottom: 32px;  /* heading bottom margin (also in settings) */
   --oc-more-color: #ff5073;          /* "More details" text color (also in settings) */
   --oc-more-hover-color: #ff5073;    /* text color on hover (also in settings) */
+  --oc-more-border: #ff5073;         /* button border, focus outline, arrows (also in settings) */
   --oc-more-bg: #ffffff;             /* button background (also in settings) */
   --oc-more-bg-hover: rgba(255, 80, 115, 0.08); /* hover background (also in settings) */
   --oc-more-radius: 40px;            /* button corner rounding (also in settings) */

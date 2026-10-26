@@ -135,6 +135,7 @@ class OurClientsBlock extends BlockBase {
       '#heading_margin_bottom' => (int) $settings->get('heading_margin_bottom'),
       '#button_text_color' => (string) $settings->get('button_text_color'),
       '#button_hover_text_color' => (string) $settings->get('button_hover_text_color'),
+      '#button_border_color' => (string) $settings->get('button_border_color'),
       '#button_background' => (string) $settings->get('button_background'),
       '#button_hover_background' => (string) $settings->get('button_hover_background'),
       '#button_border_radius' => (int) $settings->get('button_border_radius'),

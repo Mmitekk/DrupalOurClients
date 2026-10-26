@@ -26,8 +26,9 @@
  *   (0 = inherit the theme's h2 style).
  * - heading_margin_top, heading_margin_bottom: Heading margins in px
  *   (0 = theme default).
- * - button_text_color, button_hover_text_color, button_background,
- *   button_hover_background: Button colors (empty = module default).
+ * - button_text_color, button_hover_text_color, button_border_color,
+ *   button_background, button_hover_background: Button colors (empty =
+ *   module default).
  * - button_border_radius, button_font_size, button_font_size_mobile,
  *   button_height, button_height_mobile, button_padding_x: Button sizes in
  *   px (0 = module default).
@@ -78,6 +79,9 @@
 {% endif %}
 {% if button_hover_text_color %}
   {% set oc_styles = oc_styles|merge(['--oc-more-hover-color: ' ~ button_hover_text_color]) %}
+{% endif %}
+{% if button_border_color %}
+  {% set oc_styles = oc_styles|merge(['--oc-more-border: ' ~ button_border_color]) %}
 {% endif %}
 {% if button_background %}
   {% set oc_styles = oc_styles|merge(['--oc-more-bg: ' ~ button_background]) %}
