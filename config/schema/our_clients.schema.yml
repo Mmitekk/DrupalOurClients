@@ -23,12 +23,6 @@ our_clients.settings:
     slider_max_width:
       type: integer
       label: 'Slider maximum width (px)'
-    heading_font_size:
-      type: integer
-      label: 'Heading font size (px)'
-    heading_font_size_mobile:
-      type: integer
-      label: 'Heading font size on mobile (px)'
     image_height:
       type: integer
       label: 'Slide image height (px)'

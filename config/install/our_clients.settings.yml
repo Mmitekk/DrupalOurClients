@@ -9,10 +9,8 @@ visible_mobile: 1
 autoplay: true
 autoplay_speed: 4000
 slider_max_width: 1200
-heading_font_size: 28
-heading_font_size_mobile: 22
-image_height: 130
-image_height_mobile: 100
-name_font_size: 14
+image_height: 390
+image_height_mobile: 200
+name_font_size: 24
 modal_width: 760
-accent_color: '#006ab1'
+accent_color: '#ff5073'

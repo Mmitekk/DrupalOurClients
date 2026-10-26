@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.5.0 (2026-10-26)
+
+- **New slider design in the style of the "Our clients" block on stormoff.ru**: frameless slides with a full-bleed image, the client name and an accent pill button "More details", bold side arrows. The dots navigation is gone - the arrows cover paging.
+- **The block heading is rendered as an `h2` and inherits the theme's h2 style entirely** (color, font, size) - the separate heading font size settings are removed and their config keys are cleared on update.
+- The block wrapper carries the theme layout classes `page-content page-margin-top-middle page-margin-bottom-middle page-padding-top-big page-padding-bottom-middle` (edit the template to change them).
+- **The "Media image" field of the slide form is collapsed by default** - the media list no longer takes over the form; it opens automatically when the field fails validation.
+- New appearance defaults: accent color `#ff5073`, image height 390px (200px mobile), client name 24px. `our_clients_post_update_refresh_default_appearance()` applies them to sites that never changed the old defaults.
+- The bundled Russian translation is re-imported automatically on module update (versioned import state).
+
 ## 1.4.0 (2026-10-24)
 
 - **Reviews are now a separate entity with a multi-value field on the slide.** Each review holds: author name, review date, city, a 1-5 star rating and the text. Add as many reviews as needed right in the slide form ("Add review" button), edit and delete them individually.

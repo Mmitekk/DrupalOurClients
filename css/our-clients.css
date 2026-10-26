@@ -1,26 +1,27 @@
 /**
  * @file
  * Styles for the Our clients slider block and modal window.
+ *
+ * The slider design follows the "Our clients" block of the Stormoff site:
+ * the heading inherits the theme's h2 style, frameless photo cards with the
+ * client name and an accent pill button, bold side arrows.
  */
 
 .our-clients {
-  --oc-accent: #006ab1;
+  --oc-accent: #ff5073;
   --oc-accent-contrast: #ffffff;
-  --oc-text: #1a171b;
+  --oc-text: #000000;
   --oc-text-muted: #5b6470;
   --oc-bg: #ffffff;
   --oc-surface: #f5f7fa;
-  --oc-border: #e3e8ef;
-  --oc-radius: 16px;
-  --oc-shadow: 0 10px 30px rgba(26, 23, 27, 0.08);
   --oc-max-width: 1200px;
-  --oc-heading-size: 28px;
-  --oc-heading-size-mobile: 22px;
-  --oc-image-height: 130px;
-  --oc-image-height-mobile: 100px;
-  --oc-name-size: 14px;
+  --oc-image-height: 390px;
+  --oc-image-height-mobile: 200px;
+  --oc-name-size: 24px;
   position: relative;
+  box-sizing: border-box;
   max-width: var(--oc-max-width);
+  margin-inline: auto;
 }
 
 /* --------------------------------------------------------------------- */
@@ -30,15 +31,13 @@
 .our-clients__header {
   display: flex;
   align-items: baseline;
-  justify-content: space-between;
-  margin-bottom: 20px;
+  justify-content: flex-start;
+  margin-bottom: 32px;
 }
 
+/* The heading inherits the theme's h2 style entirely. */
 .our-clients__heading {
   margin: 0;
-  color: var(--oc-text);
-  font-size: var(--oc-heading-size);
-  line-height: 1.2;
 }
 
 .our-clients__frame {
@@ -47,8 +46,7 @@
 
 .our-clients__viewport {
   overflow: hidden;
-  margin: 0 -10px;
-  padding: 4px 0;
+  margin: 0 -15px;
   touch-action: pan-y;
   cursor: grab;
 }
@@ -75,34 +73,28 @@
   flex: 0 0 auto;
   min-width: 0;
   box-sizing: border-box;
-  padding: 0 10px;
+  padding: 0 15px;
 }
 
 .our-clients__trigger {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 10px;
+  align-items: stretch;
   width: 100%;
   height: 100%;
-  padding: 22px 18px;
+  padding: 0;
   box-sizing: border-box;
   font: inherit;
   color: inherit;
-  background: var(--oc-bg);
-  border: 1px solid var(--oc-border);
-  border-radius: var(--oc-radius);
-  box-shadow: none;
+  text-align: left;
+  background: none;
+  border: 0;
   cursor: pointer;
-  transition: box-shadow 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
 }
 
-.our-clients__trigger:hover,
 .our-clients__trigger:focus-visible {
-  border-color: var(--oc-accent);
-  box-shadow: var(--oc-shadow);
-  transform: translateY(-2px);
-  outline: none;
+  outline: 2px solid var(--oc-accent);
+  outline-offset: 4px;
 }
 
 .our-clients__figure {
@@ -111,93 +103,88 @@
   justify-content: center;
   width: 100%;
   height: var(--oc-image-height);
+  overflow: hidden;
 }
 
 .our-clients__figure img {
-  max-width: 100%;
-  max-height: 100%;
-  width: auto;
-  height: auto;
-  object-fit: contain;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.our-clients__trigger:hover .our-clients__figure img {
+  transform: scale(1.03);
 }
 
 .our-clients__name {
-  color: var(--oc-text-muted);
+  margin-top: 15px;
   font-size: var(--oc-name-size);
-  line-height: 1.3;
+  line-height: 1.25;
+}
+
+.our-clients__more {
+  align-self: flex-start;
+  margin-top: 12px;
+  padding: 0 24px;
+  height: 40px;
+  line-height: 36px;
+  box-sizing: border-box;
+  color: var(--oc-accent);
+  background: var(--oc-bg);
+  border: 2px solid color-mix(in srgb, var(--oc-accent) 50%, #ffffff);
+  border-radius: 40px;
+  font-size: 18px;
+  font-weight: 500;
   text-align: center;
+  transition: background 0.2s ease-in-out;
+}
+
+.our-clients__trigger:hover .our-clients__more {
+  background: color-mix(in srgb, var(--oc-accent) 8%, #ffffff);
 }
 
 .our-clients__arrow {
   position: absolute;
-  top: 50%;
+  top: calc(var(--oc-image-height) * 0.5);
   z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 36px;
+  height: 50px;
   padding: 0;
-  color: var(--oc-text);
-  background: var(--oc-bg);
-  border: 1px solid var(--oc-border);
-  border-radius: 50%;
-  box-shadow: 0 4px 14px rgba(26, 23, 27, 0.1);
+  color: inherit;
+  background: none;
+  border: 0;
   cursor: pointer;
   transform: translateY(-50%);
-  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease, opacity 0.2s ease;
+  transition: color 0.2s ease;
+}
+
+.our-clients__arrow svg {
+  width: 32px;
+  height: 32px;
 }
 
 .our-clients__arrow--prev {
-  left: -14px;
+  left: -25px;
 }
 
 .our-clients__arrow--next {
-  right: -14px;
+  right: -40px;
 }
 
 .our-clients__arrow:hover {
-  color: var(--oc-accent-contrast);
-  background: var(--oc-accent);
-  border-color: var(--oc-accent);
+  color: var(--oc-accent);
 }
 
 .our-clients__arrow:disabled {
-  opacity: 0.35;
-  cursor: default;
-  pointer-events: none;
+  visibility: hidden;
 }
 
-.our-clients__footer {
-  display: flex;
-  justify-content: center;
-  margin-top: 18px;
-}
-
-.our-clients__dots {
-  display: flex;
-  gap: 8px;
-}
-
-.our-clients__dot {
-  width: 9px;
-  height: 9px;
-  padding: 0;
-  background: var(--oc-border);
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: background 0.2s ease, transform 0.2s ease;
-}
-
-.our-clients__dot.is-active {
-  background: var(--oc-accent);
-  transform: scale(1.15);
-}
-
-/* Nothing to scroll: hide arrows and dots. */
-.our-clients.is-static .our-clients__arrow,
-.our-clients.is-static .our-clients__footer {
+/* Nothing to scroll: hide the arrows. */
+.our-clients.is-static .our-clients__arrow {
   display: none;
 }
 
@@ -276,7 +263,7 @@ body.oc-modal-open {
 }
 
 .oc-modal__close:hover {
-  background: var(--oc-accent, #006ab1);
+  background: var(--oc-accent, #ff5073);
 }
 
 .oc-modal__image {
@@ -319,7 +306,7 @@ body.oc-modal-open {
 
 .oc-modal__body {
   padding: 22px 28px 30px;
-  color: var(--oc-text, #1a171b);
+  color: var(--oc-text, #000000);
 }
 
 .oc-modal__title {
@@ -352,10 +339,10 @@ body.oc-modal-open {
   margin: 0;
   padding: 16px 20px;
   background: #eef5fb;
-  background: color-mix(in srgb, var(--oc-accent, #006ab1) 7%, #ffffff);
-  border-left: 4px solid var(--oc-accent, #006ab1);
+  background: color-mix(in srgb, var(--oc-accent, #ff5073) 7%, #ffffff);
+  border-left: 4px solid var(--oc-accent, #ff5073);
   border-radius: 0 12px 12px 0;
-  color: var(--oc-text, #1a171b);
+  color: var(--oc-text, #000000);
   font-size: 0.95em;
 }
 
@@ -367,7 +354,7 @@ body.oc-modal-open {
 }
 
 .oc-modal__review-stars {
-  color: var(--oc-accent, #006ab1);
+  color: var(--oc-accent, #ff5073);
   font-size: 1.05em;
   letter-spacing: 2px;
 }
@@ -393,7 +380,7 @@ body.oc-modal-open {
 
 .oc-modal__review-author {
   font-weight: 600;
-  color: var(--oc-text, #1a171b);
+  color: var(--oc-text, #000000);
 }
 
 .oc-modal__review-author::before {
@@ -417,9 +404,31 @@ img.our-clients-admin-thumb {
 /* Responsive and accessibility                                          */
 /* --------------------------------------------------------------------- */
 
+@media (max-width: 991px) {
+  .our-clients__figure {
+    height: min(var(--oc-image-height), 280px);
+  }
+
+  .our-clients__arrow {
+    top: calc(min(var(--oc-image-height), 280px) * 0.5);
+  }
+
+  .our-clients__name {
+    font-size: min(var(--oc-name-size), 20px);
+  }
+}
+
 @media (max-width: 575px) {
-  .our-clients__heading {
-    font-size: var(--oc-heading-size-mobile);
+  .our-clients__header {
+    margin-bottom: 24px;
+  }
+
+  .our-clients__viewport {
+    margin: 0 -20px;
+  }
+
+  .our-clients__slide {
+    padding: 0 20px;
   }
 
   .our-clients__figure {
@@ -427,16 +436,34 @@ img.our-clients-admin-thumb {
   }
 
   .our-clients__arrow {
-    width: 38px;
-    height: 38px;
+    top: calc(var(--oc-image-height-mobile) * 0.5);
+    width: 40px;
+  }
+
+  .our-clients__arrow svg {
+    width: 26px;
+    height: 26px;
   }
 
   .our-clients__arrow--prev {
-    left: 6px;
+    left: 0;
   }
 
   .our-clients__arrow--next {
-    right: 6px;
+    right: -20px;
+  }
+
+  .our-clients__name {
+    margin-top: 10px;
+    font-size: min(var(--oc-name-size), 17px);
+  }
+
+  .our-clients__more {
+    margin-top: 10px;
+    padding: 0 20px;
+    height: 36px;
+    line-height: 32px;
+    font-size: 16px;
   }
 
   .oc-modal__image {
@@ -450,7 +477,7 @@ img.our-clients-admin-thumb {
 
 @media (prefers-reduced-motion: reduce) {
   .our-clients__track,
-  .our-clients__trigger,
+  .our-clients__figure img,
   .our-clients__arrow,
   .oc-modal__overlay,
   .oc-modal__window {

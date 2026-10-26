@@ -123,8 +123,6 @@ class OurClientsBlock extends BlockBase {
       '#visible_tablet' => (int) $settings->get('visible_tablet'),
       '#visible_mobile' => (int) $settings->get('visible_mobile'),
       '#slider_max_width' => (int) $settings->get('slider_max_width'),
-      '#heading_font_size' => (int) $settings->get('heading_font_size'),
-      '#heading_font_size_mobile' => (int) $settings->get('heading_font_size_mobile'),
       '#image_height' => (int) $settings->get('image_height'),
       '#image_height_mobile' => (int) $settings->get('image_height_mobile'),
       '#name_font_size' => (int) $settings->get('name_font_size'),

@@ -51,10 +51,12 @@ class SlideForm extends EntityForm {
 
     // Self-contained media field: pick an existing media item from the grid
     // or upload a new image. Requires nothing but the core media module.
+    // Collapsed by default so the media list does not take over the form.
     $form['media_image'] = [
-      '#type' => 'fieldset',
+      '#type' => 'details',
       '#title' => $this->t('Media image'),
       '#tree' => TRUE,
+      '#open' => FALSE,
       '#description' => $this->t('Select an existing media item or upload a new image. Images are shown in the slider and enlarged in the modal window; videos show an automatic preview in the slider and are played in the modal window.'),
     ];
 
@@ -253,6 +255,7 @@ class SlideForm extends EntityForm {
     $selected = isset($fieldset['existing']) ? (int) $fieldset['existing'] : 0;
 
     if (!$upload && !$selected && $this->entity->isNew()) {
+      $form['media_image']['#open'] = TRUE;
       $form_state->setErrorByName('media_image', $this->t('Add an image: select one from the media library or upload a new one.'));
     }
 

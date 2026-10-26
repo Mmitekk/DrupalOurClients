@@ -11,16 +11,17 @@
  *   - slider_image_url: URL of the scaled slider image.
  *   - modal_image_url: URL of the larger modal image.
  *   - description: Render array with the description.
- *   - review: Render array with the client review.
+ *   - reviews: Render array with the client reviews.
  * - accent_color: Hex accent color, empty to use the CSS default.
  * - autoplay: Whether autoplay is enabled.
  * - autoplay_speed: Autoplay interval in milliseconds.
  * - visible_desktop, visible_tablet, visible_mobile: Slides per view.
  * - slider_max_width: Maximum slider width in px (0 = unlimited).
- * - heading_font_size, heading_font_size_mobile: Heading font size in px.
  * - image_height, image_height_mobile: Slide image area height in px.
  * - name_font_size: Client name font size in px.
  * - modal_width: Modal window width in px.
+ *
+ * The heading is rendered as an h2 and styled by the active theme.
  *
  * @ingroup themeable
  */
@@ -33,12 +34,6 @@
 {% if slider_max_width > 0 %}
   {% set oc_styles = oc_styles|merge(['--oc-max-width: ' ~ slider_max_width ~ 'px']) %}
 {% endif %}
-{% if heading_font_size > 0 %}
-  {% set oc_styles = oc_styles|merge(['--oc-heading-size: ' ~ heading_font_size ~ 'px']) %}
-{% endif %}
-{% if heading_font_size_mobile > 0 %}
-  {% set oc_styles = oc_styles|merge(['--oc-heading-size-mobile: ' ~ heading_font_size_mobile ~ 'px']) %}
-{% endif %}
 {% if image_height > 0 %}
   {% set oc_styles = oc_styles|merge(['--oc-image-height: ' ~ image_height ~ 'px']) %}
 {% endif %}
@@ -48,7 +43,7 @@
 {% if name_font_size > 0 %}
   {% set oc_styles = oc_styles|merge(['--oc-name-size: ' ~ name_font_size ~ 'px']) %}
 {% endif %}
-<div class="our-clients"
+<div class="our-clients page-content page-margin-top-middle page-margin-bottom-middle page-padding-top-big page-padding-bottom-middle"
   role="region"
   aria-roledescription="carousel"
   aria-label="{{ heading|default('Our clients') }}"
@@ -69,7 +64,7 @@
 
   <div class="our-clients__frame">
     <button type="button" class="our-clients__arrow our-clients__arrow--prev" data-oc-prev aria-label="{{ 'Previous slides'|t }}">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </button>
 
     <div class="our-clients__viewport" data-oc-viewport>
@@ -83,6 +78,7 @@
               {% if slide.title %}
                 <span class="our-clients__name">{{ slide.title }}</span>
               {% endif %}
+              <span class="our-clients__more">{{ 'More details'|t }}</span>
             </button>
 
             <div class="our-clients__modal-source" data-oc-modal-source hidden>
@@ -132,11 +128,7 @@
     </div>
 
     <button type="button" class="our-clients__arrow our-clients__arrow--next" data-oc-next aria-label="{{ 'Next slides'|t }}">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </button>
-  </div>
-
-  <div class="our-clients__footer">
-    <div class="our-clients__dots" data-oc-dots></div>
   </div>
 </div>

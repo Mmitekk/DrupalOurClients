@@ -106,3 +106,28 @@ function our_clients_post_update_reviews_to_entity(array &$sandbox = NULL) {
     $config->set('reviews', [$review->id()])->clear('review')->save();
   }
 }
+
+/**
+ * Refreshes the default appearance values (Stormoff-style slider design).
+ *
+ * Settings that still hold the 1.4.0 defaults are updated to the new design
+ * defaults; values customized by the site owner are left untouched.
+ */
+function our_clients_post_update_refresh_default_appearance(array &$sandbox = NULL) {
+  $config = \Drupal::configFactory()->getEditable('our_clients.settings');
+  $defaults = [
+    'image_height' => ['old' => 130, 'new' => 390],
+    'image_height_mobile' => ['old' => 100, 'new' => 200],
+    'name_font_size' => ['old' => 14, 'new' => 24],
+    'accent_color' => ['old' => '#006ab1', 'new' => '#ff5073'],
+  ];
+  foreach ($defaults as $key => $values) {
+    if ($config->get($key) === $values['old']) {
+      $config->set($key, $values['new']);
+    }
+  }
+  // The heading size settings are gone: the heading now inherits the theme's
+  // h2 style entirely.
+  $config->clear('heading_font_size')->clear('heading_font_size_mobile');
+  $config->save();
+}

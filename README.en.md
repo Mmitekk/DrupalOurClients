@@ -11,13 +11,13 @@ The slider appearance and all of its content are managed in the module's admin s
 ## Features
 
 - **`Our clients slider` block** — place it into any theme region via the standard Block layout page
-- **Dependency-free slider** — pure vanilla JS (~12 KB): arrows, dot navigation, mouse and touch swipe, autoplay with pause on hover
+- **Dependency-free slider** — pure vanilla JS (~12 KB): arrows, mouse and touch swipe, autoplay with pause on hover. The design follows the "Our clients" block of stormoff.ru: the heading is rendered in the theme's h2 style, frameless photo cards, the client name and an accent "More details" pill button
 - **Modal window** — clicking a slide opens the client card: large image (or a video player), description and **client reviews** — star rating, quote, author, city and date. Close via the cross, clicking outside the window or the Escape key
 - **Full-featured admin** (Structure » Our clients):
   - Slides list with thumbnails and **drag & drop ordering**
-  - Slide form: the **"Media image" field** — pick an existing media item from a thumbnail grid or upload a new file (stored as a media item automatically), client name, description (text format), **reviews** (multi-value field: author name, date, city, 1-5 rating, text — add as many as needed with the "Add review" button), published flag
-  - Settings tab: block heading, visible slides count (desktop / tablet / mobile), autoplay and its interval, **accent color** (pick your theme color so the block blends into the design), plus sizes: slider max width, heading font size (desktop and mobile), slide image height (desktop and mobile), client name font size, modal window width
-- **Mobile-first responsive behavior** — separate values for the number of visible slides, image height and heading size on mobile, touch swipe navigation, compact arrows
+  - Slide form: the **"Media image" field** (collapsed by default so the media list does not take over the form) — pick an existing media item from a thumbnail grid or upload a new file (stored as a media item automatically), client name, description (text format), **reviews** (multi-value field: author name, date, city, 1-5 rating, text — add as many as needed with the "Add review" button), published flag
+  - Settings tab: block heading, visible slides count (desktop / tablet / mobile), autoplay and its interval, **accent color** (pick your theme color so the block blends into the design), plus sizes: slider max width, slide image height (desktop and mobile), client name font size, modal window width
+- **Mobile-first responsive behavior** — separate values for the number of visible slides and image height on mobile, touch swipe navigation, compact arrows
 - **Accessible** — carousel ARIA attributes, keyboard arrow navigation, focus trap in the modal, `prefers-reduced-motion` support
 - **Media library and video** — the slide image or video is stored as a media item: no file duplication, one media item can be reused; media types with image, video and oEmbed sources are supported (YouTube, VK and other providers configured on the site); the alt text is managed by the media item
 - **Automatic image styles** — `our_clients_slider` (480x360, no upscale) and `our_clients_modal` (up to 1200px) are created on install
@@ -97,7 +97,7 @@ drush cr
 |---|---|---|
 | Slides | `/admin/structure/our-clients` | Slides list, drag & drop ordering, "Add slide" button, Edit/Delete operations |
 | Slide form | `/admin/structure/our-clients/add` | Media image (library selection or upload), client name, description, reviews (multi-value: author, date, city, rating, text), published flag |
-| Settings | `/admin/structure/our-clients/settings` | Block heading, visible slides (3 breakpoints), autoplay, interval, sizes (slider width, fonts, image height, modal width), accent color |
+| Settings | `/admin/structure/our-clients/settings` | Block heading, visible slides (3 breakpoints), autoplay, interval, sizes (slider width, image height, client name size, modal width), accent color |
 
 The section is also linked from the admin menu: **Manage » Structure » Our clients**.
 
@@ -109,21 +109,21 @@ The block is styled with CSS variables — override them in your theme without t
 
 ```css
 .our-clients {
-  --oc-accent: #006ab1;              /* accent color (also in module settings) */
+  --oc-accent: #ff5073;              /* accent color (also in module settings) */
   --oc-max-width: 1200px;            /* slider max width (also in settings) */
-  --oc-heading-size: 28px;           /* heading size (also in settings) */
-  --oc-heading-size-mobile: 22px;    /* heading size on mobile (also in settings) */
-  --oc-image-height: 130px;          /* slide image height (also in settings) */
-  --oc-image-height-mobile: 100px;   /* image height on mobile (also in settings) */
-  --oc-name-size: 14px;              /* client name size (also in settings) */
-  --oc-text: #1a171b;                /* main text */
-  --oc-text-muted: #5b6470;          /* captions under images */
-  --oc-bg: #ffffff;                  /* card background */
+  --oc-image-height: 390px;          /* slide image height (also in settings) */
+  --oc-image-height-mobile: 200px;   /* image height on mobile (also in settings) */
+  --oc-name-size: 24px;              /* client name size (also in settings) */
+  --oc-text: #000000;                /* modal window text */
+  --oc-text-muted: #5b6470;          /* descriptions and captions */
+  --oc-bg: #ffffff;                  /* "More details" button and modal background */
   --oc-surface: #f5f7fa;             /* modal image background */
-  --oc-border: #e3e8ef;              /* borders */
-  --oc-radius: 16px;                 /* card corner radius */
 }
 ```
+
+The block heading is rendered as an `h2` and **inherits the theme's h2 style entirely** (color, font, size) — no separate size settings are needed.
+
+The block wrapper carries the theme layout classes `page-content page-margin-top-middle page-margin-bottom-middle page-padding-top-big page-padding-bottom-middle` — change them in the template if needed. The "More details" button label is translated like any other interface string.
 
 Default template: `templates/our-clients-slider.html.twig` — copy it into your theme's `templates` folder to override it (rebuild the theme cache afterwards).
 

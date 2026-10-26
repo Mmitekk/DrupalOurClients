@@ -112,24 +112,6 @@ class SettingsForm extends ConfigFormBase {
       '#description' => $this->t('Maximum width of the slider area. Set 0 for the full width of the region.'),
     ];
 
-    $form['appearance']['heading_font_size'] = [
-      '#type' => 'number',
-      '#title' => $this->t('Heading font size (px)'),
-      '#default_value' => $config->get('heading_font_size'),
-      '#min' => 14,
-      '#max' => 80,
-      '#field_suffix' => 'px',
-    ];
-
-    $form['appearance']['heading_font_size_mobile'] = [
-      '#type' => 'number',
-      '#title' => $this->t('Heading font size on mobile (px)'),
-      '#default_value' => $config->get('heading_font_size_mobile'),
-      '#min' => 14,
-      '#max' => 80,
-      '#field_suffix' => 'px',
-    ];
-
     $form['appearance']['image_height'] = [
       '#type' => 'number',
       '#title' => $this->t('Slide image height (px)'),
@@ -137,7 +119,7 @@ class SettingsForm extends ConfigFormBase {
       '#min' => 40,
       '#max' => 600,
       '#field_suffix' => 'px',
-      '#description' => $this->t('The height of the image area inside a slide card. The image keeps its proportions inside this area.'),
+      '#description' => $this->t('The height of the image area of a slide. The image fills the area and is cropped when necessary.'),
     ];
 
     $form['appearance']['image_height_mobile'] = [
@@ -172,7 +154,7 @@ class SettingsForm extends ConfigFormBase {
       '#type' => 'color',
       '#title' => $this->t('Accent color'),
       '#default_value' => $config->get('accent_color'),
-      '#description' => $this->t('Used for buttons, dots and the review quote. Pick the primary color of your site theme to make the block blend in.'),
+      '#description' => $this->t('Used for the "More details" button, the arrows on hover and the review quote. Pick the primary color of your site theme to make the block blend in.'),
     ];
 
     return parent::buildForm($form, $form_state);
@@ -200,8 +182,6 @@ class SettingsForm extends ConfigFormBase {
       ->set('autoplay', (bool) $form_state->getValue('autoplay'))
       ->set('autoplay_speed', (int) $form_state->getValue('autoplay_speed'))
       ->set('slider_max_width', (int) $form_state->getValue('slider_max_width'))
-      ->set('heading_font_size', (int) $form_state->getValue('heading_font_size'))
-      ->set('heading_font_size_mobile', (int) $form_state->getValue('heading_font_size_mobile'))
       ->set('image_height', (int) $form_state->getValue('image_height'))
       ->set('image_height_mobile', (int) $form_state->getValue('image_height_mobile'))
       ->set('name_font_size', (int) $form_state->getValue('name_font_size'))
