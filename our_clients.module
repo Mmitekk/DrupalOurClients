@@ -42,7 +42,7 @@ function our_clients_help($route_name, RouteMatchInterface $route_match) {
  */
 function our_clients_maybe_import_russian_translation() {
   // Bump when the bundled .po file changes so existing sites re-import it.
-  $po_version = '1.7.1';
+  $po_version = '1.8.0';
   if (\Drupal::state()->get('our_clients.ru_po_imported') === $po_version) {
     return;
   }
@@ -98,7 +98,6 @@ function our_clients_theme($existing, $type, $theme, $path) {
         'visible_desktop' => 4,
         'visible_tablet' => 2,
         'visible_mobile' => 1,
-        'slider_max_width' => 1200,
         'image_height' => 390,
         'image_height_mobile' => 200,
         'name_font_size' => 24,

@@ -8,6 +8,7 @@
  * - slides: Array of slides, each with:
  *   - title: The client name.
  *   - image_alt: The image alt text.
+ *   - image_title: The image title text.
  *   - slider_image_url: URL of the scaled slider image.
  *   - modal_image_url: URL of the larger modal image.
  *   - description: Render array with the description.
@@ -15,7 +16,6 @@
  * - autoplay: Whether autoplay is enabled.
  * - autoplay_speed: Autoplay interval in milliseconds.
  * - visible_desktop, visible_tablet, visible_mobile: Slides per view.
- * - slider_max_width: Maximum slider width in px (0 = unlimited).
  * - image_height, image_height_mobile: Slide image area height in px.
  * - name_font_size: Client name font size in px.
  * - name_margin_top, name_margin_bottom: Space around the client name in px
@@ -41,9 +41,6 @@
 #}
 {{ attach_library('our_clients/our_clients') }}
 {% set oc_styles = [] %}
-{% if slider_max_width > 0 %}
-  {% set oc_styles = oc_styles|merge(['--oc-max-width: ' ~ slider_max_width ~ 'px']) %}
-{% endif %}
 {% if image_height > 0 %}
   {% set oc_styles = oc_styles|merge(['--oc-image-height: ' ~ image_height ~ 'px']) %}
 {% endif %}
@@ -137,7 +134,7 @@
           <li class="our-clients__slide" role="group" aria-roledescription="slide" aria-label="{{ loop.index }} / {{ loop.length }}">
             <button type="button" class="our-clients__trigger" aria-haspopup="dialog">
               <span class="our-clients__figure">
-                <img src="{{ slide.slider_image_url }}" alt="{{ slide.image_alt }}" loading="lazy">
+                <img src="{{ slide.slider_image_url }}" alt="{{ slide.image_alt }}"{% if slide.image_title %} title="{{ slide.image_title }}"{% endif %} loading="lazy">
               </span>
               {% if slide.title %}
                 <span class="our-clients__name">{{ slide.title }}</span>
@@ -150,7 +147,7 @@
                 <div class="oc-modal__media oc-modal__media--video">{{ slide.modal_media }}</div>
               {% else %}
                 <div class="oc-modal__image">
-                  <img src="{{ slide.modal_image_url }}" alt="{{ slide.image_alt }}">
+                  <img src="{{ slide.modal_image_url }}" alt="{{ slide.image_alt }}"{% if slide.image_title %} title="{{ slide.image_title }}"{% endif %}>
                 </div>
               {% endif %}
               <div class="oc-modal__body">

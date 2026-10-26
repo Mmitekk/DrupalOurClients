@@ -143,3 +143,15 @@ function our_clients_post_update_remove_accent_color(array &$sandbox = NULL) {
     ->clear('accent_color')
     ->save();
 }
+
+/**
+ * Removes the slider maximum width setting.
+ *
+ * The block now relies on the theme's page-content classes for the width, so
+ * the hardcoded max-width option is gone.
+ */
+function our_clients_post_update_remove_slider_max_width(array &$sandbox = NULL) {
+  \Drupal::configFactory()->getEditable('our_clients.settings')
+    ->clear('slider_max_width')
+    ->save();
+}

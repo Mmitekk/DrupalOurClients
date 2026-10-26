@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.8.0 (2026-10-26)
+
+- **Per-slide alt and title for the image**: new "Image alt text" and "Image title text" fields on the slide form. Empty = the client name is used (or the alt/title stored on the media item); the title is rendered as the `title` attribute of the slider and modal images.
+- **Media selection now opens in a modal dialog**, exactly like the core media library: "Select media" opens a dialog with a filterable media grid (up to 200 items), an upload field ("Upload and use") and "Insert selected". The chosen media is applied instantly via Ajax, with a preview and a "Remove" button on the slide form.
+- **The "Slider maximum width" setting is removed.** The block relies on the theme's `page-content` classes for the width. `our_clients_post_update_remove_slider_max_width()` clears the old config key on update.
+- **Fixed: the slide order on the overview page** (`/admin/structure/our-clients`) now saves reliably when the weights are changed by hand (explicit `#tree` on the weight table plus a defensive save fallback and a redirect after saving).
+
 ## 1.7.2 (2026-10-26)
 
 - **Fixed a PHP notice "Only variables should be passed by reference"** shown when saving a slide with a newly uploaded image (`reset()` on a function return in `SlideForm::mediaFromUpload()`).

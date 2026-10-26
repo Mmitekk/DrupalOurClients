@@ -62,6 +62,9 @@ class SlideOverviewForm extends FormBase {
 
     $form['slides'] = [
       '#type' => 'table',
+      // Without an explicit tree the per-row weight values would collide into
+      // a single form value and the order could not be saved at all.
+      '#tree' => TRUE,
       '#header' => [
         $this->t('Slide'),
         $this->t('Status'),
@@ -136,14 +139,23 @@ class SlideOverviewForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
+    $values = $form_state->getValue('slides');
+    if (!is_array($values)) {
+      // Some form rebuilds lose the nested value; fall back to the raw input.
+      $values = $form_state->getUserInput()['slides'] ?? [];
+    }
     $storage = $this->entityTypeManager->getStorage('our_clients_slide');
-    foreach ($form_state->getValue('slides') as $id => $value) {
+    foreach ($values as $id => $value) {
+      if (!is_array($value) || !array_key_exists('weight', $value)) {
+        continue;
+      }
       if ($slide = $storage->load($id)) {
         $slide->set('weight', (int) $value['weight']);
         $slide->save();
       }
     }
     $this->messenger()->addStatus($this->t('The slide order has been saved.'));
+    $form_state->setRedirect('entity.our_clients_slide.collection');
   }
 
 }

@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: our_clients 1.7.1\n"
+"Project-Id-Version: our_clients 1.8.0\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -96,42 +96,126 @@ msgid "Media image"
 msgstr "Медиа-изображение"
 
 msgid ""
-"Select an existing media item or upload a new image. Images are shown in "
-"the slider and enlarged in the modal window; videos show an automatic "
-"preview in the slider and are played in the modal window."
+"Images are shown in the slider and enlarged in the modal window; videos show "
+"an automatic preview in the slider and are played in the modal window."
 msgstr ""
-"Выберите существующий медиа-объект или загрузите новое изображение. "
 "Изображения показываются в слайдере и в увеличенном виде в модальном окне; "
 "для видео в слайдере показывается автоматическое превью, а в модальном окне "
 "видео проигрывается."
 
-msgid "From the media library"
-msgstr "Из медиатеки"
+msgid "Select media"
+msgstr "Выбрать медиа"
+
+msgid "Remove"
+msgstr "Убрать"
+
+msgid "Update media"
+msgstr "Обновить медиа"
+
+msgid "Opening the media library."
+msgstr "Открытие медиатеки."
+
+msgid "Removing."
+msgstr "Удаление."
+
+msgid "Updating media."
+msgstr "Обновление медиа."
+
+msgid "No media selected yet."
+msgstr "Медиа ещё не выбрано."
+
+msgid "Image alt text"
+msgstr "Alt-текст изображения"
+
+msgid "Image title text"
+msgstr "Title-текст изображения"
+
+msgid ""
+"Describes the image for screen readers. Empty = the client name (or the alt "
+"text stored on the media item) is used."
+msgstr ""
+"Описывает изображение для программ чтения с экрана. Пусто = используется "
+"название клиента (или alt-текст медиа-объекта)."
+
+msgid ""
+"Shown as a tooltip when the mouse hovers over the image. Empty = the client "
+"name is used."
+msgstr ""
+"Показывается как всплывающая подсказка при наведении на изображение. Пусто = "
+"используется название клиента."
+
+msgid ""
+"The Media module is disabled on this site, so no image can be attached to "
+"the slide. Enable the Media module to select an image."
+msgstr ""
+"На сайте выключен модуль Media, поэтому к слайду нельзя прикрепить "
+"изображение. Включите модуль Media, чтобы выбрать изображение."
+
+msgid ""
+"The slide @label was saved without an image. Open the slide again and click "
+"\"Select media\" to attach one."
+msgstr ""
+"Слайд @label сохранён без изображения. Откройте слайд ещё раз и нажмите "
+"«Выбрать медиа», чтобы прикрепить изображение."
+
+msgid "Filter by name"
+msgstr "Фильтр по названию"
+
+msgid "Start typing a media name…"
+msgstr "Начните вводить название медиа…"
+
+msgid "Apply"
+msgstr "Применить"
+
+msgid "Filtering…"
+msgstr "Фильтрация…"
+
+msgid "No media items found."
+msgstr "Медиа-объекты не найдены."
+
+msgid "Upload a new image"
+msgstr "Загрузить новое изображение"
+
+msgid ""
+"The uploaded image is stored in the media library and selected "
+"automatically. Recommended size: at least 600x450 pixels."
+msgstr ""
+"Загруженное изображение сохраняется в медиатеку и выбирается автоматически. "
+"Рекомендуемый размер: не менее 600x450 пикселей."
+
+msgid "Upload and use"
+msgstr "Загрузить и использовать"
+
+msgid "Uploading…"
+msgstr "Загрузка…"
+
+msgid "Insert selected"
+msgstr "Вставить выбранное"
+
+msgid "Inserting…"
+msgstr "Вставка…"
+
+msgid "Select a media item first."
+msgstr "Сначала выберите медиа-объект."
+
+msgid "The upload failed. Try again."
+msgstr "Загрузка не удалась. Попробуйте ещё раз."
+
+msgid "You are not allowed to select media."
+msgstr "У вас нет прав на выбор медиа."
+
+msgid "Our clients image"
+msgstr "Изображение для блока «Наши клиенты»"
+
+msgid "Add an image: click \"Select media\" and choose one from the media library."
+msgstr ""
+"Добавьте изображение: нажмите «Выбрать медиа» и выберите его в медиатеке."
 
 msgid "Preview"
 msgstr "Превью"
 
 msgid "Media item"
 msgstr "Медиа-объект"
-
-msgid "The media library is empty. Upload a new image below."
-msgstr "В медиатеке пока ничего нет. Загрузите новое изображение ниже."
-
-msgid "Upload new image"
-msgstr "Загрузить новое изображение"
-
-msgid ""
-"The uploaded image is stored as a media item automatically. Recommended "
-"size: at least 600x450 pixels. The alt text equals the client name and can "
-"be edited on the media item afterwards."
-msgstr ""
-"Загруженное изображение автоматически сохраняется как медиа-объект. "
-"Рекомендуемый размер: не менее 600x450 пикселей. Alt-текст равен названию "
-"клиента, позже его можно изменить у медиа-объекта."
-
-msgid "Add an image: select one from the media library or upload a new one."
-msgstr ""
-"Добавьте изображение: выберите из медиатеки или загрузите новое."
 
 msgid ""
 "The slide @label was saved without an image because the Media module is "
@@ -360,14 +444,6 @@ msgstr "Интервал автопрокрутки (мс)"
 
 msgid "Appearance"
 msgstr "Оформление"
-
-msgid "Slider maximum width (px)"
-msgstr "Максимальная ширина слайдера (px)"
-
-msgid "Maximum width of the slider area. Set 0 for the full width of the region."
-msgstr ""
-"Максимальная ширина области слайдера. Укажите 0, чтобы занять всю ширину "
-"региона."
 
 msgid "Slide image height (px)"
 msgstr "Высота картинки в слайде (px)"

@@ -12,13 +12,11 @@
   --oc-text-muted: #5b6470;
   --oc-bg: #ffffff;
   --oc-surface: #f5f7fa;
-  --oc-max-width: 1200px;
   --oc-image-height: 390px;
   --oc-image-height-mobile: 200px;
   --oc-name-size: 24px;
   position: relative;
   box-sizing: border-box;
-  max-width: var(--oc-max-width);
   margin-inline: auto;
 }
 

@@ -253,16 +253,6 @@ class SettingsForm extends ConfigFormBase {
       '#open' => TRUE,
     ];
 
-    $form['appearance']['slider_max_width'] = [
-      '#type' => 'number',
-      '#title' => $this->t('Slider maximum width (px)'),
-      '#default_value' => $config->get('slider_max_width'),
-      '#min' => 0,
-      '#max' => 3840,
-      '#field_suffix' => 'px',
-      '#description' => $this->t('Maximum width of the slider area. Set 0 for the full width of the region.'),
-    ];
-
     $form['appearance']['image_height'] = [
       '#type' => 'number',
       '#title' => $this->t('Slide image height (px)'),
@@ -393,7 +383,6 @@ class SettingsForm extends ConfigFormBase {
       ->set('visible_mobile', (int) $form_state->getValue('visible_mobile'))
       ->set('autoplay', (bool) $form_state->getValue('autoplay'))
       ->set('autoplay_speed', (int) $form_state->getValue('autoplay_speed'))
-      ->set('slider_max_width', (int) $form_state->getValue('slider_max_width'))
       ->set('image_height', (int) $form_state->getValue('image_height'))
       ->set('image_height_mobile', (int) $form_state->getValue('image_height_mobile'))
       ->set('name_font_size', (int) $form_state->getValue('name_font_size'))

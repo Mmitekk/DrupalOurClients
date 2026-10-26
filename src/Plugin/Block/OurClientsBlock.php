@@ -68,7 +68,8 @@ class OurClientsBlock extends BlockBase {
           'slider_image_url' => $slider_style
             ? $slider_style->buildUrl($thumbnail->getFileUri())
             : $file_url_generator->generateString($thumbnail->getFileUri()),
-          'image_alt' => self::thumbnailAlt($media, (string) $slide->label()),
+          'image_alt' => $slide->getImageAlt() ?: self::thumbnailAlt($media, (string) $slide->label()),
+          'image_title' => $slide->getImageTitle() ?: self::thumbnailTitle($media, (string) $slide->label()),
           'modal_image_url' => '',
           'modal_media' => $view_builder->view($media, 'default'),
           'description' => self::processText($slide->getDescription()),
@@ -90,7 +91,8 @@ class OurClientsBlock extends BlockBase {
         'slider_image_url' => $slider_style
           ? $slider_style->buildUrl($uri)
           : $file_url_generator->generateString($uri),
-        'image_alt' => self::mediaAlt($media, (string) $slide->label()),
+        'image_alt' => $slide->getImageAlt() ?: self::mediaAlt($media, (string) $slide->label()),
+        'image_title' => $slide->getImageTitle() ?: self::mediaTitle($media, (string) $slide->label()),
         'modal_image_url' => $modal_style
           ? $modal_style->buildUrl($uri)
           : $file_url_generator->generateString($uri),
@@ -121,7 +123,6 @@ class OurClientsBlock extends BlockBase {
       '#visible_desktop' => (int) $settings->get('visible_desktop'),
       '#visible_tablet' => (int) $settings->get('visible_tablet'),
       '#visible_mobile' => (int) $settings->get('visible_mobile'),
-      '#slider_max_width' => (int) $settings->get('slider_max_width'),
       '#image_height' => (int) $settings->get('image_height'),
       '#image_height_mobile' => (int) $settings->get('image_height_mobile'),
       '#name_font_size' => (int) $settings->get('name_font_size'),
@@ -281,6 +282,49 @@ class OurClientsBlock extends BlockBase {
       $alt = (string) ($media->get($source_field)->first()->alt ?? '');
       if ($alt !== '') {
         return $alt;
+      }
+    }
+    return $fallback;
+  }
+
+  /**
+   * Returns the title text of a media item's image.
+   *
+   * @param \Drupal\media\Entity\Media $media
+   *   The media item.
+   * @param string $fallback
+   *   Text used when the media item has no title.
+   *
+   * @return string
+   *   The title text.
+   */
+  protected static function mediaTitle(Media $media, string $fallback) {
+    $source_field = $media->getSource()->getConfiguration()['source_field'] ?? '';
+    if ($source_field && $media->hasField($source_field) && !$media->get($source_field)->isEmpty()) {
+      $title = (string) ($media->get($source_field)->first()->title ?? '');
+      if ($title !== '') {
+        return $title;
+      }
+    }
+    return $fallback;
+  }
+
+  /**
+   * Returns the title text of a media item's thumbnail.
+   *
+   * @param \Drupal\media\Entity\Media $media
+   *   The media item.
+   * @param string $fallback
+   *   Text used when the thumbnail has no title.
+   *
+   * @return string
+   *   The title text.
+   */
+  protected static function thumbnailTitle(Media $media, string $fallback) {
+    if (!$media->get('thumbnail')->isEmpty()) {
+      $title = (string) ($media->get('thumbnail')->first()->title ?? '');
+      if ($title !== '') {
+        return $title;
       }
     }
     return $fallback;

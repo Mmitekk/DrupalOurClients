@@ -2,7 +2,7 @@
 
 A module for Drupal 9.3+ / 10 / 11 that adds a configurable **"Our clients"** block — a slider with client images and names. Clicking a slide opens a **modal window** with the enlarged image, the client description and the client review. A slide can hold not only an image but also a **video** — an uploaded file or a YouTube/VK/other-provider clip: the slider shows an automatic thumbnail preview, the modal window plays the video.
 
-The slider appearance and all of its content are managed in the module's admin section: block heading, number of visible slides, autoplay, the "More details" button and review colors, plus adding / editing / sorting slides (image, alt text, name, description, review).
+The slider appearance and all of its content are managed in the module's admin section: block heading, number of visible slides, autoplay, the "More details" button and review colors, plus adding / editing / sorting slides (image, alt/title text, name, description, review).
 
 [Читать документацию на русском](./README.md)
 
@@ -15,11 +15,11 @@ The slider appearance and all of its content are managed in the module's admin s
 - **Modal window** — clicking a slide opens the client card: large image (or a video player), description and **client reviews** — star rating, quote, author, city and date. Close via the cross, clicking outside the window or the Escape key
 - **Full-featured admin** (Structure » Our clients):
   - Slides list with thumbnails and **drag & drop ordering**
-  - Slide form: the **"Media image" field** (collapsed by default so the media list does not take over the form) — pick an existing media item from a thumbnail grid or upload a new file (stored as a media item automatically), client name, description (text format), **reviews** (multi-value field: author name, date, city, 1-5 rating, text — add as many as needed with the "Add review" button), published flag
-  - Settings tab: block heading, visible slides count (desktop / tablet / mobile), autoplay and its interval, sizes: slider max width, slide image height (desktop and mobile), client name font size and **margins around it**, modal window width, plus **heading size and margins**, **full "More details" button styling** (text color, hover text color, border color, background, hover background, border radius, font size, height and horizontal padding — desktop and mobile) and the **review color** (stars, border and background of the reviews in the modal window)
+  - Slide form: the **"Media image" field** — the "Select media" button opens a **modal dialog** with the media library (thumbnail grid, name filter, upload of a new file stored as a media item automatically); **image alt and title texts**, client name, description (text format), **reviews** (multi-value field: author name, date, city, 1-5 rating, text — add as many as needed with the "Add review" button), published flag
+  - Settings tab: block heading, visible slides count (desktop / tablet / mobile), autoplay and its interval, slide image height (desktop and mobile), client name font size and **margins around it**, modal window width, plus **heading size and margins**, **full "More details" button styling** (text color, hover text color, border color, background, hover background, border radius, font size, height and horizontal padding — desktop and mobile) and the **review color** (stars, border and background of the reviews in the modal window)
 - **Mobile-first responsive behavior** — separate values for the number of visible slides and image height on mobile, touch swipe navigation, compact arrows
 - **Accessible** — carousel ARIA attributes, keyboard arrow navigation, focus trap in the modal, `prefers-reduced-motion` support
-- **Media library and video** — the slide image or video is stored as a media item: no file duplication, one media item can be reused; media types with image, video and oEmbed sources are supported (YouTube, VK and other providers configured on the site); the alt text is managed by the media item
+- **Media library and video** — the slide image or video is stored as a media item: no file duplication, one media item can be reused; media types with image, video and oEmbed sources are supported (YouTube, VK and other providers configured on the site); the alt and title texts are set right in the slide form (empty = the client name or the value stored on the media item)
 - **Automatic image styles** — `our_clients_slider` (480x360, no upscale) and `our_clients_modal` (up to 1200px) are created on install
 - **File usage tracking** — slide images are protected from garbage collection and released automatically when a slide is replaced or deleted
 - **Caching** — the block updates whenever any slide or setting changes; with an empty list the block is hidden entirely for anonymous visitors, while administrators see a hint with a link to the admin section
@@ -85,7 +85,7 @@ drush cr
 ## Quick start
 
 1. Open **Manage » Structure » Our clients** (`/admin/structure/our-clients`).
-2. Click **"Add slide"**: in the "Media image" field pick an existing media item from the thumbnail grid or upload a new file, enter the client name, description and review, save. Repeat for the other clients.
+2. Click **"Add slide"**: in the "Media image" field click **"Select media"** — a modal dialog opens with the media library (name filter, upload of a new file via "Upload and use", insertion via "Insert selected"). Optionally fill in the image alt and title texts, enter the client name, description and review, save. Repeat for the other clients.
 3. Optionally open the **"Settings"** tab and set the block heading ("Our clients" by default), the number of visible slides and, if needed, the button and review colors.
 4. Place the block: **Manage » Structure » Block layout** (`/admin/structure/block`) » choose a region » **"Place block"** » find **"Our clients slider"**.
 5. In the placement form, hide the technical block title (the "Display block title" checkbox) if the heading is already set in the module settings — otherwise the title will appear twice.
@@ -96,8 +96,8 @@ drush cr
 | Section | Path | What is configured |
 |---|---|---|
 | Slides | `/admin/structure/our-clients` | Slides list, drag & drop ordering, "Add slide" button, Edit/Delete operations |
-| Slide form | `/admin/structure/our-clients/add` | Media image (library selection or upload), client name, description, reviews (multi-value: author, date, city, rating, text), published flag |
-| Settings | `/admin/structure/our-clients/settings` | Block heading, visible slides (3 breakpoints), autoplay, interval, sizes (slider width, image height, client name size and margins, modal width), heading size and margins, "More details" button style (text, hover and border colors, background, radius, sizes), review color |
+| Slide form | `/admin/structure/our-clients/add` | Media image (modal media library dialog with filter and upload), image alt/title texts, client name, description, reviews (multi-value: author, date, city, rating, text), published flag |
+| Settings | `/admin/structure/our-clients/settings` | Block heading, visible slides (3 breakpoints), autoplay, interval, image height, client name size and margins, modal width, heading size and margins, "More details" button style (text, hover and border colors, background, radius, sizes), review color |
 
 The section is also linked from the admin menu: **Manage » Structure » Our clients**.
 
@@ -109,7 +109,6 @@ The block is styled with CSS variables — override them in your theme without t
 
 ```css
 .our-clients {
-  --oc-max-width: 1200px;            /* slider max width (also in settings) */
   --oc-image-height: 390px;          /* slide image height (also in settings) */
   --oc-image-height-mobile: 200px;   /* image height on mobile (also in settings) */
   --oc-name-size: 24px;              /* client name size (also in settings) */
@@ -137,7 +136,7 @@ The block is styled with CSS variables — override them in your theme without t
 
 The block heading is rendered as an `h2` and **by default inherits the theme's h2 style entirely** (color, font, size). The heading size and margins, the client name margins, the "More details" button style and the review color can be overridden in the admin UI (Settings tab); empty values keep the defaults.
 
-The block wrapper carries the theme layout classes `page-content page-margin-top-middle page-margin-bottom-middle page-padding-top-big page-padding-bottom-middle` — change them in the template if needed. The "More details" button label is translated like any other interface string.
+The block wrapper carries the theme layout classes `page-content page-margin-top-middle page-margin-bottom-middle page-padding-top-big page-padding-bottom-middle` — the theme controls the block width (there is no separate max-width setting anymore); change the classes in the template if needed. The "More details" button label is translated like any other interface string.
 
 Default template: `templates/our-clients-slider.html.twig` — copy it into your theme's `templates` folder to override it (rebuild the theme cache afterwards).
 
@@ -157,8 +156,8 @@ The "Settings" tab » uncheck "Autoplay" » save.
 **How to rename the "Our clients" heading?**
 The "Settings" tab » the "Block heading" field (clear it to render the slider without a heading). The technical block title is changed in its placement form on the "Block layout" page.
 
-**How to set the image alt text?**
-A newly uploaded file gets the client name as its alt text automatically. Change it on the media item: /admin/content/media » edit » the "Alt" field. If the alt is empty, the client name is used instead.
+**How to set the image alt and title texts?**
+Fill in the "Image alt text" and "Image title text" fields right in the slide form (the title is shown as a tooltip on hover). When empty, the value stored on the media item is used, and if that is missing too — the client name. A file uploaded through the slide form gets the file name as the media item's alt/title automatically.
 
 **The module admin strings are in English.**
 When the admin UI language is Russian, the module imports its bundled Russian translation automatically on the first open of its admin pages — reload the page once. Manual way: /admin/config/regional/translate/import » the `translations/our_clients.ru.po` file from the module folder.

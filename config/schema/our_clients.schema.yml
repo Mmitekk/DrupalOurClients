@@ -65,9 +65,6 @@ our_clients.settings:
     autoplay_speed:
       type: integer
       label: 'Autoplay interval (ms)'
-    slider_max_width:
-      type: integer
-      label: 'Slider maximum width (px)'
     image_height:
       type: integer
       label: 'Slide image height (px)'
@@ -103,6 +100,12 @@ our_clients.slide.*:
     image_media:
       type: integer
       label: 'Image media ID'
+    image_alt:
+      type: label
+      label: 'Image alt text'
+    image_title:
+      type: label
+      label: 'Image title text'
     description:
       type: mapping
       label: 'Description'

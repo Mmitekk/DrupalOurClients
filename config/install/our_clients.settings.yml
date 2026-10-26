@@ -23,7 +23,6 @@ visible_tablet: 2
 visible_mobile: 1
 autoplay: true
 autoplay_speed: 4000
-slider_max_width: 1200
 image_height: 390
 image_height_mobile: 200
 name_font_size: 24

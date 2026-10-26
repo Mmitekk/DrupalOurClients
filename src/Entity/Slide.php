@@ -33,6 +33,8 @@ use Drupal\Core\Entity\EntityStorageInterface;
  *     "id",
  *     "label",
  *     "image_media",
+ *     "image_alt",
+ *     "image_title",
  *     "description",
  *     "reviews",
  *     "weight",
@@ -72,6 +74,20 @@ class Slide extends ConfigEntityBase {
   protected $image_media = 0;
 
   /**
+   * The image alt text (falls back to the client name when empty).
+   *
+   * @var string
+   */
+  protected $image_alt = '';
+
+  /**
+   * The image title text (falls back to the client name when empty).
+   *
+   * @var string
+   */
+  protected $image_title = '';
+
+  /**
    * The description (value + format).
    *
    * @var array
@@ -107,6 +123,26 @@ class Slide extends ConfigEntityBase {
    */
   public function getImageMedia() {
     return (int) $this->image_media;
+  }
+
+  /**
+   * Returns the image alt text.
+   *
+   * @return string
+   *   The alt text, empty if none was entered.
+   */
+  public function getImageAlt() {
+    return (string) $this->image_alt;
+  }
+
+  /**
+   * Returns the image title text.
+   *
+   * @return string
+   *   The title text, empty if none was entered.
+   */
+  public function getImageTitle() {
+    return (string) $this->image_title;
   }
 
   /**
@@ -210,6 +246,52 @@ class Slide extends ConfigEntityBase {
       $bundles = $all ?: ['image'];
     }
     return $bundles;
+  }
+
+  /**
+   * Creates a media item from an uploaded file.
+   *
+   * @param int $fid
+   *   The uploaded file ID.
+   * @param string $label
+   *   The media item name.
+   * @param string $alt
+   *   The image alt text (empty = the media item name).
+   * @param string $title
+   *   The image title text (empty = the media item name).
+   *
+   * @return int
+   *   The created media ID, 0 on failure.
+   */
+  public static function mediaFromUpload($fid, $label, $alt = '', $title = '') {
+    $media_bundles = self::imageMediaBundles();
+    $bundle_id = reset($media_bundles);
+    $media_type = \Drupal::entityTypeManager()->getStorage('media_type')->load($bundle_id);
+    if (!$fid || !$media_type) {
+      return 0;
+    }
+    $file = \Drupal::entityTypeManager()->getStorage('file')->load($fid);
+    if (!$file) {
+      return 0;
+    }
+    if (!$file->isPermanent()) {
+      $file->setPermanent();
+      $file->save();
+    }
+    $source_field = $media_type->getSource()->getConfiguration()['source_field'] ?? '';
+    $media = \Drupal::entityTypeManager()->getStorage('media')->create([
+      'bundle' => $bundle_id,
+      'name' => $label,
+      'uid' => \Drupal::currentUser()->id(),
+      'status' => 1,
+      $source_field => [
+        'target_id' => $fid,
+        'alt' => $alt !== '' ? $alt : $label,
+        'title' => $title !== '' ? $title : $label,
+      ],
+    ]);
+    $media->save();
+    return (int) $media->id();
   }
 
   /**
