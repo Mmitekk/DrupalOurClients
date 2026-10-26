@@ -375,7 +375,8 @@ class SlideForm extends EntityForm {
    *   The created media ID, 0 on failure.
    */
   protected static function mediaFromUpload($fid, $label) {
-    $bundle_id = reset(\Drupal\our_clients\Entity\Slide::imageMediaBundles());
+    $media_bundles = \Drupal\our_clients\Entity\Slide::imageMediaBundles();
+    $bundle_id = reset($media_bundles);
     $media_type = \Drupal::entityTypeManager()->getStorage('media_type')->load($bundle_id);
     if (!$fid || !$media_type) {
       return 0;

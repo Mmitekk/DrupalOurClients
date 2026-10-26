@@ -1,5 +1,5 @@
 our_clients:
-  version: 1.4.0
+  version: 1.7.2
   css:
     theme:
       css/our-clients.css: {}

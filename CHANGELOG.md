@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.7.2 (2026-10-26)
+
+- **Fixed a PHP notice "Only variables should be passed by reference"** shown when saving a slide with a newly uploaded image (`reset()` on a function return in `SlideForm::mediaFromUpload()`).
+
 ## 1.7.1 (2026-10-26)
 
 - **New "Button border color" setting** (Settings tab » '"More details" button'): controls the button border, the slide focus outline, the arrows on hover and the default hover background tint. Leave empty to follow the button text color. This makes the remaining accent-colored outlines directly adjustable instead of being derived from the text color.
