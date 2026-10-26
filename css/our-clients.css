@@ -342,8 +342,14 @@ body.oc-modal-open {
   margin-bottom: 0;
 }
 
-.oc-modal__review {
+.oc-modal__reviews {
+  display: grid;
+  gap: 12px;
   margin: 18px 0 0;
+}
+
+.oc-modal__review {
+  margin: 0;
   padding: 16px 20px;
   background: #eef5fb;
   background: color-mix(in srgb, var(--oc-accent, #006ab1) 7%, #ffffff);
@@ -351,15 +357,47 @@ body.oc-modal-open {
   border-radius: 0 12px 12px 0;
   color: var(--oc-text, #1a171b);
   font-size: 0.95em;
+}
+
+.oc-modal__review-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.oc-modal__review-stars {
+  color: var(--oc-accent, #006ab1);
+  font-size: 1.05em;
+  letter-spacing: 2px;
+}
+
+.oc-modal__review-score {
+  color: var(--oc-text-muted, #5b6470);
+  font-size: 0.85em;
+}
+
+.oc-modal__review-text {
+  margin: 0;
   line-height: 1.6;
 }
 
-.oc-modal__review p:first-child {
-  margin-top: 0;
+.oc-modal__review-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin-top: 10px;
+  color: var(--oc-text-muted, #5b6470);
+  font-size: 0.88em;
 }
 
-.oc-modal__review p:last-child {
-  margin-bottom: 0;
+.oc-modal__review-author {
+  font-weight: 600;
+  color: var(--oc-text, #1a171b);
+}
+
+.oc-modal__review-author::before {
+  content: "— ";
 }
 
 /* --------------------------------------------------------------------- */

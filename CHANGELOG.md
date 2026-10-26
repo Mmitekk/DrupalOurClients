@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.4.0 (2026-10-24)
+
+- **Reviews are now a separate entity with a multi-value field on the slide.** Each review holds: author name, review date, city, a 1-5 star rating and the text. Add as many reviews as needed right in the slide form ("Add review" button), edit and delete them individually.
+- The modal window renders the reviews in the site style: star rating, quote, author, city and date.
+- Legacy single review texts are converted into review entities on update (`our_clients_post_update_reviews_to_entity()`, rating 5).
+- Reviews are deleted together with their slide.
+
 ## 1.3.0 (2026-10-24)
 
 - **Self-contained media selection field** («Медиа-изображение»): pick an existing media item from a thumbnail grid or upload a new image in the same form. The upload is stored as a media item automatically.

@@ -75,3 +75,34 @@ function our_clients_post_update_detach_media_library_form_element(array &$sandb
   // Leftover from the 1.2.1 self-healing attempt.
   \Drupal::state()->delete('our_clients.heal_scheduled');
 }
+
+/**
+ * Converts the single legacy review text into review entities.
+ */
+function our_clients_post_update_reviews_to_entity(array &$sandbox = NULL) {
+  $storage = \Drupal::entityTypeManager()->getStorage('our_clients_review');
+  $config_factory = \Drupal::configFactory();
+
+  foreach ($config_factory->listAll('our_clients.slide.') as $name) {
+    $config = $config_factory->getEditable($name);
+    $old = $config->get('review');
+    if (empty($old['value']) || $config->get('reviews')) {
+      continue;
+    }
+
+    $review = $storage->create([
+      'id' => 'review_' . substr(md5($name . uniqid('', TRUE)), 0, 10),
+      'author' => '',
+      'date' => date('Y-m-d'),
+      'city' => '',
+      'rating' => 5,
+      'text' => trim(strip_tags((string) $old['value'])),
+    ]);
+    $dependencies = $review->get('dependencies') ?: [];
+    $dependencies['enforced']['module'][] = 'our_clients';
+    $review->set('dependencies', $dependencies);
+    $review->save();
+
+    $config->set('reviews', [$review->id()])->clear('review')->save();
+  }
+}

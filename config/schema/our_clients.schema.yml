@@ -68,22 +68,46 @@ our_clients.slide.*:
         format:
           type: string
           label: 'Text format'
-    review:
-      type: mapping
-      label: 'Client review'
-      mapping:
-        value:
-          type: text
-          label: 'Value'
-        format:
-          type: string
-          label: 'Text format'
+    reviews:
+      type: sequence
+      label: 'Reviews'
+      sequence:
+        type: string
     weight:
       type: integer
       label: 'Weight'
     status:
       type: boolean
       label: 'Published'
+    uuid:
+      type: string
+      label: 'UUID'
+    langcode:
+      type: string
+      label: 'Language code'
+
+our_clients.review.*:
+  type: config_entity
+  label: 'Our clients review'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    author:
+      type: label
+      label: 'Author name'
+    date:
+      type: string
+      label: 'Review date'
+    city:
+      type: label
+      label: 'City'
+    rating:
+      type: integer
+      label: 'Rating'
+    text:
+      type: text
+      label: 'Review text'
     uuid:
       type: string
       label: 'UUID'

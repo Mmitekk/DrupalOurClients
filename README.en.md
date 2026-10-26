@@ -12,10 +12,10 @@ The slider appearance and all of its content are managed in the module's admin s
 
 - **`Our clients slider` block** — place it into any theme region via the standard Block layout page
 - **Dependency-free slider** — pure vanilla JS (~12 KB): arrows, dot navigation, mouse and touch swipe, autoplay with pause on hover
-- **Modal window** — clicking a slide opens the client card: large image (or a video player), description, review as a quote. Close via the cross, clicking outside the window or the Escape key
+- **Modal window** — clicking a slide opens the client card: large image (or a video player), description and **client reviews** — star rating, quote, author, city and date. Close via the cross, clicking outside the window or the Escape key
 - **Full-featured admin** (Structure » Our clients):
   - Slides list with thumbnails and **drag & drop ordering**
-  - Slide form: the **"Media image" field** — pick an existing media item from a thumbnail grid or upload a new file (stored as a media item automatically), client name, description (text format), review (text format), published flag
+  - Slide form: the **"Media image" field** — pick an existing media item from a thumbnail grid or upload a new file (stored as a media item automatically), client name, description (text format), **reviews** (multi-value field: author name, date, city, 1-5 rating, text — add as many as needed with the "Add review" button), published flag
   - Settings tab: block heading, visible slides count (desktop / tablet / mobile), autoplay and its interval, **accent color** (pick your theme color so the block blends into the design), plus sizes: slider max width, heading font size (desktop and mobile), slide image height (desktop and mobile), client name font size, modal window width
 - **Mobile-first responsive behavior** — separate values for the number of visible slides, image height and heading size on mobile, touch swipe navigation, compact arrows
 - **Accessible** — carousel ARIA attributes, keyboard arrow navigation, focus trap in the modal, `prefers-reduced-motion` support
@@ -96,7 +96,7 @@ drush cr
 | Section | Path | What is configured |
 |---|---|---|
 | Slides | `/admin/structure/our-clients` | Slides list, drag & drop ordering, "Add slide" button, Edit/Delete operations |
-| Slide form | `/admin/structure/our-clients/add` | Media image (library selection or upload), client name, description, review, published flag |
+| Slide form | `/admin/structure/our-clients/add` | Media image (library selection or upload), client name, description, reviews (multi-value: author, date, city, rating, text), published flag |
 | Settings | `/admin/structure/our-clients/settings` | Block heading, visible slides (3 breakpoints), autoplay, interval, sizes (slider width, fonts, image height, modal width), accent color |
 
 The section is also linked from the admin menu: **Manage » Structure » Our clients**.

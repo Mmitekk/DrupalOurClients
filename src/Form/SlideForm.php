@@ -118,13 +118,41 @@ class SlideForm extends EntityForm {
       '#description' => $this->t('Information about the client. Shown in the modal window.'),
     ];
 
-    $review = $slide->getReview();
-    $form['review'] = [
-      '#type' => 'text_format',
-      '#title' => $this->t('Client review'),
-      '#default_value' => isset($review['value']) ? $review['value'] : '',
-      '#format' => $this->resolveFormat($review),
-      '#description' => $this->t('The review text. Shown in the modal window as a quote.'),
+    // Multi-value inline reviews: one fieldset per linked review plus any new
+    // empty slots added by the "Add review" button (a plain rebuild - no JS).
+    $form['reviews_area'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Client reviews'),
+      '#open' => TRUE,
+      '#tree' => TRUE,
+      '#description' => $this->t('The reviews of the client. Shown in the modal window below the description.'),
+    ];
+
+    $storage = \Drupal::entityTypeManager()->getStorage('our_clients_review');
+    $review_entities = $slide->getReviews() ? $storage->loadMultiple($slide->getReviews()) : [];
+    $map = [];
+    $delta = 0;
+    foreach ($slide->getReviews() as $review_id) {
+      if (!isset($review_entities[$review_id])) {
+        continue;
+      }
+      $map[$delta] = $review_id;
+      $form['reviews_area'][$delta] = $this->buildReviewFieldset($delta, $review_entities[$review_id]);
+      $delta++;
+    }
+    $new_count = (int) $form_state->get('our_clients_new_reviews');
+    for ($i = 0; $i < $new_count; $i++) {
+      $form['reviews_area'][$delta] = $this->buildReviewFieldset($delta, NULL);
+      $delta++;
+    }
+    $form_state->set('our_clients_reviews_map', $map);
+
+    $form['reviews_area']['add'] = [
+      '#type' => 'submit',
+      '#name' => 'our_clients_add_review',
+      '#value' => $this->t('Add review'),
+      '#limit_validation_errors' => [],
+      '#submit' => ['::addReviewSubmit'],
     ];
 
     $form['weight'] = [
@@ -133,6 +161,85 @@ class SlideForm extends EntityForm {
     ];
 
     return $form;
+  }
+
+  /**
+   * Builds one inline review fieldset.
+   *
+   * @param int $delta
+   *   The fieldset delta.
+   * @param \Drupal\our_clients\Entity\Review|null $review
+   *   The existing review or NULL for a new one.
+   *
+   * @return array
+   *   The fieldset render array.
+   */
+  protected function buildReviewFieldset($delta, $review = NULL) {
+    $element = [
+      '#type' => 'fieldset',
+      '#title' => $this->t('Review @number', ['@number' => $delta + 1]),
+    ];
+
+    $element['author'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Author name'),
+      '#maxlength' => 255,
+      '#default_value' => $review ? $review->getAuthor() : '',
+    ];
+
+    $element['date'] = [
+      '#type' => 'date',
+      '#title' => $this->t('Review date'),
+      '#default_value' => $review ? $review->getDate() : '',
+    ];
+
+    $element['city'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('City'),
+      '#maxlength' => 255,
+      '#default_value' => $review ? $review->getCity() : '',
+    ];
+
+    $element['rating'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Rating'),
+      '#options' => [
+        5 => $this->t('5 - excellent'),
+        4 => $this->t('4 - good'),
+        3 => $this->t('3 - average'),
+        2 => $this->t('2 - poor'),
+        1 => $this->t('1 - bad'),
+      ],
+      '#default_value' => $review ? $review->getRating() : 5,
+    ];
+
+    $element['text'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('Review text'),
+      '#rows' => 3,
+      '#default_value' => $review ? $review->getText() : '',
+    ];
+
+    $element['remove'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Delete this review'),
+      '#default_value' => FALSE,
+    ];
+
+    return $element;
+  }
+
+  /**
+   * Submit handler for the "Add review" button: adds an empty review slot.
+   *
+   * @param array $form
+   *   The form array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
+   */
+  public function addReviewSubmit(array &$form, FormStateInterface $form_state) {
+    $form_state->set('our_clients_new_reviews', (int) $form_state->get('our_clients_new_reviews') + 1);
+    $form_state->setRebuild();
   }
 
   /**
@@ -147,6 +254,20 @@ class SlideForm extends EntityForm {
 
     if (!$upload && !$selected && $this->entity->isNew()) {
       $form_state->setErrorByName('media_image', $this->t('Add an image: select one from the media library or upload a new one.'));
+    }
+
+    // A review needs at least its text when any of its fields are filled in.
+    $reviews_area = $form_state->getValue('reviews_area') ?: [];
+    foreach ($reviews_area as $delta => $review) {
+      if (!is_array($review) || !empty($review['remove'])) {
+        continue;
+      }
+      $text = trim((string) ($review['text'] ?? ''));
+      $filled = $text !== '' || trim((string) ($review['author'] ?? '')) !== ''
+        || trim((string) ($review['city'] ?? '')) !== '' || !empty($review['date']);
+      if ($filled && $text === '') {
+        $form_state->setErrorByName('reviews_area][' . $delta . '][text', $this->t('The review text is required.'));
+      }
     }
   }
 
@@ -202,7 +323,6 @@ class SlideForm extends EntityForm {
     $entity->set('id', (string) $values['id']);
     $entity->set('status', !empty($values['status']));
     $entity->set('description', is_array($values['description']) ? $values['description'] : ['value' => '', 'format' => NULL]);
-    $entity->set('review', is_array($values['review']) ? $values['review'] : ['value' => '', 'format' => NULL]);
     $entity->set('weight', (int) $values['weight']);
 
     // Priority: a freshly uploaded image wins over a library selection; when
@@ -285,7 +405,11 @@ class SlideForm extends EntityForm {
    * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) {
+    /** @var \Drupal\our_clients\Entity\Slide $slide */
     $slide = $this->entity;
+
+    $slide->set('reviews', $this->processReviews($form_state));
+
     $status = $slide->save();
 
     if (!$slide->getImageMedia()) {
@@ -299,6 +423,85 @@ class SlideForm extends EntityForm {
     );
 
     $form_state->setRedirect('entity.our_clients_slide.collection');
+  }
+
+  /**
+   * Creates, updates and deletes the review entities from the form values.
+   *
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
+   *
+   * @return array
+   *   The review IDs linked to the slide, in display order.
+   */
+  protected function processReviews(FormStateInterface $form_state) {
+    $reviews_area = $form_state->getValue('reviews_area') ?: [];
+    $map = $form_state->get('our_clients_reviews_map') ?: [];
+    $storage = \Drupal::entityTypeManager()->getStorage('our_clients_review');
+
+    $kept_ids = [];
+    $delta = 0;
+    foreach ($reviews_area as $values) {
+      if (!is_array($values)) {
+        continue;
+      }
+      $original_id = isset($map[$delta]) ? $map[$delta] : NULL;
+      $delta++;
+
+      if (!empty($values['remove'])) {
+        continue;
+      }
+
+      $text = trim((string) ($values['text'] ?? ''));
+      if ($text === '' && trim((string) ($values['author'] ?? '')) === ''
+        && trim((string) ($values['city'] ?? '')) === '' && empty($values['date'])) {
+        // An untouched empty slot: ignore it.
+        continue;
+      }
+
+      if ($original_id && ($review = $storage->load($original_id))) {
+        // Existing review: update in place.
+      }
+      else {
+        $review = $storage->create(['id' => $this->generateReviewId()]);
+      }
+
+      $review->set('author', (string) ($values['author'] ?? ''));
+      $review->set('date', (string) ($values['date'] ?? ''));
+      $review->set('city', (string) ($values['city'] ?? ''));
+      $review->set('rating', max(1, min(5, (int) ($values['rating'] ?? 5))));
+      $review->set('text', $text);
+      $dependencies = $review->get('dependencies') ?: [];
+      $dependencies['enforced']['module'] = array_values(array_unique(array_merge($dependencies['enforced']['module'] ?? [], ['our_clients'])));
+      $review->set('dependencies', $dependencies);
+      $review->save();
+
+      $kept_ids[] = $review->id();
+    }
+
+    // Reviews removed through the "Delete this review" checkbox are deleted.
+    $orphaned = array_diff(array_filter($map), $kept_ids);
+    foreach ($orphaned as $orphan_id) {
+      if ($orphan = $storage->load($orphan_id)) {
+        $orphan->delete();
+      }
+    }
+
+    return $kept_ids;
+  }
+
+  /**
+   * Generates a unique machine ID for a new review.
+   *
+   * @return string
+   *   The ID.
+   */
+  protected function generateReviewId() {
+    $storage = \Drupal::entityTypeManager()->getStorage('our_clients_review');
+    do {
+      $id = 'review_' . substr(md5(uniqid('', TRUE)), 0, 10);
+    } while ($storage->load($id));
+    return $id;
   }
 
 }

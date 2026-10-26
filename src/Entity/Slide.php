@@ -34,7 +34,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
  *     "label",
  *     "image_media",
  *     "description",
- *     "review",
+ *     "reviews",
  *     "weight",
  *     "status",
  *     "uuid",
@@ -79,11 +79,11 @@ class Slide extends ConfigEntityBase {
   protected $description = [];
 
   /**
-   * The client review (value + format).
+   * The referenced review entity IDs, in display order.
    *
    * @var array
    */
-  protected $review = [];
+  protected $reviews = [];
 
   /**
    * The weight used for ordering.
@@ -120,13 +120,13 @@ class Slide extends ConfigEntityBase {
   }
 
   /**
-   * Returns the client review.
+   * Returns the referenced review entity IDs.
    *
    * @return array
-   *   Array with 'value' and 'format' keys.
+   *   List of review IDs in display order.
    */
-  public function getReview() {
-    return is_array($this->review) ? $this->review : [];
+  public function getReviews() {
+    return is_array($this->reviews) ? array_values($this->reviews) : [];
   }
 
   /**
@@ -218,8 +218,15 @@ class Slide extends ConfigEntityBase {
   public static function preDelete(EntityStorageInterface $storage, array $entities) {
     parent::preDelete($storage, $entities);
 
-    // The media items themselves are kept: they live in the media library and
-    // may be reused by other slides or content.
+    // Reviews belong to their slide: delete them along with it. The media
+    // items themselves are kept - they live in the media library and may be
+    // reused by other slides or content.
+    $review_storage = \Drupal::entityTypeManager()->getStorage('our_clients_review');
+    foreach ($entities as $slide) {
+      if ($slide instanceof Slide && ($ids = $slide->getReviews())) {
+        $review_storage->delete($review_storage->loadMultiple($ids));
+      }
+    }
   }
 
 }

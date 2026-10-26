@@ -72,7 +72,7 @@ class OurClientsBlock extends BlockBase {
           'modal_image_url' => '',
           'modal_media' => $view_builder->view($media, 'default'),
           'description' => self::processText($slide->getDescription()),
-          'review' => self::processText($slide->getReview()),
+          'reviews' => $this->buildReviews($slide),
         ];
         $media_ids[] = $media->id();
         $file_ids[] = $thumbnail->id();
@@ -96,7 +96,7 @@ class OurClientsBlock extends BlockBase {
           : $file_url_generator->generateString($uri),
         'modal_media' => NULL,
         'description' => self::processText($slide->getDescription()),
-        'review' => self::processText($slide->getReview()),
+        'reviews' => $this->buildReviews($slide),
       ];
       $media_ids[] = $media->id();
       $file_ids[] = $file->id();
@@ -146,10 +146,55 @@ class OurClientsBlock extends BlockBase {
    * @return array
    *   Cache metadata array with tags and contexts.
    */
+  /**
+   * Builds the render data for a slide's reviews.
+   *
+   * @param \Drupal\our_clients\Entity\Slide $slide
+   *   The slide.
+   *
+   * @return array
+   *   List of review render arrays (empty when the slide has no reviews).
+   */
+  protected function buildReviews($slide) {
+    $ids = $slide->getReviews();
+    if (!$ids) {
+      return [];
+    }
+    $storage = \Drupal::entityTypeManager()->getStorage('our_clients_review');
+    /** @var \Drupal\our_clients\Entity\Review[] $reviews */
+    $reviews = $storage->loadMultiple($ids);
+    $date_formatter = \Drupal::service('date.formatter');
+
+    $items = [];
+    foreach ($ids as $id) {
+      if (!isset($reviews[$id])) {
+        continue;
+      }
+      $review = $reviews[$id];
+      $rating = $review->getRating();
+      $date = '';
+      if ($review->getDate() && ($timestamp = strtotime($review->getDate()))) {
+        $date = $date_formatter->format($timestamp, 'custom', 'd.m.Y');
+      }
+      $items[] = [
+        'author' => $review->getAuthor(),
+        'city' => $review->getCity(),
+        'date' => $date,
+        'rating' => $rating,
+        'stars' => str_repeat('★', $rating) . str_repeat('☆', 5 - $rating),
+        'text' => [
+          '#markup' => nl2br(Html::escape($review->getText())),
+        ],
+      ];
+    }
+    return $items;
+  }
+
   protected function buildCacheMetadata(array $slide_ids, array $media_ids, array $file_ids) {
     $tags = [
       'config:our_clients.settings',
       'config:our_clients_slide_list',
+      'config:our_clients_review_list',
       'config:image.style.our_clients_slider',
       'config:image.style.our_clients_modal',
       'media_list',

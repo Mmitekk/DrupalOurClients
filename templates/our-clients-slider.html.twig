@@ -100,8 +100,29 @@
                 {% if slide.description %}
                   <div class="oc-modal__description">{{ slide.description }}</div>
                 {% endif %}
-                {% if slide.review %}
-                  <blockquote class="oc-modal__review">{{ slide.review }}</blockquote>
+                {% if slide.reviews %}
+                  <div class="oc-modal__reviews">
+                    {% for review in slide.reviews %}
+                      <figure class="oc-modal__review">
+                        <div class="oc-modal__review-head">
+                          <span class="oc-modal__review-stars" aria-hidden="true">{{ review.stars }}</span>
+                          <span class="oc-modal__review-score">{{ review.rating }}/5</span>
+                        </div>
+                        <blockquote class="oc-modal__review-text">{{ review.text }}</blockquote>
+                        <figcaption class="oc-modal__review-meta">
+                          {% if review.author %}
+                            <span class="oc-modal__review-author">{{ review.author }}</span>
+                          {% endif %}
+                          {% if review.city %}
+                            <span class="oc-modal__review-city">{{ review.city }}</span>
+                          {% endif %}
+                          {% if review.date %}
+                            <span class="oc-modal__review-date">{{ review.date }}</span>
+                          {% endif %}
+                        </figcaption>
+                      </figure>
+                    {% endfor %}
+                  </div>
                 {% endif %}
               </div>
             </div>

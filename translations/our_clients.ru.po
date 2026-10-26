@@ -168,6 +168,56 @@ msgstr "Отзыв клиента"
 msgid "The review text. Shown in the modal window as a quote."
 msgstr "Текст отзыва. Показывается в модальном окне в виде цитаты."
 
+msgid "Client reviews"
+msgstr "Отзывы клиента"
+
+msgid ""
+"The reviews of the client. Shown in the modal window below the description."
+msgstr ""
+"Отзывы о клиенте. Показываются в модальном окне под описанием."
+
+msgid "Review @number"
+msgstr "Отзыв @number"
+
+msgid "Author name"
+msgstr "Имя автора"
+
+msgid "Review date"
+msgstr "Дата отзыва"
+
+msgid "City"
+msgstr "Город"
+
+msgid "Rating"
+msgstr "Оценка"
+
+msgid "5 - excellent"
+msgstr "5 — отлично"
+
+msgid "4 - good"
+msgstr "4 — хорошо"
+
+msgid "3 - average"
+msgstr "3 — нормально"
+
+msgid "2 - poor"
+msgstr "2 — плохо"
+
+msgid "1 - bad"
+msgstr "1 — плохо"
+
+msgid "Review text"
+msgstr "Текст отзыва"
+
+msgid "Delete this review"
+msgstr "Удалить этот отзыв"
+
+msgid "Add review"
+msgstr "Добавить отзыв"
+
+msgid "The review text is required."
+msgstr "Текст отзыва обязателен."
+
 msgid "Machine name"
 msgstr "Машинное имя"
 
