@@ -13,7 +13,7 @@
 (function (Drupal, once) {
   'use strict';
 
-  var ITEMS_PER_PAGE = 12;
+  var ITEMS_PER_PAGE = 18;
 
   Drupal.behaviors.ourClientsMediaGrid = {
     attach: function (context) {

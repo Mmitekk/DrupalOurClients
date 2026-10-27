@@ -403,17 +403,18 @@ class SlideForm extends EntityForm {
       return $element;
     }
 
-    $pages = max(1, (int) ceil(count($options) / 12));
+    $pages = max(1, (int) ceil(count($options) / 18));
     $element['existing'] = [
       '#type' => 'radios',
       '#title' => $this->t('From the media library'),
       '#options' => $options,
       '#default_value' => $slide->getImageMedia() ?: NULL,
-      // The grid layout is set inline so admin theme stylesheets cannot turn
-      // it back into a single-column list of radios.
+      // A definite column count (instead of auto-fill) plus an explicit width
+      // keeps the grid multi-column even when an admin theme lets the
+      // container shrink to its content.
       '#attributes' => [
         'class' => ['our-clients-media-radios'],
-        'style' => 'display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin:0',
+        'style' => 'display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin:0;width:100%;max-width:100%',
       ],
     ];
     $element['pager'] = [

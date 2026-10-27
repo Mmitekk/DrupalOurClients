@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.8.7 (2026-10-27)
+
+- **Fixed the media grid collapsing into a single column**: the grid tracks were `repeat(auto-fill, minmax(130px, 1fr))`, and when the admin theme lets the container shrink to its content the browser resolves auto-fill to a single track, so the tiles stacked one under another. The grid now uses a definite number of columns (6, or 4 and 2 on narrower screens) together with an explicit full width, which stays multi-column in every layout - verified in a browser against the shrink-to-fit cases.
+- **18 tiles per page** (6 x 3) instead of 12, so a page fills three rows.
+
 ## 1.8.6 (2026-10-27)
 
 - **The media grid no longer shows empty white tiles**: media items without a thumbnail (for example remote videos) now get a visible placeholder tile with a dashed "no preview" frame, an icon and the media type label, so the grid always looks complete.
