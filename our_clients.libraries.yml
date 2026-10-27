@@ -1,5 +1,5 @@
 our_clients:
-  version: 1.8.4
+  version: 1.8.5
   css:
     theme:
       css/our-clients.css: {}
@@ -10,7 +10,7 @@ our_clients:
     - core/once
 
 our_clients.admin:
-  version: 1.8.4
+  version: 1.8.5
   css:
     theme:
       css/our-clients.admin.css: {}

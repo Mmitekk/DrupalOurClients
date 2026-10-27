@@ -365,13 +365,14 @@ class SlideForm extends EntityForm {
     foreach ($media_storage->loadMultiple($query->execute()) as $media) {
       $thumbnail_field = $media->hasField('thumbnail') ? $media->get('thumbnail') : NULL;
       $thumbnail = $thumbnail_field && !$thumbnail_field->isEmpty() ? $thumbnail_field->entity : NULL;
+      $thumb = $thumbnail ? [
+        '#theme' => 'image_style',
+        '#style_name' => 'thumbnail',
+        '#uri' => $thumbnail->getFileUri(),
+        '#attributes' => ['class' => ['our-clients-admin-thumb']],
+      ] : [];
       $thumb_html = $thumbnail
-        ? \Drupal::service('renderer')->render([
-          '#theme' => 'image_style',
-          '#style_name' => 'thumbnail',
-          '#uri' => $thumbnail->getFileUri(),
-          '#attributes' => ['class' => ['our-clients-admin-thumb']],
-        ])
+        ? \Drupal::service('renderer')->render($thumb)
         : '<svg width="44" height="44" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" stroke="#9a9a9f" stroke-width="1.5" fill="#f2f2f4"/><circle cx="9" cy="9" r="1.8" fill="#9a9a9f"/><path d="M5 18l5-5 3 3 2.5-2.5L20 18" stroke="#9a9a9f" stroke-width="1.5" fill="none" stroke-linejoin="round"/></svg>';
       $options[$media->id()] = Markup::create(
         '<span class="our-clients-media-tile-thumb">' . $thumb_html

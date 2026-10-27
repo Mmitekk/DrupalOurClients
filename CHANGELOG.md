@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.8.5 (2026-10-27)
+
+- **Fixed a fatal error on the slide form**: the thumbnail render array was passed to `Renderer::render()` as an inline literal, but the method takes the array by reference - the form crashed with "Argument #1 ($elements) cannot be passed by reference". The render array is now assigned to a variable first.
+
 ## 1.8.4 (2026-10-27)
 
 - **The media grid can no longer be broken by admin theme styles**: the grid layout is now set inline on the element itself and duplicated in the stylesheet with higher specificity, so Seven, Gin and other admin themes cannot turn the tiles back into a single-column radio list.
