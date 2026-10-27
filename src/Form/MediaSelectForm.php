@@ -36,20 +36,6 @@ class MediaSelectForm extends FormBase {
   protected $currentMediaId;
 
   /**
-   * Constructs a MediaSelectForm object.
-   *
-   * @param string $widget_id
-   *   The widget ID of the slide form.
-   * @param int $current_media_id
-   *   The currently selected media ID, 0 for none.
-   */
-  public function __construct($widget_id = '', $current_media_id = 0) {
-    // The ID is echoed into an Ajax selector, so keep only safe characters.
-    $this->widgetId = preg_match('/^[A-Za-z0-9-]+$/', (string) $widget_id) ? (string) $widget_id : '';
-    $this->currentMediaId = (int) $current_media_id;
-  }
-
-  /**
    * {@inheritdoc}
    */
   public function getFormId() {
@@ -60,6 +46,13 @@ class MediaSelectForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
+    // The slide form passes the widget ID and the current selection through
+    // the form state: FormBuilder never forwards getForm() arguments to the
+    // form constructor, so constructor parameters cannot be used here.
+    $widget_id = (string) $form_state->get('our_clients_media_widget_id');
+    $this->widgetId = preg_match('/^[A-Za-z0-9-]+$/', $widget_id) ? $widget_id : '';
+    $this->currentMediaId = (int) $form_state->get('our_clients_media_current_id', 0);
+
     $form['#attached']['library'][] = 'our_clients/our_clients.admin';
 
     if (!\Drupal::currentUser()->hasPermission('administer our clients')) {
@@ -180,7 +173,8 @@ class MediaSelectForm extends FormBase {
 
     $media_storage = \Drupal::entityTypeManager()->getStorage('media');
     foreach ($media_storage->loadMultiple($query->execute()) as $media) {
-      $thumbnail = $media->get('thumbnail')->entity;
+      $thumbnail_field = $media->hasField('thumbnail') ? $media->get('thumbnail') : NULL;
+      $thumbnail = $thumbnail_field && !$thumbnail_field->isEmpty() ? $thumbnail_field->entity : NULL;
       $element['#options'][$media->id()] = [
         'thumb' => [
           'data' => $thumbnail ? [

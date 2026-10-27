@@ -9,6 +9,7 @@ use Drupal\Core\Ajax\OpenModalDialogCommand;
 use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormState;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\filter\Entity\FilterFormat;
 use Drupal\our_clients\Entity\Slide;
@@ -60,10 +61,17 @@ class SlideForm extends EntityForm {
     // library widget: "Select media" opens the dialog, the chosen media ID
     // comes back through the hidden selection element, and the hidden update
     // button refreshes the preview via Ajax.
-    $widget_id = Html::getUniqueId('our-clients-media-widget');
+    // The widget ID lives in the form state so it stays the same across Ajax
+    // rebuilds: a request-scoped unique ID would change between the rendered
+    // page and the later Ajax request and the dialog could not find the
+    // elements it writes back to.
+    $widget_id = (string) $form_state->get('our_clients_media_widget_id');
+    if ($widget_id === '') {
+      $widget_id = Html::getUniqueId('our-clients-media-widget');
+      $form_state->set('our_clients_media_widget_id', $widget_id);
+      $form_state->set('our_clients_media_preview_wrapper', $widget_id . '-preview');
+    }
     $preview_wrapper_id = $widget_id . '-preview';
-    $form_state->set('our_clients_media_widget_id', $widget_id);
-    $form_state->set('our_clients_media_preview_wrapper', $preview_wrapper_id);
 
     $current_media_id = (int) $form_state->getValue(['media_image', 'selection'], $slide->getImageMedia());
 
@@ -392,7 +400,8 @@ class SlideForm extends EntityForm {
     if ($media_id && \Drupal::moduleHandler()->moduleExists('media')) {
       $media = \Drupal::entityTypeManager()->getStorage('media')->load($media_id);
       if ($media) {
-        $thumbnail = $media->get('thumbnail')->entity;
+        $thumbnail_field = $media->hasField('thumbnail') ? $media->get('thumbnail') : NULL;
+        $thumbnail = $thumbnail_field && !$thumbnail_field->isEmpty() ? $thumbnail_field->entity : NULL;
         return [
           '#type' => 'container',
           '#attributes' => ['class' => ['our-clients-media-preview']],
@@ -427,7 +436,16 @@ class SlideForm extends EntityForm {
   public function openMediaDialog(array &$form, FormStateInterface $form_state) {
     $widget_id = (string) $form_state->get('our_clients_media_widget_id');
     $current = (int) ($form_state->getValue(['media_image', 'selection'], 0) ?: 0);
-    $content = \Drupal::formBuilder()->getForm(MediaSelectForm::class, $widget_id, $current);
+
+    // OpenModalDialogCommand accepts a render array, not a form object:
+    // passing getForm() output would fail JSON encoding of the Ajax response.
+    // The dialog form is built like the core media library does it, and the
+    // widget ID and current selection travel through the form state.
+    $dialog_form_state = new FormState();
+    $dialog_form_state->set('our_clients_media_widget_id', $widget_id);
+    $dialog_form_state->set('our_clients_media_current_id', $current);
+    $content = \Drupal::formBuilder()->buildForm(MediaSelectForm::class, $dialog_form_state);
+
     $response = new AjaxResponse();
     $response->addCommand(new OpenModalDialogCommand($this->t('Select media'), $content, [
       'width' => '75%',

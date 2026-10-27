@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.8.1 (2026-10-27)
+
+- **Fixed a 500 error on the "Select media" button** in the slide form: the modal dialog must receive a rendered form array, not a form object - the object cannot be JSON-encoded into the Ajax response. The dialog is now built exactly like the core media library widget builds its add form.
+- **The dialog now receives the widget ID and the current selection through the form state** (FormBuilder never forwards `getForm()` arguments to form constructors), and the widget ID stays stable across Ajax rebuilds - the chosen media item reliably appears in the slide form preview after closing the dialog.
+- The media grid and the slide preview no longer break on media items without a thumbnail field value.
+
 ## 1.8.0 (2026-10-26)
 
 - **Per-slide alt and title for the image**: new "Image alt text" and "Image title text" fields on the slide form. Empty = the client name is used (or the alt/title stored on the media item); the title is rendered as the `title` attribute of the slider and modal images.
