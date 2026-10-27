@@ -4,6 +4,7 @@ namespace Drupal\our_clients\Form;
 
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\AlertCommand;
 use Drupal\Core\Ajax\InvokeCommand;
 use Drupal\Core\Ajax\OpenModalDialogCommand;
 use Drupal\Core\Ajax\ReplaceCommand;
@@ -106,6 +107,10 @@ class SlideForm extends EntityForm {
         '#type' => 'button',
         '#value' => $this->t('Select media'),
         '#name' => $widget_id . '-select-button',
+        // Opening the dialog must not validate the slide form: the media image
+        // is required only when the slide is actually saved, exactly like the
+        // open button of the core media library widget.
+        '#limit_validation_errors' => [],
         '#ajax' => [
           'callback' => '::openMediaDialog',
           'progress' => ['type' => 'throbber', 'message' => $this->t('Opening the media library.')],
@@ -437,22 +442,31 @@ class SlideForm extends EntityForm {
     $widget_id = (string) $form_state->get('our_clients_media_widget_id');
     $current = (int) ($form_state->getValue(['media_image', 'selection'], 0) ?: 0);
 
-    // OpenModalDialogCommand accepts a render array, not a form object:
-    // passing getForm() output would fail JSON encoding of the Ajax response.
-    // The dialog form is built like the core media library does it, and the
-    // widget ID and current selection travel through the form state.
-    $dialog_form_state = new FormState();
-    $dialog_form_state->set('our_clients_media_widget_id', $widget_id);
-    $dialog_form_state->set('our_clients_media_current_id', $current);
-    $content = \Drupal::formBuilder()->buildForm(MediaSelectForm::class, $dialog_form_state);
+    try {
+      // OpenModalDialogCommand accepts a render array, not a form object:
+      // passing getForm() output would fail JSON encoding of the Ajax response.
+      // The dialog form is built like the core media library does it, and the
+      // widget ID and current selection travel through the form state.
+      $dialog_form_state = new FormState();
+      $dialog_form_state->set('our_clients_media_widget_id', $widget_id);
+      $dialog_form_state->set('our_clients_media_current_id', $current);
+      $content = \Drupal::formBuilder()->buildForm(MediaSelectForm::class, $dialog_form_state);
 
-    $response = new AjaxResponse();
-    $response->addCommand(new OpenModalDialogCommand($this->t('Select media'), $content, [
-      'width' => '75%',
-      'height' => '75%',
-      'dialogClass' => 'our-clients-media-dialog',
-    ]));
-    return $response;
+      $response = new AjaxResponse();
+      $response->addCommand(new OpenModalDialogCommand($this->t('Select media'), $content, [
+        'width' => '75%',
+        'height' => '75%',
+        'dialogClass' => 'our-clients-media-dialog',
+      ]));
+      return $response;
+    }
+    catch (\Throwable $e) {
+      // Any exception here would otherwise surface as an opaque HTTP 500 with
+      // an empty response body. Log it and show it in the browser instead.
+      \Drupal::logger('our_clients')->error('Failed to open the media selection dialog: @error', ['@error' => $e->getMessage()]);
+      return (new AjaxResponse())
+        ->addCommand(new AlertCommand($this->t('The media selection dialog could not be opened: @error', ['@error' => $e->getMessage()])));
+    }
   }
 
   /**

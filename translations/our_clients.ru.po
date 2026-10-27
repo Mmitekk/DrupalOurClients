@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: our_clients 1.8.0\n"
+"Project-Id-Version: our_clients 1.8.2\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -114,6 +114,9 @@ msgstr "Обновить медиа"
 
 msgid "Opening the media library."
 msgstr "Открытие медиатеки."
+
+msgid "The media selection dialog could not be opened: @error"
+msgstr "Не удалось открыть окно выбора медиа: @error"
 
 msgid "Removing."
 msgstr "Удаление."

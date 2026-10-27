@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.8.2 (2026-10-27)
+
+- **Fixed the "Select media" button on new slides**: the button now skips slide form validation (`#limit_validation_errors`), exactly like the open button of the core media library widget. Previously the empty media selection of a new slide failed validation before the button's Ajax callback could run, so the dialog never opened.
+- **Any remaining dialog error is shown instead of an empty HTTP 500**: if building the media dialog fails, the error message appears in an alert and is written to the site log.
+
 ## 1.8.1 (2026-10-27)
 
 - **Fixed a 500 error on the "Select media" button** in the slide form: the modal dialog must receive a rendered form array, not a form object - the object cannot be JSON-encoded into the Ajax response. The dialog is now built exactly like the core media library widget builds its add form.
