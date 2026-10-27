@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.8.4 (2026-10-27)
+
+- **The media grid can no longer be broken by admin theme styles**: the grid layout is now set inline on the element itself and duplicated in the stylesheet with higher specificity, so Seven, Gin and other admin themes cannot turn the tiles back into a single-column radio list.
+- **Tiles without a thumbnail show a placeholder icon** instead of an empty area (e.g. media items without a thumbnail field value).
+- **The pager no longer depends on the stylesheet** - pages are toggled with inline styles, so the Previous/Next paging keeps working in any environment.
+
 ## 1.8.3 (2026-10-27)
 
 - **Media selection is back in the slide form**: the "Media image" field is a collapsed block again, with the media library shown as a thumbnail grid (up to 200 items) with a client-side pager (Previous/Next buttons, page counter). The modal dialog, its filter and its upload field were removed as unreliable.

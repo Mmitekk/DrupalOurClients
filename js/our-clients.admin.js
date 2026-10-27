@@ -5,6 +5,9 @@
  * Pages the media selection grid inside the collapsed "Media image" block
  * purely in the browser: all radio tiles stay in the form, so a selection
  * made on another page is still submitted when the slide is saved.
+ *
+ * Visibility is toggled with inline styles instead of CSS classes, so paging
+ * works even if the module stylesheet is overridden or not loaded at all.
  */
 
 (function (Drupal, once) {
@@ -20,7 +23,7 @@
 
         if (tiles.length <= ITEMS_PER_PAGE || !pager) {
           if (pager) {
-            pager.classList.add('js-hide');
+            pager.style.display = 'none';
           }
           return;
         }
@@ -34,7 +37,7 @@
         var update = function () {
           tiles.forEach(function (tile, index) {
             var onPage = index >= page * ITEMS_PER_PAGE && index < (page + 1) * ITEMS_PER_PAGE;
-            tile.classList.toggle('js-hide', !onPage);
+            tile.style.display = onPage ? '' : 'none';
           });
           counter.textContent = (page + 1) + ' / ' + pages;
           prev.disabled = page === 0;
