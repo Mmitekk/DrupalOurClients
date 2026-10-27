@@ -362,6 +362,13 @@ class SlideForm extends EntityForm {
 
     $options = [];
     $media_storage = \Drupal::entityTypeManager()->getStorage('media');
+    $type_storage = \Drupal::entityTypeManager()->getStorage('media_type');
+    $bundle_labels = [];
+    foreach ($bundles as $bundle_id) {
+      if ($type = $type_storage->load($bundle_id)) {
+        $bundle_labels[$bundle_id] = (string) $type->label();
+      }
+    }
     foreach ($media_storage->loadMultiple($query->execute()) as $media) {
       $thumbnail_field = $media->hasField('thumbnail') ? $media->get('thumbnail') : NULL;
       $thumbnail = $thumbnail_field && !$thumbnail_field->isEmpty() ? $thumbnail_field->entity : NULL;
@@ -371,11 +378,20 @@ class SlideForm extends EntityForm {
         '#uri' => $thumbnail->getFileUri(),
         '#attributes' => ['class' => ['our-clients-admin-thumb']],
       ] : [];
-      $thumb_html = $thumbnail
-        ? \Drupal::service('renderer')->render($thumb)
-        : '<svg width="44" height="44" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" stroke="#9a9a9f" stroke-width="1.5" fill="#f2f2f4"/><circle cx="9" cy="9" r="1.8" fill="#9a9a9f"/><path d="M5 18l5-5 3 3 2.5-2.5L20 18" stroke="#9a9a9f" stroke-width="1.5" fill="none" stroke-linejoin="round"/></svg>';
+      if ($thumbnail) {
+        $thumb_html = \Drupal::service('renderer')->render($thumb);
+      }
+      else {
+        // A clearly visible placeholder so tiles without a thumbnail
+        // (e.g. remote videos) do not look like empty slots in the grid.
+        $kind = $bundle_labels[$media->bundle()] ?? $media->bundle();
+        $thumb_html = '<svg class="our-clients-admin-noimage" width="48" height="48" viewBox="0 0 24 24" aria-hidden="true">'
+          . '<circle cx="9.5" cy="9.5" r="2.2" fill="#b9bec7"/>'
+          . '<path d="M5.5 19.5l5-5 3.4 3.4 2.6-2.6 3.5 3.5" stroke="#b9bec7" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+          . '<span class="our-clients-media-tile-kind">' . Html::escape($kind) . '</span>';
+      }
       $options[$media->id()] = Markup::create(
-        '<span class="our-clients-media-tile-thumb">' . $thumb_html
+        '<span class="our-clients-media-tile-thumb' . ($thumbnail ? '' : ' our-clients-media-tile-thumb--empty') . '">' . $thumb_html
         . '</span><span class="our-clients-media-tile-name">' . Html::escape((string) $media->label()) . '</span>'
       );
     }

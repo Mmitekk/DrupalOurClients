@@ -73,17 +73,35 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 60px;
+  min-height: 70px;
 }
 
 .our-clients-media-grid-wrapper .our-clients-admin-thumb {
   display: block;
-  max-width: 100%;
-  max-height: 70px;
-  width: auto;
-  height: auto;
+  width: 100%;
+  height: 70px;
+  object-fit: contain;
   border: 1px solid #e0e0e0;
   background: #ffffff;
+}
+
+/* Tiles without a thumbnail get a visible placeholder instead of an
+   empty white box: dashed frame, icon and the media type label. */
+.our-clients-media-grid-wrapper .our-clients-media-tile-thumb--empty {
+  flex-direction: column;
+  gap: 6px;
+  background: #f7f8fa;
+  border: 1px dashed #c9cdd4;
+  border-radius: 3px;
+}
+
+.our-clients-media-grid-wrapper .our-clients-media-tile-kind {
+  display: block;
+  font-size: 11px;
+  line-height: 1.2;
+  color: #6b7280;
+  overflow-wrap: break-word;
+  text-align: center;
 }
 
 .our-clients-media-grid-wrapper .our-clients-media-tile-name {

@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.8.6 (2026-10-27)
+
+- **The media grid no longer shows empty white tiles**: media items without a thumbnail (for example remote videos) now get a visible placeholder tile with a dashed "no preview" frame, an icon and the media type label, so the grid always looks complete.
+- **All tiles have the same size**: thumbnails now fill the tile area (`object-fit`), so rows stay even regardless of the source image dimensions.
+
 ## 1.8.5 (2026-10-27)
 
 - **Fixed a fatal error on the slide form**: the thumbnail render array was passed to `Renderer::render()` as an inline literal, but the method takes the array by reference - the form crashed with "Argument #1 ($elements) cannot be passed by reference". The render array is now assigned to a variable first.
