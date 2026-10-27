@@ -3,15 +3,10 @@
 namespace Drupal\our_clients\Form;
 
 use Drupal\Component\Utility\Html;
-use Drupal\Core\Ajax\AjaxResponse;
-use Drupal\Core\Ajax\AlertCommand;
-use Drupal\Core\Ajax\InvokeCommand;
-use Drupal\Core\Ajax\OpenModalDialogCommand;
-use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Form\FormState;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Markup;
 use Drupal\filter\Entity\FilterFormat;
 use Drupal\our_clients\Entity\Slide;
 
@@ -30,7 +25,6 @@ class SlideForm extends EntityForm {
     $slide = $this->entity;
     our_clients_maybe_import_russian_translation();
 
-    $form['#attached']['library'][] = 'core/drupal.dialog.ajax';
     $form['#attached']['library'][] = 'our_clients/our_clients.admin';
 
     $form['label'] = [
@@ -58,113 +52,46 @@ class SlideForm extends EntityForm {
       '#default_value' => $slide->isNew() ? TRUE : $slide->isEnabled(),
     ];
 
-    // The media item is picked in a modal dialog, exactly like the core media
-    // library widget: "Select media" opens the dialog, the chosen media ID
-    // comes back through the hidden selection element, and the hidden update
-    // button refreshes the preview via Ajax.
-    // The widget ID lives in the form state so it stays the same across Ajax
-    // rebuilds: a request-scoped unique ID would change between the rendered
-    // page and the later Ajax request and the dialog could not find the
-    // elements it writes back to.
-    $widget_id = (string) $form_state->get('our_clients_media_widget_id');
-    if ($widget_id === '') {
-      $widget_id = Html::getUniqueId('our-clients-media-widget');
-      $form_state->set('our_clients_media_widget_id', $widget_id);
-      $form_state->set('our_clients_media_preview_wrapper', $widget_id . '-preview');
-    }
-    $preview_wrapper_id = $widget_id . '-preview';
-
-    $current_media_id = (int) $form_state->getValue(['media_image', 'selection'], $slide->getImageMedia());
-
+    // Inline media field inside a collapsed details block: a thumbnail grid
+    // of the media library with a client-side pager plus an upload field.
+    // Everything happens in the form itself - no modal dialog, no Ajax
+    // round-trips.
     $form['media_image'] = [
       '#type' => 'details',
       '#title' => $this->t('Media image'),
       '#tree' => TRUE,
       '#open' => FALSE,
-      '#description' => $this->t('Images are shown in the slider and enlarged in the modal window; videos show an automatic preview in the slider and are played in the modal window.'),
+      '#description' => $this->t('Select an existing media item or upload a new image. Images are shown in the slider and enlarged in the modal window; videos show an automatic preview in the slider and are played in the modal window.'),
     ];
 
-    if (\Drupal::moduleHandler()->moduleExists('media')) {
-      $form['media_image']['selection'] = [
-        '#type' => 'hidden',
-        '#default_value' => $current_media_id ?: '',
-        '#attributes' => [
-          'data-our-clients-media-value' => $widget_id,
-        ],
-      ];
+    $form['media_image']['grid'] = $this->buildMediaGrid($slide);
 
-      $form['media_image']['preview'] = [
-        '#prefix' => '<div id="' . $preview_wrapper_id . '">',
-        '#suffix' => '</div>',
-        'item' => $this->buildMediaPreview($current_media_id),
-      ];
+    $current_fid = $this->currentSourceFileId($slide);
+    $form['media_image']['upload'] = [
+      '#type' => 'managed_file',
+      '#title' => $this->t('Upload new image'),
+      '#default_value' => $current_fid ? [$current_fid] : NULL,
+      '#upload_location' => 'public://our_clients',
+      '#upload_validators' => [
+        'file_validate_extensions' => ['png gif jpg jpeg webp'],
+      ],
+      '#description' => $this->t('The uploaded image is stored as a media item automatically. Recommended size: at least 600x450 pixels. The alt text equals the client name and can be edited on the media item afterwards.'),
+    ];
 
-      $form['media_image']['actions'] = [
-        '#type' => 'container',
-        '#attributes' => ['class' => ['our-clients-media-actions']],
-      ];
-      $form['media_image']['actions']['select'] = [
-        '#type' => 'button',
-        '#value' => $this->t('Select media'),
-        '#name' => $widget_id . '-select-button',
-        // Opening the dialog must not validate the slide form: the media image
-        // is required only when the slide is actually saved, exactly like the
-        // open button of the core media library widget.
-        '#limit_validation_errors' => [],
-        '#ajax' => [
-          'callback' => '::openMediaDialog',
-          'progress' => ['type' => 'throbber', 'message' => $this->t('Opening the media library.')],
-        ],
-      ];
-      $form['media_image']['actions']['remove'] = [
-        '#type' => 'submit',
-        '#value' => $this->t('Remove'),
-        '#name' => $widget_id . '-remove-button',
-        '#submit' => ['::removeMediaSubmit'],
-        '#limit_validation_errors' => [['media_image', 'selection']],
-        '#ajax' => [
-          'callback' => '::removeMediaAjax',
-          'progress' => ['type' => 'throbber', 'message' => $this->t('Removing.')],
-        ],
-      ];
-      $form['media_image']['update'] = [
-        '#type' => 'submit',
-        '#value' => $this->t('Update media'),
-        '#name' => $widget_id . '-update-button',
-        '#submit' => ['::updateMediaSubmit'],
-        '#validate' => [],
-        '#limit_validation_errors' => [['media_image', 'selection']],
-        '#attributes' => [
-          'data-our-clients-media-update' => $widget_id,
-          'class' => ['js-hide'],
-        ],
-        '#ajax' => [
-          'callback' => '::updateMediaPreview',
-          'wrapper' => $preview_wrapper_id,
-          'progress' => ['type' => 'throbber', 'message' => $this->t('Updating media.')],
-        ],
-      ];
-
-      $form['media_image']['image_alt'] = [
-        '#type' => 'textfield',
-        '#title' => $this->t('Image alt text'),
-        '#maxlength' => 255,
-        '#default_value' => $slide->getImageAlt(),
-        '#description' => $this->t('Describes the image for screen readers. Empty = the client name (or the alt text stored on the media item) is used.'),
-      ];
-      $form['media_image']['image_title'] = [
-        '#type' => 'textfield',
-        '#title' => $this->t('Image title text'),
-        '#maxlength' => 255,
-        '#default_value' => $slide->getImageTitle(),
-        '#description' => $this->t('Shown as a tooltip when the mouse hovers over the image. Empty = the client name is used.'),
-      ];
-    }
-    else {
-      $form['media_image']['warning'] = [
-        '#markup' => '<p>' . $this->t('The Media module is disabled on this site, so no image can be attached to the slide. Enable the Media module to select an image.') . '</p>',
-      ];
-    }
+    $form['media_image']['image_alt'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Image alt text'),
+      '#maxlength' => 255,
+      '#default_value' => $slide->getImageAlt(),
+      '#description' => $this->t('Describes the image for screen readers. Empty = the client name (or the alt text stored on the media item) is used.'),
+    ];
+    $form['media_image']['image_title'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Image title text'),
+      '#maxlength' => 255,
+      '#default_value' => $slide->getImageTitle(),
+      '#description' => $this->t('Shown as a tooltip when the mouse hovers over the image. Empty = the client name is used.'),
+    ];
 
     $description = $slide->getDescription();
     $form['description'] = [
@@ -306,11 +233,12 @@ class SlideForm extends EntityForm {
     parent::validateForm($form, $form_state);
 
     $media_image = $form_state->getValue('media_image') ?: [];
-    $selection = trim((string) ($media_image['selection'] ?? ''));
+    $upload = isset($media_image['upload'][0]) ? (int) $media_image['upload'][0] : 0;
+    $selected = isset($media_image['grid']['existing']) ? (int) $media_image['grid']['existing'] : 0;
 
-    if ($selection === '' && $this->entity->isNew() && \Drupal::moduleHandler()->moduleExists('media')) {
+    if (!$upload && !$selected && $this->entity->isNew() && \Drupal::moduleHandler()->moduleExists('media')) {
       $form['media_image']['#open'] = TRUE;
-      $form_state->setErrorByName('media_image', $this->t('Add an image: click "Select media" and choose one from the media library.'));
+      $form_state->setErrorByName('media_image', $this->t('Add an image: select one from the media library or upload a new one.'));
     }
 
     // A review needs at least its text when any of its fields are filled in.
@@ -384,154 +312,143 @@ class SlideForm extends EntityForm {
     $entity->set('image_alt', trim((string) ($media_image['image_alt'] ?? '')));
     $entity->set('image_title', trim((string) ($media_image['image_title'] ?? '')));
 
-    // The hidden selection field is the single source of truth for the media
-    // item: an empty value means the media was removed on purpose.
-    if (\Drupal::moduleHandler()->moduleExists('media')) {
-      $entity->set('image_media', (int) ($media_image['selection'] ?? 0));
+    // Priority: a freshly uploaded image wins over a library selection; when
+    // both are empty an existing slide keeps its current media item.
+    $fid = isset($media_image['upload'][0]) ? (int) $media_image['upload'][0] : 0;
+    $selected = isset($media_image['grid']['existing']) ? (int) $media_image['grid']['existing'] : 0;
+    if ($fid) {
+      $entity->set('image_media', Slide::mediaFromUpload($fid, (string) $values['label']));
+    }
+    elseif ($selected) {
+      $entity->set('image_media', $selected);
     }
   }
 
   /**
-   * Builds the current media selection preview.
+   * Builds the inline media selection grid with a client-side pager.
    *
-   * @param int $media_id
-   *   The media ID, 0 for none.
+   * All media items are rendered as radio tiles; the pager script hides all
+   * but one page of them, so the whole selection stays in the form and paging
+   * never needs a server round-trip.
+   *
+   * @param \Drupal\our_clients\Entity\Slide $slide
+   *   The slide being edited.
    *
    * @return array
-   *   The preview render array.
+   *   The grid render array.
    */
-  protected function buildMediaPreview($media_id) {
-    $media_id = (int) $media_id;
-    if ($media_id && \Drupal::moduleHandler()->moduleExists('media')) {
-      $media = \Drupal::entityTypeManager()->getStorage('media')->load($media_id);
-      if ($media) {
-        $thumbnail_field = $media->hasField('thumbnail') ? $media->get('thumbnail') : NULL;
-        $thumbnail = $thumbnail_field && !$thumbnail_field->isEmpty() ? $thumbnail_field->entity : NULL;
-        return [
-          '#type' => 'container',
-          '#attributes' => ['class' => ['our-clients-media-preview']],
-          'thumb' => $thumbnail ? [
-            '#theme' => 'image_style',
-            '#style_name' => 'thumbnail',
-            '#uri' => $thumbnail->getFileUri(),
-            '#attributes' => ['class' => ['our-clients-admin-thumb']],
-          ] : [],
-          'name' => ['#markup' => Html::escape((string) $media->label())],
-        ];
-      }
-    }
-    return [
+  protected function buildMediaGrid(Slide $slide) {
+    $element = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['our-clients-media-preview', 'is-empty']],
-      'empty' => ['#markup' => $this->t('No media selected yet.')],
+      '#prefix' => '<div class="our-clients-media-grid-wrapper">',
+      '#suffix' => '</div>',
     ];
-  }
 
-  /**
-   * Ajax callback for the "Select media" button: opens the media dialog.
-   *
-   * @param array $form
-   *   The form array.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The form state.
-   *
-   * @return \Drupal\Core\Ajax\AjaxResponse
-   *   The response opening the dialog.
-   */
-  public function openMediaDialog(array &$form, FormStateInterface $form_state) {
-    $widget_id = (string) $form_state->get('our_clients_media_widget_id');
-    $current = (int) ($form_state->getValue(['media_image', 'selection'], 0) ?: 0);
-
-    try {
-      // OpenModalDialogCommand accepts a render array, not a form object:
-      // passing getForm() output would fail JSON encoding of the Ajax response.
-      // The dialog form is built like the core media library does it, and the
-      // widget ID and current selection travel through the form state.
-      $dialog_form_state = new FormState();
-      $dialog_form_state->set('our_clients_media_widget_id', $widget_id);
-      $dialog_form_state->set('our_clients_media_current_id', $current);
-      $content = \Drupal::formBuilder()->buildForm(MediaSelectForm::class, $dialog_form_state);
-
-      $response = new AjaxResponse();
-      $response->addCommand(new OpenModalDialogCommand($this->t('Select media'), $content, [
-        'width' => '75%',
-        'height' => '75%',
-        'dialogClass' => 'our-clients-media-dialog',
-      ]));
-      return $response;
+    if (!\Drupal::moduleHandler()->moduleExists('media')) {
+      $element['warning'] = [
+        '#markup' => '<p>' . $this->t('The Media module is disabled on this site, so no image can be attached to the slide. Enable the Media module to select an image.') . '</p>',
+      ];
+      return $element;
     }
-    catch (\Throwable $e) {
-      // Any exception here would otherwise surface as an opaque HTTP 500 with
-      // an empty response body. Log it and show it in the browser instead.
-      \Drupal::logger('our_clients')->error('Failed to open the media selection dialog: @error', ['@error' => $e->getMessage()]);
-      return (new AjaxResponse())
-        ->addCommand(new AlertCommand($this->t('The media selection dialog could not be opened: @error', ['@error' => $e->getMessage()])));
+
+    $query = \Drupal::entityQuery('media')
+      ->accessCheck(FALSE)
+      ->sort('created', 'DESC')
+      ->range(0, 200);
+    $bundles = Slide::slideMediaBundles();
+    if ($bundles) {
+      $query->condition('bundle', $bundles, 'IN');
     }
+
+    $options = [];
+    $media_storage = \Drupal::entityTypeManager()->getStorage('media');
+    foreach ($media_storage->loadMultiple($query->execute()) as $media) {
+      $thumbnail_field = $media->hasField('thumbnail') ? $media->get('thumbnail') : NULL;
+      $thumbnail = $thumbnail_field && !$thumbnail_field->isEmpty() ? $thumbnail_field->entity : NULL;
+      $thumb = $thumbnail ? [
+        '#theme' => 'image_style',
+        '#style_name' => 'thumbnail',
+        '#uri' => $thumbnail->getFileUri(),
+        '#attributes' => ['class' => ['our-clients-admin-thumb']],
+      ] : [];
+      $options[$media->id()] = Markup::create(
+        '<span class="our-clients-media-tile-thumb">' . \Drupal::service('renderer')->render($thumb)
+        . '</span><span class="our-clients-media-tile-name">' . Html::escape((string) $media->label()) . '</span>'
+      );
+    }
+
+    if (!$options) {
+      $element['empty'] = [
+        '#markup' => '<p>' . $this->t('The media library is empty. Upload a new image below.') . '</p>',
+      ];
+      return $element;
+    }
+
+    $pages = max(1, (int) ceil(count($options) / 12));
+    $element['existing'] = [
+      '#type' => 'radios',
+      '#title' => $this->t('From the media library'),
+      '#options' => $options,
+      '#default_value' => $slide->getImageMedia() ?: NULL,
+      '#attributes' => ['class' => ['our-clients-media-radios']],
+    ];
+    $element['pager'] = [
+      '#type' => 'container',
+      '#attributes' => ['class' => ['our-clients-media-pager']],
+      'prev' => [
+        '#type' => 'html_tag',
+        '#tag' => 'button',
+        '#value' => '‹',
+        '#attributes' => [
+          'type' => 'button',
+          'class' => ['our-clients-media-pager-prev'],
+          'aria-label' => $this->t('Previous page'),
+          'disabled' => TRUE,
+        ],
+      ],
+      'counter' => [
+        '#type' => 'html_tag',
+        '#tag' => 'span',
+        '#value' => '1 / ' . $pages,
+        '#attributes' => ['class' => ['our-clients-media-pager-counter']],
+      ],
+      'next' => [
+        '#type' => 'html_tag',
+        '#tag' => 'button',
+        '#value' => '›',
+        '#attributes' => [
+          'type' => 'button',
+          'class' => ['our-clients-media-pager-next'],
+          'aria-label' => $this->t('Next page'),
+          'disabled' => $pages <= 1,
+        ],
+      ],
+    ];
+
+    return $element;
   }
 
   /**
-   * Submit handler for the hidden media update button.
+   * Returns the source file ID behind the slide's current media item.
    *
-   * The value arrives through the hidden selection element; the ajax callback
-   * rebuilds the preview from it.
+   * Used to prefill the upload field when editing a slide whose media item is
+   * based on an image file.
    *
-   * @param array $form
-   *   The form array.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The form state.
+   * @param \Drupal\our_clients\Entity\Slide $slide
+   *   The slide.
+   *
+   * @return int
+   *   The file ID, 0 if none.
    */
-  public function updateMediaSubmit(array &$form, FormStateInterface $form_state) {
-  }
-
-  /**
-   * Ajax callback: rebuilds the media preview from the current selection.
-   *
-   * @param array $form
-   *   The form array.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The form state.
-   *
-   * @return array
-   *   The preview render array.
-   */
-  public function updateMediaPreview(array &$form, FormStateInterface $form_state) {
-    $media_id = (int) ($form_state->getValue(['media_image', 'selection'], 0) ?: 0);
-    return $this->buildMediaPreview($media_id);
-  }
-
-  /**
-   * Submit handler for the "Remove" button.
-   *
-   * @param array $form
-   *   The form array.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The form state.
-   */
-  public function removeMediaSubmit(array &$form, FormStateInterface $form_state) {
-    $form_state->setValue(['media_image', 'selection'], '');
-  }
-
-  /**
-   * Ajax callback for the "Remove" button.
-   *
-   * Clears the hidden selection in the DOM as well, so the cleared value also
-   * survives full form rebuilds such as the "Add review" button.
-   *
-   * @param array $form
-   *   The form array.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The form state.
-   *
-   * @return \Drupal\Core\Ajax\AjaxResponse
-   *   The response.
-   */
-  public function removeMediaAjax(array &$form, FormStateInterface $form_state) {
-    $widget_id = (string) $form_state->get('our_clients_media_widget_id');
-    $wrapper_id = (string) $form_state->get('our_clients_media_preview_wrapper');
-    $response = new AjaxResponse();
-    $response->addCommand(new InvokeCommand('[data-our-clients-media-value="' . $widget_id . '"]', 'val', ['']));
-    $response->addCommand(new ReplaceCommand('#' . $wrapper_id, $this->buildMediaPreview(0)));
-    return $response;
+  protected function currentSourceFileId($slide) {
+    if (!$slide->getImageMedia() || !\Drupal::moduleHandler()->moduleExists('media')) {
+      return 0;
+    }
+    $media = \Drupal::entityTypeManager()->getStorage('media')->load($slide->getImageMedia());
+    if (!$media || $media->getSource()->getPluginId() !== 'image') {
+      return 0;
+    }
+    return (int) $media->getSource()->getSourceFieldValue($media);
   }
 
   /**
@@ -547,7 +464,7 @@ class SlideForm extends EntityForm {
 
     if (!$slide->getImageMedia()) {
       if (\Drupal::moduleHandler()->moduleExists('media')) {
-        $this->messenger()->addWarning($this->t('The slide @label was saved without an image. Open the slide again and click "Select media" to attach one.', ['@label' => $slide->label()]));
+        $this->messenger()->addWarning($this->t('The slide @label was saved without an image. Open the slide again and choose one from the media library.', ['@label' => $slide->label()]));
       }
       else {
         $this->messenger()->addWarning($this->t('The slide @label was saved without an image because the Media module is disabled on this site. Enable the Media module and edit the slide to attach an image.', ['@label' => $slide->label()]));

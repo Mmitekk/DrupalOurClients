@@ -42,7 +42,7 @@ function our_clients_help($route_name, RouteMatchInterface $route_match) {
  */
 function our_clients_maybe_import_russian_translation() {
   // Bump when the bundled .po file changes so existing sites re-import it.
-  $po_version = '1.8.2';
+  $po_version = '1.8.3';
   if (\Drupal::state()->get('our_clients.ru_po_imported') === $po_version) {
     return;
   }

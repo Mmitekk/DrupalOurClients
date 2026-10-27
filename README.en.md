@@ -15,7 +15,7 @@ The slider appearance and all of its content are managed in the module's admin s
 - **Modal window** — clicking a slide opens the client card: large image (or a video player), description and **client reviews** — star rating, quote, author, city and date. Close via the cross, clicking outside the window or the Escape key
 - **Full-featured admin** (Structure » Our clients):
   - Slides list with thumbnails and **drag & drop ordering**
-  - Slide form: the **"Media image" field** — the "Select media" button opens a **modal dialog** with the media library (thumbnail grid, name filter, upload of a new file stored as a media item automatically); **image alt and title texts**, client name, description (text format), **reviews** (multi-value field: author name, date, city, 1-5 rating, text — add as many as needed with the "Add review" button), published flag
+  - Slide form: the **"Media image" field** — the media library as a **thumbnail grid with a pager** (up to 200 items, "Previous page" / "Next page" buttons) and upload of a new file stored as a media item automatically; **image alt and title texts**, client name, description (text format), **reviews** (multi-value field: author name, date, city, 1-5 rating, text — add as many as needed with the "Add review" button), published flag
   - Settings tab: block heading, visible slides count (desktop / tablet / mobile), autoplay and its interval, slide image height (desktop and mobile), client name font size and **margins around it**, modal window width, plus **heading size and margins**, **full "More details" button styling** (text color, hover text color, border color, background, hover background, border radius, font size, height and horizontal padding — desktop and mobile) and the **review color** (stars, border and background of the reviews in the modal window)
 - **Mobile-first responsive behavior** — separate values for the number of visible slides and image height on mobile, touch swipe navigation, compact arrows
 - **Accessible** — carousel ARIA attributes, keyboard arrow navigation, focus trap in the modal, `prefers-reduced-motion` support
@@ -85,7 +85,7 @@ drush cr
 ## Quick start
 
 1. Open **Manage » Structure » Our clients** (`/admin/structure/our-clients`).
-2. Click **"Add slide"**: in the "Media image" field click **"Select media"** — a modal dialog opens with the media library (name filter, upload of a new file via "Upload and use", insertion via "Insert selected"). Optionally fill in the image alt and title texts, enter the client name, description and review, save. Repeat for the other clients.
+2. Click **"Add slide"**: in the "Media image" field pick an image from the media library grid (page through it with the "‹" and "›" buttons) or upload a new file. Optionally fill in the image alt and title texts, enter the client name, description and review, save. Repeat for the other clients.
 3. Optionally open the **"Settings"** tab and set the block heading ("Our clients" by default), the number of visible slides and, if needed, the button and review colors.
 4. Place the block: **Manage » Structure » Block layout** (`/admin/structure/block`) » choose a region » **"Place block"** » find **"Our clients slider"**.
 5. In the placement form, hide the technical block title (the "Display block title" checkbox) if the heading is already set in the module settings — otherwise the title will appear twice.
@@ -96,7 +96,7 @@ drush cr
 | Section | Path | What is configured |
 |---|---|---|
 | Slides | `/admin/structure/our-clients` | Slides list, drag & drop ordering, "Add slide" button, Edit/Delete operations |
-| Slide form | `/admin/structure/our-clients/add` | Media image (modal media library dialog with filter and upload), image alt/title texts, client name, description, reviews (multi-value: author, date, city, rating, text), published flag |
+| Slide form | `/admin/structure/our-clients/add` | Media image (media library grid with a pager and file upload), image alt/title texts, client name, description, reviews (multi-value: author, date, city, rating, text), published flag |
 | Settings | `/admin/structure/our-clients/settings` | Block heading, visible slides (3 breakpoints), autoplay, interval, image height, client name size and margins, modal width, heading size and margins, "More details" button style (text, hover and border colors, background, radius, sizes), review color |
 
 The section is also linked from the admin menu: **Manage » Structure » Our clients**.

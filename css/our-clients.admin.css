@@ -1,98 +1,121 @@
 /**
  * @file
- * Admin styles for the Our clients slide form and the media dialog.
+ * Admin styles for the Our clients slide form media grid.
  */
 
-/* Keep the hidden media update button out of sight even without core's
-   system stylesheet. */
+/* Hide elements without core's system stylesheet. */
 .js-hide {
   display: none !important;
 }
 
-/* Current selection preview on the slide form. */
-.our-clients-media-preview {
+/* The media selection grid inside the collapsed "Media image" block. */
+.our-clients-media-grid-wrapper {
+  margin-bottom: 16px;
+}
+
+.our-clients-media-radios {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
+  margin: 0;
+}
+
+.our-clients-media-radios .js-form-type-radio {
+  position: relative;
+  margin: 0;
+}
+
+/* The radio covers the whole tile but stays invisible and focusable. */
+.our-clients-media-radios .js-form-type-radio input[type="radio"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.our-clients-media-radios .js-form-type-radio label.option {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  height: 100%;
+  padding: 8px;
+  border: 2px solid #d4d4d8;
+  border-radius: 4px;
+  background: #ffffff;
+  text-align: center;
+  cursor: pointer;
+}
+
+.our-clients-media-radios .js-form-type-radio:hover label.option {
+  border-color: #8fb7e4;
+}
+
+.our-clients-media-radios .js-form-type-radio input:checked + label.option {
+  border-color: #2e6da4;
+  background: #e7f0fe;
+}
+
+.our-clients-media-radios .js-form-type-radio input:focus + label.option {
+  outline: 2px solid #2e6da4;
+  outline-offset: 1px;
+}
+
+.our-clients-media-radios .our-clients-media-tile-thumb {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
-  margin-bottom: 12px;
-  max-width: 520px;
-  border: 1px solid #d4d4d8;
-  background: #f7f7f9;
+  justify-content: center;
+  min-height: 60px;
 }
 
-.our-clients-media-preview img {
+.our-clients-media-radios .our-clients-admin-thumb {
   display: block;
-  max-width: 80px;
-  max-height: 60px;
+  max-width: 100%;
+  max-height: 70px;
   width: auto;
   height: auto;
   border: 1px solid #e0e0e0;
   background: #ffffff;
 }
 
-.our-clients-media-preview.is-empty {
-  color: #777777;
-  font-style: italic;
-  border-style: dashed;
-  background: transparent;
-}
-
-.our-clients-media-actions {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-/* Media selection dialog. */
-.our-clients-media-dialog .ui-dialog-content {
-  overflow: auto;
-}
-
-.our-clients-filter-row {
-  display: flex;
-  align-items: flex-end;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.our-clients-filter-row .form-item {
-  flex: 1 1 auto;
-  margin: 0;
-}
-
-.our-clients-media-grid {
-  max-height: 45vh;
-  overflow: auto;
-  margin-bottom: 16px;
-  padding: 8px;
-  border: 1px solid #d4d4d8;
-  background: #ffffff;
-}
-
-.our-clients-media-grid table {
-  width: 100%;
-  margin: 0;
-}
-
-.our-clients-media-grid td {
-  vertical-align: middle;
-}
-
-.our-clients-media-grid tr.is-selected td {
-  background-color: #e7f0fe;
-}
-
-.our-clients-media-grid tr:hover td {
-  background-color: #f2f6fc;
-}
-
-.our-clients-media-grid .our-clients-admin-thumb {
+.our-clients-media-radios .our-clients-media-tile-name {
   display: block;
-  max-width: 70px;
-  max-height: 52px;
-  width: auto;
-  height: auto;
-  border: 1px solid #e0e0e0;
-  background: #ffffff;
+  font-size: 12px;
+  line-height: 1.3;
+  overflow-wrap: break-word;
+}
+
+/* The client-side pager. */
+.our-clients-media-pager {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.our-clients-media-pager button {
+  min-width: 44px;
+  padding: 4px 10px;
+  border: 1px solid #b8b8b8;
+  border-radius: 3px;
+  background: #f0f0f0;
+  font-size: 16px;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.our-clients-media-pager button:hover:not(:disabled) {
+  background: #e0e0e0;
+}
+
+.our-clients-media-pager button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.our-clients-media-pager .our-clients-media-pager-counter {
+  font-size: 13px;
+  color: #555555;
 }

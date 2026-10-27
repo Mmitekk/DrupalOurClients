@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.8.3 (2026-10-27)
+
+- **Media selection is back in the slide form**: the "Media image" field is a collapsed block again, with the media library shown as a thumbnail grid (up to 200 items) with a client-side pager (Previous/Next buttons, page counter). The modal dialog, its filter and its upload field were removed as unreliable.
+- The upload field ("Upload new image") and the per-slide alt/title fields work as before. Without JavaScript the grid degrades to the plain list of radio options.
+
 ## 1.8.2 (2026-10-27)
 
 - **Fixed the "Select media" button on new slides**: the button now skips slide form validation (`#limit_validation_errors`), exactly like the open button of the core media library widget. Previously the empty media selection of a new slide failed validation before the button's Ajax callback could run, so the dialog never opened.

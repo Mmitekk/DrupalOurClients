@@ -1,43 +1,58 @@
 /**
  * @file
  * Admin helpers for the Our clients slide form.
+ *
+ * Pages the media selection grid inside the collapsed "Media image" block
+ * purely in the browser: all radio tiles stay in the form, so a selection
+ * made on another page is still submitted when the slide is saved.
  */
 
 (function (Drupal, once) {
   'use strict';
 
-  Drupal.behaviors.ourClientsMediaSelect = {
+  var ITEMS_PER_PAGE = 12;
+
+  Drupal.behaviors.ourClientsMediaGrid = {
     attach: function (context) {
-      once('our-clients-media-select', '.our-clients-media-grid', context).forEach(function (grid) {
-        var markSelected = function () {
-          grid.querySelectorAll('tr').forEach(function (row) {
-            var radio = row.querySelector('input[type="radio"]');
-            row.classList.toggle('is-selected', radio && radio.checked);
+      once('our-clients-media-grid', '.our-clients-media-grid-wrapper', context).forEach(function (wrapper) {
+        var tiles = Array.prototype.slice.call(wrapper.querySelectorAll('.js-form-type-radio'));
+        var pager = wrapper.querySelector('.our-clients-media-pager');
+
+        if (tiles.length <= ITEMS_PER_PAGE || !pager) {
+          if (pager) {
+            pager.classList.add('js-hide');
+          }
+          return;
+        }
+
+        var counter = pager.querySelector('.our-clients-media-pager-counter');
+        var prev = pager.querySelector('.our-clients-media-pager-prev');
+        var next = pager.querySelector('.our-clients-media-pager-next');
+        var pages = Math.ceil(tiles.length / ITEMS_PER_PAGE);
+        var page = 0;
+
+        var update = function () {
+          tiles.forEach(function (tile, index) {
+            var onPage = index >= page * ITEMS_PER_PAGE && index < (page + 1) * ITEMS_PER_PAGE;
+            tile.classList.toggle('js-hide', !onPage);
           });
+          counter.textContent = (page + 1) + ' / ' + pages;
+          prev.disabled = page === 0;
+          next.disabled = page >= pages - 1;
         };
 
-        // Highlight the rows of checked radios, also when the grid is
-        // re-rendered by the filter.
-        markSelected();
-
-        grid.addEventListener('change', function (event) {
-          if (event.target.closest('input[type="radio"]')) {
-            markSelected();
-          }
+        prev.addEventListener('click', function (event) {
+          event.preventDefault();
+          page = Math.max(0, page - 1);
+          update();
+        });
+        next.addEventListener('click', function (event) {
+          event.preventDefault();
+          page = Math.min(pages - 1, page + 1);
+          update();
         });
 
-        // Clicking anywhere in a row selects its radio.
-        grid.addEventListener('click', function (event) {
-          var row = event.target.closest('tr');
-          if (!row || event.target.closest('input, a, button, label')) {
-            return;
-          }
-          var radio = row.querySelector('input[type="radio"]');
-          if (radio) {
-            radio.checked = true;
-            markSelected();
-          }
-        });
+        update();
       });
     }
   };
