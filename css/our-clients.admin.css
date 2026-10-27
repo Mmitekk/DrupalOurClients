@@ -20,25 +20,29 @@
   max-width: 100%;
 }
 
-/* A definite column count, not auto-fill: with auto-fill an admin theme that
-   lets the container shrink to its content collapses the grid to one column. */
-.our-clients-media-grid-wrapper .form-radios.our-clients-media-radios {
+/* The tiles themselves live in the .form-radios div: Claro puts the element's
+   own attributes (and our hook class) on the surrounding fieldset, so the grid
+   must be applied to this inner container - on the fieldset it would squeeze
+   the whole tile block into a single column. A definite column count is used
+   on purpose: with auto-fill a container whose width is resolved from its
+   content collapses to one column. */
+.our-clients-media-grid-wrapper .form-radios {
   display: grid !important;
   grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
-  gap: 10px;
+  gap: 10px !important;
   margin: 0 !important;
   width: 100% !important;
   max-width: 100% !important;
 }
 
 @media (max-width: 1200px) {
-  .our-clients-media-grid-wrapper .form-radios.our-clients-media-radios {
+  .our-clients-media-grid-wrapper .form-radios {
     grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
   }
 }
 
 @media (max-width: 820px) {
-  .our-clients-media-grid-wrapper .form-radios.our-clients-media-radios {
+  .our-clients-media-grid-wrapper .form-radios {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 }

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.8.8 (2026-10-27)
+
+- **The grid was applied to the wrong element**: Claro renders a radios element as a fieldset and puts the element's own attributes on that fieldset, so the inline grid styles turned the fieldset itself into a 6-column grid and squeezed the whole block of tiles into a single ~150px column. The grid is now applied to the `.form-radios` container that actually holds the tiles (in the stylesheet, with a definite column count), and the element carries only a hook class. Verified in a browser against the real Claro markup and stylesheets: tiles go from 29px wide in one column to 226px wide in a multi-column grid.
+
 ## 1.8.7 (2026-10-27)
 
 - **Fixed the media grid collapsing into a single column**: the grid tracks were `repeat(auto-fill, minmax(130px, 1fr))`, and when the admin theme lets the container shrink to its content the browser resolves auto-fill to a single track, so the tiles stacked one under another. The grid now uses a definite number of columns (6, or 4 and 2 on narrower screens) together with an explicit full width, which stays multi-column in every layout - verified in a browser against the shrink-to-fit cases.

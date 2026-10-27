@@ -409,12 +409,12 @@ class SlideForm extends EntityForm {
       '#title' => $this->t('From the media library'),
       '#options' => $options,
       '#default_value' => $slide->getImageMedia() ?: NULL,
-      // A definite column count (instead of auto-fill) plus an explicit width
-      // keeps the grid multi-column even when an admin theme lets the
-      // container shrink to its content.
+      // Only a hook class here: themes wrap the radios differently (Claro puts
+      // these attributes on the fieldset and renders the tiles inside a
+      // .form-radios div), so the grid itself is applied to .form-radios in
+      // the stylesheet.
       '#attributes' => [
         'class' => ['our-clients-media-radios'],
-        'style' => 'display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin:0;width:100%;max-width:100%',
       ],
     ];
     $element['pager'] = [
