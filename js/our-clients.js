@@ -218,6 +218,7 @@
     this.dragStartX = 0;
     this.dragDelta = 0;
     this.isDragging = false;
+    this.hasPointerCapture = false;
     this.suppressClick = false;
 
     if (!this.viewport || !this.track || !this.slides.length) {
@@ -386,7 +387,6 @@
       self.dragStartX = event.clientX;
       self.dragDelta = 0;
       self.viewport.classList.add('is-dragging');
-      self.viewport.setPointerCapture(event.pointerId);
       self.stopAutoplay();
     });
 
@@ -395,6 +395,13 @@
         return;
       }
       self.dragDelta = event.clientX - self.dragStartX;
+      // Capture only after a real movement. Capturing on pointerdown makes the
+      // browser retarget the following click to the viewport, so the slide
+      // button never receives it and the details modal does not open.
+      if (!self.hasPointerCapture && Math.abs(self.dragDelta) > 8) {
+        self.hasPointerCapture = true;
+        self.viewport.setPointerCapture(event.pointerId);
+      }
       self.applyTransform(self.dragDelta);
     });
 
@@ -406,9 +413,17 @@
         return;
       }
       self.isDragging = false;
+      self.hasPointerCapture = false;
       self.viewport.classList.remove('is-dragging');
       var threshold = self.viewport.clientWidth / self.perView / 6;
       self.suppressClick = Math.abs(self.dragDelta) > 10;
+      if (self.suppressClick) {
+        // The click that follows a drag is retargeted to the viewport, so the
+        // suppression must not leak into the next, genuine click.
+        window.setTimeout(function () {
+          self.suppressClick = false;
+        }, 300);
+      }
       if (self.dragDelta < -threshold) {
         self.goTo(self.index + 1);
       } else if (self.dragDelta > threshold) {

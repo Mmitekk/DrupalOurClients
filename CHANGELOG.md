@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.8.9 (2026-10-28)
+
+- **The "More details" button opens the client modal again**: the slider called `setPointerCapture()` on every pointerdown, so the browser retargeted the following click to the slider viewport and the slide button never received it - the modal silently never opened when there were enough slides to drag, while it still worked when all slides fit. The pointer is now captured only after the pointer actually moves (more than 8px), so a plain click reaches the button and a drag still slides.
+- **Click suppression after a drag no longer leaks**: the flag that ignores the click following a drag is now reset after 300ms, so the next genuine click is not swallowed.
+
 ## 1.8.8 (2026-10-27)
 
 - **The grid was applied to the wrong element**: Claro renders a radios element as a fieldset and puts the element's own attributes on that fieldset, so the inline grid styles turned the fieldset itself into a 6-column grid and squeezed the whole block of tiles into a single ~150px column. The grid is now applied to the `.form-radios` container that actually holds the tiles (in the stylesheet, with a definite column count), and the element carries only a hook class. Verified in a browser against the real Claro markup and stylesheets: tiles go from 29px wide in one column to 226px wide in a multi-column grid.
