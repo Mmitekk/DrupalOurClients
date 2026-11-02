@@ -155,3 +155,28 @@ function our_clients_post_update_remove_slider_max_width(array &$sandbox = NULL)
     ->clear('slider_max_width')
     ->save();
 }
+
+/**
+ * Resets heading sizes that still hold the old defaults to theme control.
+ *
+ * Since 1.5.x a heading_font_size of 0 means "style the heading with the
+ * active theme's h2 rules". Sites that installed the module while the old
+ * defaults (28/22) were shipped still carry those values, which keeps the
+ * heading small and dark instead of looking like the surrounding h2 blocks.
+ * Values are only reset when they have never been customized.
+ */
+function our_clients_post_update_theme_controlled_heading(array &$sandbox = NULL) {
+  $config = \Drupal::configFactory()->getEditable('our_clients.settings');
+  $changed = FALSE;
+  if ((int) $config->get('heading_font_size') === 28) {
+    $config->set('heading_font_size', 0);
+    $changed = TRUE;
+  }
+  if ((int) $config->get('heading_font_size_mobile') === 22) {
+    $config->set('heading_font_size_mobile', 0);
+    $changed = TRUE;
+  }
+  if ($changed) {
+    $config->save();
+  }
+}

@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.9.0 (2026-11-02)
+
+- **The heading is fully styled by the active theme's h2 rules by default** - color, size and the responsive breakpoints (for example 2.5em / 2em / 1.4em with the accent color), so it looks exactly like the h2 headings of the surrounding blocks. Sites that never customized the heading size (the old 28/22 defaults) are migrated to the theme-controlled mode by `drush updb` (`our_clients_post_update_theme_controlled_heading()`); customized values keep working as before.
+- The heading size/margin CSS is now only applied when the matching settings are non-zero (a modifier class on the block wrapper), so the module stylesheet cannot fight the theme.
+
 ## 1.8.9 (2026-10-28)
 
 - **The "More details" button opens the client modal again**: the slider called `setPointerCapture()` on every pointerdown, so the browser retargeted the following click to the slider viewport and the slide button never received it - the modal silently never opened when there were enough slides to drag, while it still worked when all slides fit. The pointer is now captured only after the pointer actually moves (more than 8px), so a plain click reaches the button and a drag still slides.

@@ -30,11 +30,16 @@
   justify-content: flex-start;
 }
 
-/* By default the heading inherits the theme's h2 style entirely; the
-   --oc-heading-* variables override the size and the margins. */
-.our-clients__heading {
-  margin: var(--oc-heading-margin-top, 0) 0 var(--oc-heading-margin-bottom, 32px);
+/* By default the heading is styled entirely by the active theme's h2 rules
+   (color, size, responsive behavior) - the module declares nothing. The
+   --heading-size / --heading-margins modifiers (added when the matching
+   settings are non-zero) re-enable the module's own declarations. */
+.our-clients--heading-size .our-clients__heading {
   font-size: var(--oc-heading-font-size, inherit);
+}
+
+.our-clients--heading-margins .our-clients__heading {
+  margin: var(--oc-heading-margin-top, 0) 0 var(--oc-heading-margin-bottom, 32px);
 }
 
 .our-clients__frame {
@@ -418,8 +423,11 @@ img.our-clients-admin-thumb {
 }
 
 @media (max-width: 575px) {
-  .our-clients__heading {
+  .our-clients--heading-size .our-clients__heading {
     font-size: var(--oc-heading-font-size-mobile, var(--oc-heading-font-size, inherit));
+  }
+
+  .our-clients--heading-margins .our-clients__heading {
     margin-bottom: var(--oc-heading-margin-bottom, 24px);
   }
 

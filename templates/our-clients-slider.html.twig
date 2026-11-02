@@ -40,6 +40,20 @@
  */
 #}
 {{ attach_library('our_clients/our_clients') }}
+{% set oc_classes = [
+  'our-clients',
+  'page-content',
+  'page-margin-top-middle',
+  'page-margin-bottom-middle',
+  'page-padding-top-big',
+  'page-padding-bottom-middle',
+] %}
+{% if heading_font_size > 0 %}
+  {% set oc_classes = oc_classes|merge(['our-clients--heading-size']) %}
+{% endif %}
+{% if heading_margin_top > 0 or heading_margin_bottom > 0 %}
+  {% set oc_classes = oc_classes|merge(['our-clients--heading-margins']) %}
+{% endif %}
 {% set oc_styles = [] %}
 {% if image_height > 0 %}
   {% set oc_styles = oc_styles|merge(['--oc-image-height: ' ~ image_height ~ 'px']) %}
@@ -104,7 +118,7 @@
 {% if button_padding_x > 0 %}
   {% set oc_styles = oc_styles|merge(['--oc-more-padding-x: ' ~ button_padding_x ~ 'px']) %}
 {% endif %}
-<div class="our-clients page-content page-margin-top-middle page-margin-bottom-middle page-padding-top-big page-padding-bottom-middle"
+<div class="{{ oc_classes|join(' ') }}"
   role="region"
   aria-roledescription="carousel"
   aria-label="{{ heading|default('Our clients') }}"
