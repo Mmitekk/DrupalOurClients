@@ -258,7 +258,7 @@ class SlideForm extends EntityForm {
     parent::validateForm($form, $form_state);
 
     $media_image = $form_state->getValue('media_image') ?: [];
-    $upload = isset($media_image['upload'][0]) ? (int) $media_image['upload'][0] : 0;
+    $upload = $this->lastManagedFileFid($media_image['upload'] ?? NULL);
     $selected = isset($media_image['grid']['existing']) ? (int) $media_image['grid']['existing'] : 0;
 
     if (!$upload && !$selected && $this->entity->isNew() && \Drupal::moduleHandler()->moduleExists('media')) {
@@ -338,11 +338,20 @@ class SlideForm extends EntityForm {
     $entity->set('image_title', trim((string) ($media_image['image_title'] ?? '')));
 
     // Priority: a freshly uploaded image wins over a library selection; when
-    // both are empty an existing slide keeps its current media item.
-    $fid = isset($media_image['upload'][0]) ? (int) $media_image['upload'][0] : 0;
+    // both are empty an existing slide keeps its current media item. The
+    // upload field carries the current file id in its hidden fids input on
+    // every submission, so only a CHANGED file id counts as a fresh upload.
+    // The original file id is memoized: buildEntity() runs on every pass and
+    // later passes see the already-modified entity.
+    $fid = $this->lastManagedFileFid($media_image['upload'] ?? NULL);
     $selected = isset($media_image['grid']['existing']) ? (int) $media_image['grid']['existing'] : 0;
-    if ($fid) {
-      $entity->set('image_media', Slide::mediaFromUpload($fid, (string) $values['label']));
+    $current_fid = $form_state->get('our_clients_current_fid');
+    if ($current_fid === NULL) {
+      $current_fid = $this->currentSourceFileId($entity);
+      $form_state->set('our_clients_current_fid', $current_fid);
+    }
+    if ($fid && $fid !== $current_fid) {
+      $entity->set('image_media', $this->mediaFromUploadCached($form_state, $fid, (string) $values['label']));
     }
     elseif ($selected) {
       $entity->set('image_media', $selected);
@@ -359,19 +368,93 @@ class SlideForm extends EntityForm {
       $existing = $modal_images['existing']['gallery_existing'] ?? [];
       $existing = is_array($existing) ? $existing : [];
       foreach ($existing as $mid) {
-        if ($mid) {
+        if (is_numeric($mid)) {
           $gallery[] = (int) $mid;
         }
       }
-      $uploads = isset($modal_images['upload']) && is_array($modal_images['upload']) ? $modal_images['upload'] : [];
-      foreach ($uploads as $upload_fid) {
-        $mid = Slide::mediaFromUpload((int) $upload_fid, (string) $values['label']);
+      foreach ($this->managedFileFids($modal_images['upload'] ?? NULL) as $upload_fid) {
+        $mid = $this->mediaFromUploadCached($form_state, $upload_fid, (string) $values['label']);
         if ($mid) {
           $gallery[] = $mid;
         }
       }
       $entity->set('media_images', array_values(array_unique($gallery)));
     }
+  }
+
+  /**
+   * Extracts the numeric file ids from a managed_file element value.
+   *
+   * The value of a managed_file element is the whole input subtree: the
+   * 'fids' list sits next to the internal "Upload"/"Remove" button values
+   * (TranslatableMarkup objects) and the nested file element, so only real
+   * numeric ids are collected.
+   *
+   * @param mixed $value
+   *   The managed_file element value.
+   *
+   * @return int[]
+   *   The numeric file ids, in submitted order.
+   */
+  protected function managedFileFids($value) {
+    $fids = [];
+    if (!is_array($value)) {
+      return $fids;
+    }
+    $raw = array_key_exists('fids', $value) ? $value['fids'] : $value;
+    if (!is_array($raw)) {
+      return $fids;
+    }
+    foreach ($raw as $fid) {
+      if (is_numeric($fid)) {
+        $fids[] = (int) $fid;
+      }
+    }
+    return $fids;
+  }
+
+  /**
+   * Returns the newest numeric file id of a managed_file element value.
+   *
+   * @param mixed $value
+   *   The managed_file element value.
+   *
+   * @return int
+   *   The last numeric file id, or 0 when there is none.
+   */
+  protected function lastManagedFileFid($value) {
+    $fids = $this->managedFileFids($value);
+    return $fids ? end($fids) : 0;
+  }
+
+  /**
+   * Converts an uploaded file to a media item, reusing a previous result.
+   *
+   * buildEntity() runs several times per submission (afterBuild, AJAX
+   * rebuilds, validation), so the created media id is cached in the form
+   * state to keep exactly one media item per uploaded file.
+   *
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
+   * @param int $fid
+   *   The uploaded file id.
+   * @param string $label
+   *   The media item name.
+   *
+   * @return int
+   *   The media item id, or 0 on failure.
+   */
+  protected function mediaFromUploadCached(FormStateInterface $form_state, $fid, $label) {
+    $map = $form_state->get('our_clients_upload_media');
+    if (!is_array($map)) {
+      $map = [];
+    }
+    $key = (string) $fid;
+    if (!array_key_exists($key, $map)) {
+      $map[$key] = (int) Slide::mediaFromUpload($fid, $label);
+      $form_state->set('our_clients_upload_media', $map);
+    }
+    return $map[$key];
   }
 
   /**

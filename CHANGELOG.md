@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.10.1 (2026-11-14)
+
+- **Fixed the slide form warning "Object of class ... TranslatableMarkup could not be converted to int" on save** and the data corruption behind it: the value of a `managed_file` element is the whole input subtree — the `fids` list next to the internal "Upload"/"Remove" button values (TranslatableMarkup objects) and the nested file element. The previous code iterated that subtree as if it were a plain file id list, so every save raised warnings and could attach a media item built from the site's first file (file id 1) to the slide gallery. The form now collects only real numeric ids (`managedFileFids()`), which also makes the upload fields actually work — a genuinely uploaded file is converted to a media item and appended to the gallery / replaces the slide image, which previously silently did nothing.
+- **One media item per uploaded file**: `buildEntity()` runs several times per submission (afterBuild, AJAX upload rebuild, validation), so the media id created from an uploaded file is memoized in the form state; a changed file id (compared against the slide's current file) is the only trigger for replacing the slide image.
+
 ## 1.10.0 (2026-11-14)
 
 - **Multi-value media images field on the slide form** («Изображения в модальном окне»): a multi-select tile grid of the media library (checkboxes, works with the pager) plus a multi-file upload. Checked library items and fresh uploads merge on save — uploads are appended to the end of the list. Unchecking everything clears the gallery.
