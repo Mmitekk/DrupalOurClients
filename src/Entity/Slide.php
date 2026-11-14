@@ -35,6 +35,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
  *     "image_media",
  *     "image_alt",
  *     "image_title",
+ *     "media_images",
  *     "description",
  *     "reviews",
  *     "weight",
@@ -86,6 +87,13 @@ class Slide extends ConfigEntityBase {
    * @var string
    */
   protected $image_title = '';
+
+  /**
+   * The referenced media entity IDs of the modal gallery images, in order.
+   *
+   * @var array
+   */
+  protected $media_images = [];
 
   /**
    * The description (value + format).
@@ -143,6 +151,16 @@ class Slide extends ConfigEntityBase {
    */
   public function getImageTitle() {
     return (string) $this->image_title;
+  }
+
+  /**
+   * Returns the media entity IDs of the modal gallery images.
+   *
+   * @return array
+   *   List of media IDs in display order.
+   */
+  public function getMediaImages() {
+    return is_array($this->media_images) ? array_values(array_filter($this->media_images)) : [];
   }
 
   /**

@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.10.0 (2026-11-14)
+
+- **Multi-value media images field on the slide form** («Изображения в модальном окне»): a multi-select tile grid of the media library (checkboxes, works with the pager) plus a multi-file upload. Checked library items and fresh uploads merge on save — uploads are appended to the end of the list. Unchecking everything clears the gallery.
+- **The gallery is rendered in the client modal window above the description**: one image takes the full width, two sit side by side, three or more form rows of three (grid with 4:3 tiles).
+- Slide cache metadata now includes the gallery media and file tags.
+
 ## 1.9.0 (2026-11-02)
 
 - **The heading is fully styled by the active theme's h2 rules by default** - color, size and the responsive breakpoints (for example 2.5em / 2em / 1.4em with the accent color), so it looks exactly like the h2 headings of the surrounding blocks. Sites that never customized the heading size (the old 28/22 defaults) are migrated to the theme-controlled mode by `drush updb` (`our_clients_post_update_theme_controlled_heading()`); customized values keep working as before.

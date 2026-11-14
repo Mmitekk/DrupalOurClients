@@ -12,6 +12,8 @@
  *   - slider_image_url: URL of the scaled slider image.
  *   - modal_image_url: URL of the larger modal image.
  *   - description: Render array with the description.
+ *   - gallery: List of gallery images shown above the description
+ *     (url, alt, title).
  *   - reviews: Render array with the client reviews.
  * - autoplay: Whether autoplay is enabled.
  * - autoplay_speed: Autoplay interval in milliseconds.
@@ -167,6 +169,19 @@
               <div class="oc-modal__body">
                 {% if slide.title %}
                   <h3 class="oc-modal__title">{{ slide.title }}</h3>
+                {% endif %}
+                {% if slide.gallery %}
+                  {% set gallery_count = slide.gallery|length %}
+                  {% set gallery_class = gallery_count == 1
+                    ? 'oc-modal__gallery--single'
+                    : (gallery_count == 2 ? 'oc-modal__gallery--two' : 'oc-modal__gallery--three') %}
+                  <div class="oc-modal__gallery {{ gallery_class }}">
+                    {% for image in slide.gallery %}
+                      <div class="oc-modal__gallery-item">
+                        <img src="{{ image.url }}" alt="{{ image.alt }}"{% if image.title %} title="{{ image.title }}"{% endif %} loading="lazy">
+                      </div>
+                    {% endfor %}
+                  </div>
                 {% endif %}
                 {% if slide.description %}
                   <div class="oc-modal__description">{{ slide.description }}</div>

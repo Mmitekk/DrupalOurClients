@@ -93,6 +93,31 @@ class SlideForm extends EntityForm {
       '#description' => $this->t('Shown as a tooltip when the mouse hovers over the image. Empty = the client name is used.'),
     ];
 
+    // Multi-value gallery images rendered in the modal window above the
+    // description: a multi-select tile grid of the media library plus a
+    // multi-file upload. Checked items and fresh uploads merge on save
+    // (uploads are appended last).
+    $form['modal_images'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Images in the modal window'),
+      '#tree' => TRUE,
+      '#open' => FALSE,
+      '#description' => $this->t('Shown above the description in the client modal window: one image takes the full width, two sit side by side, three or more form rows of three.'),
+    ];
+
+    $form['modal_images']['existing'] = $this->buildMediaCheckboxes($slide);
+
+    $form['modal_images']['upload'] = [
+      '#type' => 'managed_file',
+      '#title' => $this->t('Upload new images'),
+      '#multiple' => TRUE,
+      '#upload_location' => 'public://our_clients',
+      '#upload_validators' => [
+        'file_validate_extensions' => ['png gif jpg jpeg webp'],
+      ],
+      '#description' => $this->t('Each uploaded image is stored as a media item and appended to the gallery. Recommended size: at least 600x450 pixels.'),
+    ];
+
     $description = $slide->getDescription();
     $form['description'] = [
       '#type' => 'text_format',
@@ -322,6 +347,31 @@ class SlideForm extends EntityForm {
     elseif ($selected) {
       $entity->set('image_media', $selected);
     }
+
+    // Modal gallery images: the checked library items (in grid order) plus
+    // the freshly uploaded files appended last. Unchecking everything and
+    // uploading nothing clears the gallery.
+    $modal_images = isset($values['modal_images']) && is_array($values['modal_images']) ? $values['modal_images'] : [];
+    if (array_key_exists('existing', $modal_images) || array_key_exists('upload', $modal_images)) {
+      $gallery = [];
+      // buildMediaCheckboxes() nests the checkboxes element under its own
+      // 'gallery_existing' key, so the submitted values sit one level deeper.
+      $existing = $modal_images['existing']['gallery_existing'] ?? [];
+      $existing = is_array($existing) ? $existing : [];
+      foreach ($existing as $mid) {
+        if ($mid) {
+          $gallery[] = (int) $mid;
+        }
+      }
+      $uploads = isset($modal_images['upload']) && is_array($modal_images['upload']) ? $modal_images['upload'] : [];
+      foreach ($uploads as $upload_fid) {
+        $mid = Slide::mediaFromUpload((int) $upload_fid, (string) $values['label']);
+        if ($mid) {
+          $gallery[] = $mid;
+        }
+      }
+      $entity->set('media_images', array_values(array_unique($gallery)));
+    }
   }
 
   /**
@@ -370,30 +420,7 @@ class SlideForm extends EntityForm {
       }
     }
     foreach ($media_storage->loadMultiple($query->execute()) as $media) {
-      $thumbnail_field = $media->hasField('thumbnail') ? $media->get('thumbnail') : NULL;
-      $thumbnail = $thumbnail_field && !$thumbnail_field->isEmpty() ? $thumbnail_field->entity : NULL;
-      $thumb = $thumbnail ? [
-        '#theme' => 'image_style',
-        '#style_name' => 'thumbnail',
-        '#uri' => $thumbnail->getFileUri(),
-        '#attributes' => ['class' => ['our-clients-admin-thumb']],
-      ] : [];
-      if ($thumbnail) {
-        $thumb_html = \Drupal::service('renderer')->render($thumb);
-      }
-      else {
-        // A clearly visible placeholder so tiles without a thumbnail
-        // (e.g. remote videos) do not look like empty slots in the grid.
-        $kind = $bundle_labels[$media->bundle()] ?? $media->bundle();
-        $thumb_html = '<svg class="our-clients-admin-noimage" width="48" height="48" viewBox="0 0 24 24" aria-hidden="true">'
-          . '<circle cx="9.5" cy="9.5" r="2.2" fill="#b9bec7"/>'
-          . '<path d="M5.5 19.5l5-5 3.4 3.4 2.6-2.6 3.5 3.5" stroke="#b9bec7" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>'
-          . '<span class="our-clients-media-tile-kind">' . Html::escape($kind) . '</span>';
-      }
-      $options[$media->id()] = Markup::create(
-        '<span class="our-clients-media-tile-thumb' . ($thumbnail ? '' : ' our-clients-media-tile-thumb--empty') . '">' . $thumb_html
-        . '</span><span class="our-clients-media-tile-name">' . Html::escape((string) $media->label()) . '</span>'
-      );
+      $options[$media->id()] = $this->mediaTileOptionMarkup($media, $bundle_labels);
     }
 
     if (!$options) {
@@ -451,6 +478,148 @@ class SlideForm extends EntityForm {
     ];
 
     return $element;
+  }
+
+  /**
+   * Builds the multi-select tile grid for the modal gallery images.
+   *
+   * Structurally the same tile grid as buildMediaGrid(), but with checkboxes
+   * so any number of media items can be selected at once.
+   *
+   * @param \Drupal\our_clients\Entity\Slide $slide
+   *   The slide being edited.
+   *
+   * @return array
+   *   The grid render array.
+   */
+  protected function buildMediaCheckboxes(Slide $slide) {
+    $element = [
+      '#type' => 'container',
+      '#prefix' => '<div class="our-clients-media-grid-wrapper">',
+      '#suffix' => '</div>',
+    ];
+
+    if (!\Drupal::moduleHandler()->moduleExists('media')) {
+      $element['warning'] = [
+        '#markup' => '<p>' . $this->t('The Media module is disabled on this site, so no image can be attached to the slide. Enable the Media module to select images.') . '</p>',
+      ];
+      return $element;
+    }
+
+    $query = \Drupal::entityQuery('media')
+      ->accessCheck(FALSE)
+      ->sort('created', 'DESC')
+      ->range(0, 200);
+    $bundles = Slide::slideMediaBundles();
+    if ($bundles) {
+      $query->condition('bundle', $bundles, 'IN');
+    }
+
+    $options = [];
+    $media_storage = \Drupal::entityTypeManager()->getStorage('media');
+    $type_storage = \Drupal::entityTypeManager()->getStorage('media_type');
+    $bundle_labels = [];
+    foreach ($bundles as $bundle_id) {
+      if ($type = $type_storage->load($bundle_id)) {
+        $bundle_labels[$bundle_id] = (string) $type->label();
+      }
+    }
+    foreach ($media_storage->loadMultiple($query->execute()) as $media) {
+      $options[$media->id()] = $this->mediaTileOptionMarkup($media, $bundle_labels);
+    }
+
+    if (!$options) {
+      $element['empty'] = [
+        '#markup' => '<p>' . $this->t('The media library is empty. Upload a new image below.') . '</p>',
+      ];
+      return $element;
+    }
+
+    $pages = max(1, (int) ceil(count($options) / 18));
+    $element['gallery_existing'] = [
+      '#type' => 'checkboxes',
+      '#title' => $this->t('From the media library'),
+      '#options' => $options,
+      '#default_value' => $slide->getMediaImages(),
+      // Only a hook class here: the grid itself is applied to the inner
+      // .form-checkboxes container in the stylesheet (see buildMediaGrid).
+      '#attributes' => [
+        'class' => ['our-clients-media-checkboxes'],
+      ],
+    ];
+    $element['pager'] = [
+      '#type' => 'container',
+      '#attributes' => ['class' => ['our-clients-media-pager']],
+      'prev' => [
+        '#type' => 'html_tag',
+        '#tag' => 'button',
+        '#value' => '‹',
+        '#attributes' => [
+          'type' => 'button',
+          'class' => ['our-clients-media-pager-prev'],
+          'aria-label' => $this->t('Previous page'),
+          'disabled' => TRUE,
+        ],
+      ],
+      'counter' => [
+        '#type' => 'html_tag',
+        '#tag' => 'span',
+        '#value' => '1 / ' . $pages,
+        '#attributes' => ['class' => ['our-clients-media-pager-counter']],
+      ],
+      'next' => [
+        '#type' => 'html_tag',
+        '#tag' => 'button',
+        '#value' => '›',
+        '#attributes' => [
+          'type' => 'button',
+          'class' => ['our-clients-media-pager-next'],
+          'aria-label' => $this->t('Next page'),
+          'disabled' => $pages <= 1,
+        ],
+      ],
+    ];
+
+    return $element;
+  }
+
+  /**
+   * Renders the tile markup (thumbnail or placeholder plus name) for one
+   * media item.
+   *
+   * @param \Drupal\media\MediaInterface $media
+   *   The media item.
+   * @param array $bundle_labels
+   *   Bundle machine names mapped to their labels.
+   *
+   * @return \Drupal\Core\Render\Markup
+   *   The tile markup.
+   */
+  protected function mediaTileOptionMarkup($media, array $bundle_labels) {
+    $thumbnail_field = $media->hasField('thumbnail') ? $media->get('thumbnail') : NULL;
+    $thumbnail = $thumbnail_field && !$thumbnail_field->isEmpty() ? $thumbnail_field->entity : NULL;
+    $thumb = $thumbnail ? [
+      '#theme' => 'image_style',
+      '#style_name' => 'thumbnail',
+      '#uri' => $thumbnail->getFileUri(),
+      '#attributes' => ['class' => ['our-clients-admin-thumb']],
+    ] : [];
+    if ($thumbnail) {
+      $thumb_html = \Drupal::service('renderer')->render($thumb);
+    }
+    else {
+      // A clearly visible placeholder so tiles without a thumbnail
+      // (e.g. remote videos) do not look like empty slots in the grid.
+      $kind = $bundle_labels[$media->bundle()] ?? $media->bundle();
+      $thumb_html = '<svg class="our-clients-admin-noimage" width="48" height="48" viewBox="0 0 24 24" aria-hidden="true">'
+        . '<circle cx="9.5" cy="9.5" r="2.2" fill="#b9bec7"/>'
+        . '<path d="M5.5 19.5l5-5 3.4 3.4 2.6-2.6 3.5 3.5" stroke="#b9bec7" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+        . '<span class="our-clients-media-tile-kind">' . Html::escape($kind) . '</span>';
+    }
+    return Markup::create(
+      '<span class="our-clients-media-tile-thumb' . ($thumbnail ? '' : ' our-clients-media-tile-thumb--empty') . '">' . $thumb_html
+      . '</span><span class="our-clients-media-tile-name">' . Html::escape((string) $media->label()) . '</span>'
+    );
   }
 
   /**

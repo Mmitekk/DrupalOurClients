@@ -26,7 +26,8 @@
    the whole tile block into a single column. A definite column count is used
    on purpose: with auto-fill a container whose width is resolved from its
    content collapses to one column. */
-.our-clients-media-grid-wrapper .form-radios {
+.our-clients-media-grid-wrapper .form-radios,
+.our-clients-media-grid-wrapper .form-checkboxes {
   display: grid !important;
   grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
   gap: 10px !important;
@@ -36,25 +37,29 @@
 }
 
 @media (max-width: 1200px) {
-  .our-clients-media-grid-wrapper .form-radios {
+  .our-clients-media-grid-wrapper .form-radios,
+.our-clients-media-grid-wrapper .form-checkboxes {
     grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
   }
 }
 
 @media (max-width: 820px) {
-  .our-clients-media-grid-wrapper .form-radios {
+  .our-clients-media-grid-wrapper .form-radios,
+.our-clients-media-grid-wrapper .form-checkboxes {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 }
 
-.our-clients-media-grid-wrapper .js-form-type-radio {
+.our-clients-media-grid-wrapper .js-form-type-radio,
+.our-clients-media-grid-wrapper .js-form-type-checkbox {
   position: relative;
   margin: 0;
   width: auto;
 }
 
 /* The radio covers the whole tile but stays invisible and focusable. */
-.our-clients-media-grid-wrapper .js-form-type-radio input[type="radio"] {
+.our-clients-media-grid-wrapper .js-form-type-radio input[type="radio"],
+.our-clients-media-grid-wrapper .js-form-type-checkbox input[type="checkbox"] {
   position: absolute !important;
   inset: 0;
   width: 100%;
@@ -64,7 +69,8 @@
   cursor: pointer;
 }
 
-.our-clients-media-grid-wrapper .js-form-type-radio label.option {
+.our-clients-media-grid-wrapper .js-form-type-radio label.option,
+.our-clients-media-grid-wrapper .js-form-type-checkbox label.option {
   display: flex !important;
   flex-direction: column;
   gap: 6px;
@@ -77,16 +83,19 @@
   cursor: pointer;
 }
 
-.our-clients-media-grid-wrapper .js-form-type-radio:hover label.option {
+.our-clients-media-grid-wrapper .js-form-type-radio:hover label.option,
+.our-clients-media-grid-wrapper .js-form-type-checkbox:hover label.option {
   border-color: #8fb7e4;
 }
 
-.our-clients-media-grid-wrapper .js-form-type-radio input:checked + label.option {
+.our-clients-media-grid-wrapper .js-form-type-radio input:checked + label.option,
+.our-clients-media-grid-wrapper .js-form-type-checkbox input:checked + label.option {
   border-color: #2e6da4;
   background: #e7f0fe;
 }
 
-.our-clients-media-grid-wrapper .js-form-type-radio input:focus + label.option {
+.our-clients-media-grid-wrapper .js-form-type-radio input:focus + label.option,
+.our-clients-media-grid-wrapper .js-form-type-checkbox input:focus + label.option {
   outline: 2px solid #2e6da4;
   outline-offset: 1px;
 }

@@ -287,6 +287,33 @@ msgid ""
 msgstr ""
 "Отзывы о клиенте. Показываются в модальном окне под описанием."
 
+msgid "Images in the modal window"
+msgstr "Изображения в модальном окне"
+
+msgid ""
+"Shown above the description in the client modal window: one image takes "
+"the full width, two sit side by side, three or more form rows of three."
+msgstr ""
+"Показываются в карточке клиента над описанием: одно изображение занимает "
+"всю ширину, два располагаются рядом, три и более — рядами по три."
+
+msgid "Upload new images"
+msgstr "Загрузить новые изображения"
+
+msgid ""
+"Each uploaded image is stored as a media item and appended to the gallery. "
+"Recommended size: at least 600x450 pixels."
+msgstr ""
+"Каждое загруженное изображение сохраняется как медиа-объект и добавляется "
+"в конец галереи. Рекомендуемый размер: не менее 600x450 пикселей."
+
+msgid ""
+"The Media module is disabled on this site, so no image can be attached to "
+"the slide. Enable the Media module to select images."
+msgstr ""
+"Модуль Media на этом сайте выключен, поэтому прикрепить изображение к "
+"слайду нельзя. Включите модуль Media, чтобы выбирать изображения."
+
 msgid "Review @number"
 msgstr "Отзыв @number"
 

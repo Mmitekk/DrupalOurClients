@@ -333,6 +333,41 @@ body.oc-modal-open {
   margin-bottom: 0;
 }
 
+/* Gallery images above the description: one image takes the full width,
+   two sit side by side, three or more form rows of three. */
+.oc-modal__gallery {
+  display: grid;
+  gap: 10px;
+  margin: 14px 0 0;
+}
+
+.oc-modal__gallery--single {
+  grid-template-columns: 1fr;
+}
+
+.oc-modal__gallery--single .oc-modal__gallery-item img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+.oc-modal__gallery--two {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.oc-modal__gallery--three {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.oc-modal__gallery--two .oc-modal__gallery-item img,
+.oc-modal__gallery--three .oc-modal__gallery-item img {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
 .oc-modal__reviews {
   display: grid;
   gap: 12px;

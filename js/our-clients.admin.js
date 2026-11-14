@@ -18,7 +18,7 @@
   Drupal.behaviors.ourClientsMediaGrid = {
     attach: function (context) {
       once('our-clients-media-grid', '.our-clients-media-grid-wrapper', context).forEach(function (wrapper) {
-        var tiles = Array.prototype.slice.call(wrapper.querySelectorAll('.js-form-type-radio'));
+        var tiles = Array.prototype.slice.call(wrapper.querySelectorAll('.js-form-type-radio, .js-form-type-checkbox'));
         var pager = wrapper.querySelector('.our-clients-media-pager');
 
         if (tiles.length <= ITEMS_PER_PAGE || !pager) {

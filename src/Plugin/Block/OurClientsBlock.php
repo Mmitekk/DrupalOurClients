@@ -73,6 +73,7 @@ class OurClientsBlock extends BlockBase {
           'modal_image_url' => '',
           'modal_media' => $view_builder->view($media, 'default'),
           'description' => self::processText($slide->getDescription()),
+          'gallery' => $this->buildGallery($slide, $media_ids, $file_ids),
           'reviews' => $this->buildReviews($slide),
         ];
         $media_ids[] = $media->id();
@@ -98,6 +99,7 @@ class OurClientsBlock extends BlockBase {
           : $file_url_generator->generateString($uri),
         'modal_media' => NULL,
         'description' => self::processText($slide->getDescription()),
+        'gallery' => $this->buildGallery($slide, $media_ids, $file_ids),
         'reviews' => $this->buildReviews($slide),
       ];
       $media_ids[] = $media->id();
@@ -162,6 +164,57 @@ class OurClientsBlock extends BlockBase {
    * @return array
    *   Cache metadata array with tags and contexts.
    */
+  /**
+   * Builds the render data for a slide's modal gallery images.
+   *
+   * The gallery images are displayed above the description in the modal
+   * window: one image takes the full width, two sit side by side, three or
+   * more form rows of three.
+   *
+   * @param \Drupal\our_clients\Entity\Slide $slide
+   *   The slide.
+   * @param array $media_ids
+   *   Collector for the gallery media IDs (cache tags).
+   * @param array $file_ids
+   *   Collector for the gallery file IDs (cache tags).
+   *
+   * @return array
+   *   List of gallery image render items (empty when the slide has none).
+   */
+  protected function buildGallery($slide, array &$media_ids, array &$file_ids) {
+    $mids = $slide->getMediaImages();
+    if (!$mids || !\Drupal::moduleHandler()->moduleExists('media')) {
+      return [];
+    }
+    $modal_style = ImageStyle::load('our_clients_modal');
+    $file_url_generator = \Drupal::service('file_url_generator');
+    $storage = \Drupal::entityTypeManager()->getStorage('media');
+
+    $items = [];
+    foreach ($storage->loadMultiple($mids) as $mid => $media) {
+      // Only real images go into the gallery; video slides have their own
+      // representation.
+      if ($media->getSource()->getPluginId() !== 'image') {
+        continue;
+      }
+      $file = self::mediaFile($media);
+      if (!$file) {
+        continue;
+      }
+      $uri = $file->getFileUri();
+      $items[] = [
+        'url' => $modal_style
+          ? $modal_style->buildUrl($uri)
+          : $file_url_generator->generateString($uri),
+        'alt' => $slide->getImageAlt() ?: self::mediaAlt($media, (string) $slide->label()),
+        'title' => $slide->getImageTitle() ?: self::mediaTitle($media, (string) $slide->label()),
+      ];
+      $media_ids[] = (int) $mid;
+      $file_ids[] = $file->id();
+    }
+    return $items;
+  }
+
   /**
    * Builds the render data for a slide's reviews.
    *
